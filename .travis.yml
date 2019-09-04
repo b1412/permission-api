@@ -6,10 +6,10 @@ script:
 - "./gradlew jacocoTestReport"
 services:
 - docker
-before_install:
-- docker build -t kotlin-cannon .
+-
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+- docker build -t kotlin-cannon .
 deploy:
   provider: script
   script: bash docker_push.sh
