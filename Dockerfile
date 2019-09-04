@@ -1,5 +1,5 @@
 FROM openjdk:8-jre-alpine
-MAINTAINER CannonDev
+MAINTAINER zhouleib1412@gmail.com
 
 ENV APP_ROOT /opt/cannon
 ENV APP_VERSION 0.0.1
