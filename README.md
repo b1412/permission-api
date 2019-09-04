@@ -1,6 +1,5 @@
 # Kotlin Cannon
-[![Build Status](https://travis-ci.org/b1412/kotlin-cannon.png)](https://travis-ci.org/b1412/kotlin-cannon)
-[![codecov](https://codecov.io/gh/b1412/kotlin-cannon/branch/master/graph/badge.svg)](https://codecov.io/gh/b1412/kotlin-cannon)
+[![Build Status](https://travis-ci.org/b1412/kotlin-cannon.svg?branch=master)](https://travis-ci.org/b1412/kotlin-cannon)[![codecov](https://codecov.io/gh/b1412/kotlin-cannon/branch/master/graph/badge.svg)](https://codecov.io/gh/b1412/kotlin-cannon)
 
 ## Quick start
   build app and image 
