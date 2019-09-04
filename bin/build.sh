@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-./gradlew clean build -x test
+gradle clean build -x test
 docker build -t cannon .
