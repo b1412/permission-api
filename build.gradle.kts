@@ -11,16 +11,9 @@ plugins {
     kotlin("plugin.allopen") version kotlinVersion
 }
 
-jacoco {
-    toolVersion = "0.8.4"
-    reportsDir = file("$buildDir/customJacocoReportDir")
-}
-
 tasks.jacocoTestReport {
     reports {
         xml.isEnabled = true
-        xml.destination = file("${buildDir}/reports/jacoco/report.xml")
-        csv.isEnabled = false
         html.isEnabled = false
     }
 }
