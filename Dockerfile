@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8-jre-alpine
 MAINTAINER CannonDev
 
 ENV APP_ROOT /opt/cannon
