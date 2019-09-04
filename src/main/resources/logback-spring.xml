@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <jmxConfigurator/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>　　　　　　　　
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>　　
+        </encoder>
+    </appender>
+
+    <springProfile name="local">
+        <logger name="com.cannon" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    </springProfile>
+
+    <springProfile name="prod">
+
+        <logger name="com.cannon" level="INFO"/>
+    </springProfile>
+
+    <root level="ERROR">
+        <appender-ref ref="Console"/>
+    </root>
+</configuration>
