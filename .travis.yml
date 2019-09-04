@@ -10,7 +10,7 @@ services:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - docker build -t $IMAGE_NAME .
-  - docker login -u $DOCKER_USERNAME  -p $DOCKER_PASSWORD
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker tag $IMAGE_NAME:latest $DOCKER_USERNAME/$IMAGE_NAME:$TRAVIS_BUILD_NUMBER
   - docker push $DOCKER_USERNAME/$IMAGE_NAME:$TRAVIS_BUILD_NUMBER
 
