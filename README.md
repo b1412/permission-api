@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/b1412/kotlin-cannon.png)](https://travis-ci.org/b1412/kotlin-cannon)
 [![codecov](https://codecov.io/gh/b1412/kotlin-cannon/branch/master/graph/badge.svg)](https://codecov.io/gh/b1412/kotlin-cannon)
 
-## quick start
+## Quick start
   build app and image 
 ```shell 
 scripts/build.sh
@@ -12,6 +12,28 @@ scripts/build.sh
 docker-compose up
 ```
 
-get started!
+open your browser
 
 http://localhost:8080/graphiql
+
+write your first GraphQL query
+
+```graphql
+{
+  Branch {
+    id
+    name
+    number
+    users {
+      id
+      email
+      login
+      role {
+        id
+        name
+      }
+    }
+  }
+}
+```
+
