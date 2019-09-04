@@ -18,9 +18,10 @@ jacoco {
 
 tasks.jacocoTestReport {
     reports {
-        xml.isEnabled = false
+        xml.isEnabled = true
+        xml.destination = file("${buildDir}/reports/jacoco/report.xml")
         csv.isEnabled = false
-        html.destination = file("${buildDir}/jacocoHtml")
+        html.isEnabled = false
     }
 }
 
@@ -62,7 +63,7 @@ dependencies {
     graphql()
 
     implementation("org.jooq:joor-java-8:0.9.12")
-    
+
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")

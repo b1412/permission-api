@@ -1,2 +1,1 @@
-rootProject.name = "cannon"
-
+rootProject.name = "kotlin-cannon"
