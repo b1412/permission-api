@@ -36,4 +36,3 @@ write your first GraphQL query
   }
 }
 ```
-
