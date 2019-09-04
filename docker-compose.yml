@@ -10,7 +10,8 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cannon
     volumes:
-      - test-mysql-data:/var/lib/mysql
+      - cannon-mysql-data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d
 
   cannon:
     container_name: cannon
@@ -23,5 +24,5 @@ services:
       - mysql
 
 volumes:
-  test-mysql-data:
+  cannon-mysql-data:
     driver: local
