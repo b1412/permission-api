@@ -35,3 +35,5 @@ write your first GraphQL query
   }
 }
 ```
+see your result
+![data](https://raw.githubusercontent.com/b1412/cannon/master/images/graphql.png)
