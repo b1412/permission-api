@@ -1,2 +1,6 @@
-language: java
+os: linux
+dist: trusty
 jdk: openjdk8
+yes
+script:
+  - gradle build
