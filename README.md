@@ -1,7 +1,11 @@
 # Kotlin Cannon
 [![Build Status](https://travis-ci.org/b1412/kotlin-cannon.svg?branch=master)](https://travis-ci.org/b1412/kotlin-cannon)[![codecov](https://codecov.io/gh/b1412/kotlin-cannon/branch/master/graph/badge.svg)](https://codecov.io/gh/b1412/kotlin-cannon)
 
-## Quick start
+## Start from DockerHub
+
+https://hub.docker.com/r/b1412/kotlin-cannon
+
+## Quick source code
   build app and image 
 ```shell 
 scripts/build.sh
@@ -10,6 +14,7 @@ scripts/build.sh
 ```shell
 docker-compose up
 ```
+**NOTE** `db/dump.sql` only be executed once the first time you start the container.
 
 open your browser
 
@@ -37,3 +42,8 @@ write your first GraphQL query
 ```
 see your result
 ![data](/images/graphql.png)
+
+
+##T
+
+https://github.com/jcrygier/graphql-jpa
