@@ -93,17 +93,26 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
     }
 
     private fun getQueryFieldDefinition(entityType: EntityType<*>): GraphQLFieldDefinition {
-        var arguments = entityType.attributes
+        val fields = entityType.attributes
                 .filter { this.isValidInput(it) }
                 .filter { this.isNotIgnored(it) }
-                .flatMap { this.getArgumentFilter(it) }
-        arguments += where
+                .flatMap { this.getFieldsFilter(it) }
+
+        val argument = GraphQLArgument.newArgument()
+                .name("where")
+                .type(GraphQLInputObjectType.newInputObject()
+                        .name(entityType.name.capitalize() + "Where")
+                        .description("where filter")
+                        .fields(fields)
+                        .build()
+                ).build()
+
         return GraphQLFieldDefinition.newFieldDefinition()
                 .name(entityType.name)
                 .description(getSchemaDocumentation(entityType.javaType))
                 .type(GraphQLList(getObjectType(entityType)))
                 .dataFetcher(JpaDataFetcher(entityManager, entityType))
-                .argument(arguments)
+                .argument(argument)
                 .build()
     }
 
@@ -227,6 +236,7 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
                                     .build())
                         }
                     }
+
                     GraphQLFieldDefinition.newFieldDefinition()
                             .name(attribute.name)
                             .description(getSchemaDocumentation(attribute.javaMember))
@@ -386,7 +396,28 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
         } catch (e: Exception) {
             log.error("Unable to set coercing for $type", e)
         }
+    }
 
+    private fun getFieldsFilter(attribute: Attribute<*, *>): List<GraphQLInputObjectField> {
+        return getAttributeType(attribute)
+                .filterIsInstance<GraphQLInputType>()
+                .filter { type ->
+                    attribute.persistentAttributeType != Attribute.PersistentAttributeType.EMBEDDED ||
+                            attribute.persistentAttributeType == Attribute.PersistentAttributeType.EMBEDDED
+                            && type is GraphQLScalarType
+                }.flatMap {
+                    OPERATORS.map { operator ->
+                        var type = it
+                        if (operator == "in" || operator == "bt") {
+                            type = GraphQLList.list(type)
+                        }
+                        GraphQLInputObjectField.newInputObjectField()
+                                .name("${attribute.name}_$operator")
+                                //.description(it.name)
+                                .type(type).build()
+                    }
+
+                }
     }
 
     companion object {
@@ -394,22 +425,6 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
         private const val PAGINATION_REQUEST_PARAM_NAME = "paginationRequest"
         private val log = LoggerFactory.getLogger(GraphQLSchemaBuilder::class.java)
         private val OPERATORS = listOf("eq", "in", "like", "gte", "gt", "lt", "lte", "bt")
-
-        private val where = GraphQLArgument.newArgument()
-                .name("where")
-                .type(GraphQLInputObjectType.newInputObject()
-                        .name("where")
-                        .description("where filter")
-                        .field(GraphQLInputObjectField.newInputObjectField()
-                                .name("page")
-                                .description("Which page should be returned, starting with 1 (1-indexed)")
-                                .type(Scalars.GraphQLInt).build())
-                        .field(GraphQLInputObjectField
-                                .newInputObjectField()
-                                .name("size").description("How many results should this page contain")
-                                .type(Scalars.GraphQLInt).build())
-                        .build()
-                ).build()
 
         private val paginationArgument = GraphQLArgument.newArgument()
                 .name(PAGINATION_REQUEST_PARAM_NAME)
