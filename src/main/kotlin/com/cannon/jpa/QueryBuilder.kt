@@ -40,11 +40,14 @@ object QueryBuilder {
                 { "" },
                 { argument ->
                     val filterFields = (argument.value as ObjectValue).objectFields
-                    filterFields.map { f ->
+                    filterFields.joinToString("&") { f ->
                         val (name, op) = f.name.split("_")
                         val value = f.value
                         val oldQuery = when (value) {
                             is StringValue -> {
+                                "f_$name=${value.value}"
+                            }
+                            is IntValue -> {
                                 "f_$name=${value.value}"
                             }
                             is ArrayValue -> {
@@ -53,7 +56,7 @@ object QueryBuilder {
                             else -> throw  IllegalArgumentException("unknown value type")
                         }
                         "$oldQuery&f_${name}_op=$op"
-                    }.joinToString("&")
+                    }
                 })
         val nodes = rootField.selectionSet.selections
         nodes.forEach {
