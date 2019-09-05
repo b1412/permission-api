@@ -4,10 +4,14 @@ import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.core.toOption
 import graphql.language.Field
+import mu.KotlinLogging
 import javax.persistence.EntityGraph
 import javax.persistence.EntityManager
 import javax.persistence.Subgraph
 import javax.persistence.criteria.*
+
+private val logger = KotlinLogging.logger {}
+
 
 object JpaUtil {
     fun <T> createPredicate(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder): Option<Predicate> {
@@ -45,13 +49,7 @@ object JpaUtil {
         }
     }
 
-    /**
-     * 第一层字段的entity grpah
-     * 比如 branch.user 支持， branch.user.role目前不支持
-     * EntityGraph 是指动态的定义了 Entity 所关联属性的抓取策略 association fields, fetching strategy
-     */
     fun <T> createEntityGraphFromURL(entityManager: EntityManager, domainClass: Class<T>, filter: Map<String, String>): EntityGraph<T> {
-
         val embedded = filter["embedded"]
                 .toOption()
                 .map {
@@ -60,9 +58,11 @@ object JpaUtil {
                 .getOrElse {
                     listOf()
                 }
-        println(embedded)
+        logger.debug {
+            embedded
+        }
         val maxLevel = embedded.map { it.split(".").size }.max()
-        println("$maxLevel maxLevel")
+        logger.debug { "$maxLevel maxLevel" }
         val graph = entityManager.createEntityGraph(domainClass)
 
         when (maxLevel) {
@@ -81,7 +81,7 @@ object JpaUtil {
                                 1 -> {
                                     subGraphs.putIfAbsent(nodes[0], graph.addSubgraph(nodes[0]))
                                 }
-                                2->{
+                                2 -> {
                                     val subgraph = subGraphs.get(nodes[0])!!
                                     subgraph.addAttributeNodes(nodes[1])
                                 }
