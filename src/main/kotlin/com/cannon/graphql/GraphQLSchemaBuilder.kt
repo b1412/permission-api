@@ -4,7 +4,7 @@ import com.cannon.graphql.annotation.GraphQLIgnore
 import com.cannon.graphql.annotation.SchemaDocumentation
 import graphql.Scalars
 import graphql.schema.*
-import org.slf4j.LoggerFactory
+import mu.KotlinLogging
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.math.BigDecimal
@@ -15,13 +15,9 @@ import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.metamodel.*
 
-/**
- * A wrapper for the [GraphQLSchema.Builder]. In addition to exposing the traditional builder functionality,
- * this class constructs an initial [GraphQLSchema] by scanning the given [EntityManager] for relevant
- * JPA entities. This happens at construction time.
- *
- * Note: This class should not be accessed outside this library.
- */
+
+private val logger = KotlinLogging.logger {}
+
 class GraphQLSchemaBuilder : GraphQLSchema.Builder {
 
     private val entityManager: EntityManager
@@ -50,11 +46,6 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
             return queryType.build()
         }
 
-    /**
-     * Initialises the builder with the given [EntityManager] from which we immediately start to scan for
-     * entities to include in the GraphQL schema.
-     * @param entityManager The manager containing the data models to include in the final GraphQL schema.
-     */
     constructor(entityManager: EntityManager) {
         this.entityManager = entityManager
 
@@ -94,25 +85,38 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
 
     private fun getQueryFieldDefinition(entityType: EntityType<*>): GraphQLFieldDefinition {
         val fields = entityType.attributes
-                .filter { this.isValidInput(it) }
-                .filter { this.isNotIgnored(it) }
-                .flatMap { this.getFieldsFilter(it) }
+                .filter { isValidInput(it) }
+                .filter { isNotIgnored(it) }
+                .flatMap { getFieldsFilter(it) }
 
         val argument = GraphQLArgument.newArgument()
                 .name("where")
                 .type(GraphQLInputObjectType.newInputObject()
                         .name(entityType.name.capitalize() + "Where")
-                        .description("where filter")
                         .fields(fields)
                         .build()
                 ).build()
+        GraphQLEnumType.newEnum()
+                .name("Direction")
+                .description("Describes the direction (Ascending / Descending) to sort a field.")
+                .value("ASC", 0, "Ascending")
+                .value("DESC", 1, "Descending")
+                .build()
+
+        val pageType = GraphQLObjectType.newObject()
+                .name(entityType.name + "Connection")
+                .description("'Connection' response wrapper object for " + entityType.name + ".  When pagination or aggregation is requested, this object will be returned with metadata about the query.")
+                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalPages").description("Total number of pages calculated on the database for this pageSize.").type(Scalars.GraphQLLong).build())
+                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalElements").description("Total number of results on the database for this query.").type(Scalars.GraphQLLong).build())
+                .field(GraphQLFieldDefinition.newFieldDefinition().name("content").description("The actual object results").type(GraphQLList(getObjectType(entityType))).build())
+                .build()
 
         return GraphQLFieldDefinition.newFieldDefinition()
                 .name(entityType.name)
                 .description(getSchemaDocumentation(entityType.javaType))
-                .type(GraphQLList(getObjectType(entityType)))
+                .type(pageType)
                 .dataFetcher(JpaDataFetcher(entityManager, entityType))
-                .argument(argument)
+                .argument(listOf(argument, paginationArgument))
                 .build()
     }
 
@@ -241,7 +245,7 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
                             .name(attribute.name)
                             .description(getSchemaDocumentation(attribute.javaMember))
                             .type(type)
-                            .argument(arguments)
+                            //  .argument(arguments)
                             .build()
                 }
 
@@ -385,17 +389,12 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
 
     /**
      * A bit of a hack, since JPA will deserialize our Enum's for us...we don't want GraphQL doing it.
-     *
      * @param type
      */
     private fun setIdentityCoercing(type: GraphQLType) {
-        try {
-            val coercing = type.javaClass.getDeclaredField("coercing")
-            coercing.isAccessible = true
-            coercing.set(type, IdentityCoercing())
-        } catch (e: Exception) {
-            log.error("Unable to set coercing for $type", e)
-        }
+        val coercing = type.javaClass.getDeclaredField("coercing")
+        coercing.isAccessible = true
+        coercing.set(type, IdentityCoercing())
     }
 
     private fun getFieldsFilter(attribute: Attribute<*, *>): List<GraphQLInputObjectField> {
@@ -413,7 +412,6 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
                         }
                         GraphQLInputObjectField.newInputObjectField()
                                 .name("${attribute.name}_$operator")
-                                //.description(it.name)
                                 .type(type).build()
                     }
 
@@ -421,15 +419,12 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
     }
 
     companion object {
-
-        private const val PAGINATION_REQUEST_PARAM_NAME = "paginationRequest"
-        private val log = LoggerFactory.getLogger(GraphQLSchemaBuilder::class.java)
         private val OPERATORS = listOf("eq", "in", "like", "gte", "gt", "lt", "lte", "bt")
 
         private val paginationArgument = GraphQLArgument.newArgument()
-                .name(PAGINATION_REQUEST_PARAM_NAME)
+                .name("pageRequest")
                 .type(GraphQLInputObjectType.newInputObject()
-                        .name("PaginationObject")
+                        .name("Pageable")
                         .description("Query object for Pagination Requests, specifying the requested page, and that page's size.\n\nNOTE: 'page' parameter is 1-indexed, NOT 0-indexed.\n\nExample: paginationRequest { page: 1, size: 20 }")
                         .field(GraphQLInputObjectField.newInputObjectField().name("page")
                                 .description("Which page should be returned, starting with 1 (1-indexed)")
@@ -441,7 +436,7 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
                 ).build()
 
         private val orderByDirectionEnum = GraphQLEnumType.newEnum()
-                .name("OrderByDirection")
+                .name("Direction")
                 .description("Describes the direction (Ascending / Descending) to sort a field.")
                 .value("ASC", 0, "Ascending")
                 .value("DESC", 1, "Descending")

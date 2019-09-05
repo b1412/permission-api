@@ -1,3 +1,4 @@
+language: jvm
 os: linux
 dist: trusty
 jdk: openjdk8

@@ -19,16 +19,13 @@ object JavaScalars {
 
     var GraphQLLocalDateTime = GraphQLScalarType("LocalDateTime", "Date type", object : Coercing<Any, Any> {
         override fun serialize(input: Any): Any? {
-            if (input is String) {
-                return parseStringToLocalDateTime(input)
-            } else if (input is LocalDateTime) {
-                return input
-            } else if (input is Long) {
-                return parseLongToLocalDateTime(input)
-            } else if (input is Int) {
-                return parseLongToLocalDateTime(input.toLong())
+            return when (input) {
+                is String -> parseStringToLocalDateTime(input)
+                is LocalDateTime -> input
+                is Long -> parseLongToLocalDateTime(input)
+                is Int -> parseLongToLocalDateTime(input.toLong())
+                else -> null
             }
-            return null
         }
 
         override fun parseValue(input: Any): Any? {
@@ -50,13 +47,7 @@ object JavaScalars {
         }
 
         private fun parseStringToLocalDateTime(input: String): LocalDateTime? {
-            try {
-                return LocalDateTime.parse(input)
-            } catch (e: DateTimeParseException) {
-                log.warn("Failed to parse Date from input: $input", e)
-                return null
-            }
-
+            return LocalDateTime.parse(input)
         }
     })
 
