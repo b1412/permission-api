@@ -3,10 +3,12 @@ package com.cannon.jpa
 import arrow.core.extensions.list.foldable.firstOption
 import graphql.language.*
 import graphql.parser.Parser
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
 
 object QueryBuilder {
     fun queryList(queryUrl: String): Map<String, String> {
-        //val queryUrl = "f_name=xx&f_name=yy&f_name_op=in&f_age=1&f_age_op=="
         return queryUrl.split("&")
                 .map { Pair(it.substringBefore("="), it.substringAfter("=")) }
                 .groupBy { it.first }
@@ -24,12 +26,17 @@ object QueryBuilder {
     }
 
     fun graphqlPlayload(input: String): String {
-        val embedded = mutableListOf<String>()
-        val field = mutableListOf<String>()
+
         val document = Parser().parseDocument(input)
         val rootField = (document.definitions[0].children[0] as SelectionSet).selections[0] as Field
+        return queryURLFromField(rootField)
+    }
+
+    fun queryURLFromField(rootField: Field): String {
+        val embedded = mutableListOf<String>()
+        val field = mutableListOf<String>()
         val arguments = rootField.arguments
-        val queryString = arguments.firstOption { it.name == "filter" }.fold(
+        val queryString = arguments.firstOption { it.name == "where" }.fold(
                 { "" },
                 { argument ->
                     val filterFields = (argument.value as ObjectValue).objectFields
@@ -65,7 +72,7 @@ object QueryBuilder {
         val embeddedStr = embedded.joinToString(",")
         val fieldsStr = field.joinToString(",")
         val url = "embedded=$embeddedStr&fields=$fieldsStr"
-        return queryString + "&" + url
+        return "$queryString&$url"
     }
 
 
