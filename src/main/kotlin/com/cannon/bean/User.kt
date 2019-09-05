@@ -8,7 +8,7 @@ class User(
         var address: String,
         var email: String,
         var notes: String,
-        @OneToOne
+        @OneToOne(fetch = FetchType.LAZY)
         var branch: Branch? = null,
         @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
         var docs: MutableList<Doc> = mutableListOf(),

@@ -24,11 +24,9 @@ open class JpaDataFetcher(
         val field = environment.fields.iterator().next()
         val result = LinkedHashMap<String, Any>()
         val pageInformation = extractPageInformation(environment, field)
-
         val totalPagesSelection = getSelectionField(field, "totalPages")
         val totalElementsSelection = getSelectionField(field, "totalElements")
         val contentSelection = getSelectionField(field, "content")
-
         if (contentSelection.isPresent) {
             val typedQuery = getQuery(environment, field, contentSelection.get())
             result["content"] = typedQuery
@@ -85,19 +83,16 @@ open class JpaDataFetcher(
             is FloatValue -> return value.value
             else -> return value.toString()
         }
-
     }
 
     private fun getCountQuery(environment: DataFetchingEnvironment, field: Field): TypedQuery<Long> {
         val cb = entityManager.criteriaBuilder
         val query = cb.createQuery(Long::class.java)
         val root = query.from(entityType)
-
         val idAttribute = entityType.getId(Any::class.java)
         query.select(cb.count(root.get<Any>(idAttribute.name)))
         val predicates = field.arguments.map { cb.equal(root.get<Any>(it.name), convertValue(environment, it, it.value)) }
         query.where(*predicates.toTypedArray())
-
         return entityManager.createQuery(query)
     }
 
@@ -109,14 +104,11 @@ open class JpaDataFetcher(
         val paginationRequest = field.arguments.stream().filter { "pageRequest".equals(it.name) }.findFirst()
         if (paginationRequest.isPresent) {
             field.arguments.remove(paginationRequest.get())
-
             val paginationValues = paginationRequest.get().value as ObjectValue
             val page = paginationValues.objectFields.first { "page" == it.name }.value as IntValue
             val size = paginationValues.objectFields.first { "size" == it.name }.value as IntValue
-
             return PageInformation(page.value.toInt(), size.value.toInt())
         }
-
         return PageInformation(1, Integer.MAX_VALUE)
     }
 
@@ -137,9 +129,7 @@ open class JpaDataFetcher(
             outputType = outputType.wrappedType
 
         return if (outputType is GraphQLObjectType) outputType else null
-
     }
-
 
     private class PageInformation(var page: Int?, var size: Int?)
 }

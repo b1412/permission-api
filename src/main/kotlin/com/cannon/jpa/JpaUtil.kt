@@ -51,16 +51,19 @@ object JpaUtil {
     fun <T> createEntityGraphFromURL(entityManager: EntityManager, domainClass: Class<T>, filter: Map<String, String>): EntityGraph<T> {
         val embedded = filter["embedded"]
                 .toOption()
-                .map {
-                    it.split(",")
-                }
+                .filter { it.isNotBlank() }
+                .map { it.split(",") }
                 .getOrElse {
                     listOf()
                 }
         logger.debug {
             embedded
         }
-        val maxLevel = embedded.map { it.split(".").size }.max()
+        val maxLevel = if (embedded.isEmpty()) {
+            0
+        } else {
+            embedded.map { it.split(".").size }.max()
+        }
         logger.debug { "$maxLevel maxLevel" }
         val graph = entityManager.createEntityGraph(domainClass)
 
@@ -81,16 +84,14 @@ object JpaUtil {
                                     subGraphs.putIfAbsent(nodes[0], graph.addSubgraph(nodes[0]))
                                 }
                                 2 -> {
-                                    val subgraph = subGraphs.get(nodes[0])!!
-                                    subgraph.addAttributeNodes(nodes[1])
+                                    val subGraph = subGraphs.get(nodes[0])!!
+                                    subGraph.addAttributeNodes(nodes[1])
                                 }
                             }
                         }
-                println(subGraphs)
             }
             else -> graph
         }
-
         return graph
     }
 

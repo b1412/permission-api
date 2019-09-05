@@ -47,6 +47,9 @@ object QueryBuilder {
                             is StringValue -> {
                                 "f_$name=${value.value}"
                             }
+                            is IntValue -> {
+                                "f_$name=${value.value}"
+                            }
                             is ArrayValue -> {
                                 "f_$name=${value.values.joinToString(",") { (it as StringValue).value }}"
                             }
