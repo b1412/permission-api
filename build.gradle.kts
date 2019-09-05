@@ -56,7 +56,8 @@ dependencies {
     graphql()
 
     implementation("org.jooq:joor-java-8:0.9.12")
-
+    implementation("io.github.microutils:kotlin-logging:1.7.6")
+    
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
@@ -65,7 +66,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:1.1.2")
 
     runtimeOnly("com.h2database:h2")
-
+    
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
