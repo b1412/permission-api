@@ -85,23 +85,36 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
 
     private fun getQueryFieldDefinition(entityType: EntityType<*>): GraphQLFieldDefinition {
         val fields = entityType.attributes
-                .filter { this.isValidInput(it) }
-                .filter { this.isNotIgnored(it) }
-                .flatMap { this.getFieldsFilter(it) }
+                .filter { isValidInput(it) }
+                .filter { isNotIgnored(it) }
+                .flatMap { getFieldsFilter(it) }
 
         val argument = GraphQLArgument.newArgument()
                 .name("where")
                 .type(GraphQLInputObjectType.newInputObject()
                         .name(entityType.name.capitalize() + "Where")
-                        .description("where filter")
                         .fields(fields)
                         .build()
                 ).build()
+        GraphQLEnumType.newEnum()
+                .name("Direction")
+                .description("Describes the direction (Ascending / Descending) to sort a field.")
+                .value("ASC", 0, "Ascending")
+                .value("DESC", 1, "Descending")
+                .build()
+
+        val pageType = GraphQLObjectType.newObject()
+                .name(entityType.name + "Connection")
+                .description("'Connection' response wrapper object for " + entityType.name + ".  When pagination or aggregation is requested, this object will be returned with metadata about the query.")
+                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalPages").description("Total number of pages calculated on the database for this pageSize.").type(Scalars.GraphQLLong).build())
+                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalElements").description("Total number of results on the database for this query.").type(Scalars.GraphQLLong).build())
+                .field(GraphQLFieldDefinition.newFieldDefinition().name("content").description("The actual object results").type(GraphQLList(getObjectType(entityType))).build())
+                .build()
 
         return GraphQLFieldDefinition.newFieldDefinition()
                 .name(entityType.name)
                 .description(getSchemaDocumentation(entityType.javaType))
-                .type(GraphQLList(getObjectType(entityType)))
+                .type(pageType)
                 .dataFetcher(JpaDataFetcher(entityManager, entityType))
                 .argument(listOf(argument, paginationArgument))
                 .build()
@@ -232,7 +245,7 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
                             .name(attribute.name)
                             .description(getSchemaDocumentation(attribute.javaMember))
                             .type(type)
-                            .argument(arguments)
+                            //  .argument(arguments)
                             .build()
                 }
 
