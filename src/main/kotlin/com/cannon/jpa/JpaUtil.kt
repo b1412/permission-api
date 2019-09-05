@@ -12,7 +12,6 @@ import javax.persistence.criteria.*
 
 private val logger = KotlinLogging.logger {}
 
-
 object JpaUtil {
     fun <T> createPredicate(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder): Option<Predicate> {
         val filterFields = filter.filter {
