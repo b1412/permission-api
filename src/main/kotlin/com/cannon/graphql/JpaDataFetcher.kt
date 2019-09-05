@@ -29,9 +29,12 @@ open class JpaDataFetcher(
         val totalElementsSelection = getSelectionField(field, "totalElements")
         val contentSelection = getSelectionField(field, "content")
 
-        if (contentSelection.isPresent)
-            result["content"] = getQuery(environment, field, contentSelection.get())
-                    .setMaxResults(pageInformation.size!!).setFirstResult((pageInformation.page!! - 1) * pageInformation.size!!).resultList
+        if (contentSelection.isPresent) {
+            val typedQuery = getQuery(environment, field, contentSelection.get())
+            result["content"] = typedQuery
+                    .setFirstResult((pageInformation.page!! - 1) * pageInformation.size!!)
+                    .setMaxResults(pageInformation.size!!).resultList
+        }
 
         if (totalElementsSelection.isPresent || totalPagesSelection.isPresent) {
             val totalElements = contentSelection
@@ -48,7 +51,7 @@ open class JpaDataFetcher(
         val cb = entityManager.criteriaBuilder
         val query = cb.createQuery<Any>(entityType.javaType as Class<Any>)
         val root = query.from(entityType)
-        val url = QueryBuilder.queryURLFromField(rootField).substringBefore("&embedded")+QueryBuilder.queryURLFromField(contentField)
+        val url = QueryBuilder.queryURLFromField(rootField).substringBefore("&embedded") + QueryBuilder.queryURLFromField(contentField)
         val filter = QueryBuilder.queryList(url)
         JpaUtil.createPredicate(filter, root, cb).fold({}, { query.where(it) })
         val graph = JpaUtil.createEntityGraphFromURL(entityManager, entityType.javaType, filter)
@@ -57,7 +60,7 @@ open class JpaDataFetcher(
 
     private fun getJavaType(environment: DataFetchingEnvironment, argument: Argument): Class<*> {
         val argumentEntityAttribute = getAttribute(environment, argument)
-        return if (argumentEntityAttribute is PluralAttribute<*, *, *>) argumentEntityAttribute.elementType.javaType else argumentEntityAttribute.getJavaType()
+        return if (argumentEntityAttribute is PluralAttribute<*, *, *>) argumentEntityAttribute.elementType.javaType else argumentEntityAttribute.javaType
     }
 
 
