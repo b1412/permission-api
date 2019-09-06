@@ -43,6 +43,24 @@ write your first GraphQL query
 see your result
 ![data](/images/graphql.png)
 
+```graphql
+{
+  User(where: {email_like: "foo", login_like: "f"}, pageRequest: {size: 5, page: 1}) {
+    totalPages
+    totalElements
+    content {
+      id
+      login
+      email
+      role {
+        id
+        name
+      }
+    }
+  }
+}
+```
+
 
 ##T
 

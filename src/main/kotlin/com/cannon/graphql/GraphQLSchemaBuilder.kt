@@ -16,8 +16,6 @@ import javax.persistence.EntityManager
 import javax.persistence.metamodel.*
 
 
-private val logger = KotlinLogging.logger {}
-
 class GraphQLSchemaBuilder : GraphQLSchema.Builder {
 
     private val entityManager: EntityManager

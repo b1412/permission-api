@@ -13,9 +13,6 @@ import javax.persistence.metamodel.EntityType
 import javax.persistence.metamodel.PluralAttribute
 import kotlin.math.ceil
 
-
-private val logger = KotlinLogging.logger {}
-
 open class JpaDataFetcher(
         private var entityManager: EntityManager,
         private var entityType: EntityType<*>) : DataFetcher<Any> {
