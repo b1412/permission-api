@@ -48,18 +48,16 @@ class GraphQLIntegTest {
     fun `users query`() {
         // Given
         val query = """
-            {
-  User(where: {email_like: "foo", login_like: "f"}, pageRequest: {size: 5, page: 1}) {
+{
+  User {
     totalPages
     totalElements
     content {
       id
       login
       email
-      role {
-        id
-        name
-      }
+      createdAt
+      updatedAt
     }
   }
 }
@@ -70,11 +68,10 @@ class GraphQLIntegTest {
         postResult.andExpect(status().isOk)
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(jsonPath("$.errors").isEmpty)
-                .andExpect(jsonPath("$.data.User.totalPages").value(2))
-                .andExpect(jsonPath("$.data.User.content.size()").value(5))
+                .andExpect(jsonPath("$.data.User.totalPages").value(1))
+                .andExpect(jsonPath("$.data.User.content.size()").value(10))
                 .andExpect(jsonPath("$.data.User.content[0].id").value(1))
                 .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
-
     }
 
     @Autowired
