@@ -1,6 +1,5 @@
 package com.cannon.dao
 
-import com.cannon.DatabaseCleanupService
 import com.cannon.bean.Blog
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
