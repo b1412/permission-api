@@ -12,5 +12,7 @@ spring:
         format_sql: true
   profiles:
     active: local
+  main:
+    lazy-initialization: true
 server:
-  port: 9999
+  port: 8080

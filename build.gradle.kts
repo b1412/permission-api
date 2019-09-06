@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     jacoco
-    id("org.springframework.boot") version "2.1.7.RELEASE"
+    id("org.springframework.boot") version "2.2.0.M5"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
     val kotlinVersion = "1.3.41"
     kotlin("jvm") version kotlinVersion
@@ -37,6 +37,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven(url = "https://repo.spring.io/milestone")
     maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
     maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/")
 }
@@ -49,6 +50,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-undertow")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("mysql:mysql-connector-java:6.0.5")

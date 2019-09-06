@@ -10,6 +10,5 @@ interface BaseDao<T, ID : Serializable> : JpaRepository<T, ID>, JpaSpecification
     fun searchByKeyword(keyword: String, fields: String): List<T>
 
     fun searchByFilter(filter: Map<String, String>): List<T>
-
 }
 

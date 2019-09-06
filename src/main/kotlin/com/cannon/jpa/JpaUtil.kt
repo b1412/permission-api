@@ -3,11 +3,11 @@ package com.cannon.jpa
 import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.core.toOption
-import graphql.language.Field
 import mu.KotlinLogging
+import graph.EntityGraphs
+import graph.GraphParser
 import javax.persistence.EntityGraph
 import javax.persistence.EntityManager
-import javax.persistence.Subgraph
 import javax.persistence.criteria.*
 
 private val logger = KotlinLogging.logger {}
@@ -56,51 +56,16 @@ object JpaUtil {
                 .getOrElse {
                     listOf()
                 }
-        logger.debug {
-            embedded
-        }
-        val maxLevel = if (embedded.isEmpty()) {
-            0
-        } else {
-            embedded.map { it.split(".").size }.max()
-        }
-        logger.debug { "$maxLevel maxLevel" }
-        val graph = entityManager.createEntityGraph(domainClass)
-
-        when (maxLevel) {
-            0 -> graph
-            1 -> {
-                embedded.forEach {
-                    graph.addAttributeNodes(it)
-                }
+        logger.debug { "embedded $embedded" }
+        val graphs = embedded.map {
+            it.split(".").reversed().reduce { l, r ->
+                val s = "$r($l)"
+                s
             }
-            2 -> {
-                val subGraphs: MutableMap<String, Subgraph<Any>> = mutableMapOf()
-                embedded.sortedBy { it.split(".").size }
-                        .forEach {
-                            val nodes = it.split(".")
-                            when (nodes.size) {
-                                1 -> {
-                                    subGraphs.putIfAbsent(nodes[0], graph.addSubgraph(nodes[0]))
-                                }
-                                2 -> {
-                                    val subGraph = subGraphs.get(nodes[0])!!
-                                    subGraph.addAttributeNodes(nodes[1])
-                                }
-                            }
-                        }
-            }
-            else -> graph
+        }.map {
+            GraphParser.parse(domainClass, it, entityManager)
         }
+        val graph = EntityGraphs.merge(entityManager, domainClass, *graphs.toTypedArray())
         return graph
     }
-
-    fun <T> createEntityGraphFromGraphQL(entityManager: EntityManager, domainClass: Class<T>, field: Field): EntityGraph<T> {
-        println(field)
-        val graph = entityManager.createEntityGraph(domainClass)
-
-        return graph
-    }
-
-
 }
