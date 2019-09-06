@@ -79,11 +79,11 @@ object JpaUtil {
                 embedded.sortedBy { it.split(".").size }
                         .forEach {
                             val nodes = it.split(".")
-                            when (nodes.size) {
+                            when (nodes.size) {//non-leaf
                                 1 -> {
                                     subGraphs.putIfAbsent(nodes[0], graph.addSubgraph(nodes[0]))
                                 }
-                                2 -> {
+                                2 -> { // leaf
                                     val subGraph = subGraphs.get(nodes[0])!!
                                     subGraph.addAttributeNodes(nodes[1])
                                 }
@@ -94,13 +94,4 @@ object JpaUtil {
         }
         return graph
     }
-
-    fun <T> createEntityGraphFromGraphQL(entityManager: EntityManager, domainClass: Class<T>, field: Field): EntityGraph<T> {
-        println(field)
-        val graph = entityManager.createEntityGraph(domainClass)
-
-        return graph
-    }
-
-
 }

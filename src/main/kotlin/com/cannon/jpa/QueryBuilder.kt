@@ -3,13 +3,11 @@ package com.cannon.jpa
 import arrow.core.extensions.list.foldable.firstOption
 import graphql.language.*
 import graphql.parser.Parser
-import mu.KotlinLogging
-
-private val logger = KotlinLogging.logger {}
 
 object QueryBuilder {
     fun queryList(queryUrl: String): Map<String, String> {
-        return queryUrl.split("&")
+        return queryUrl
+                .split("&")
                 .map { Pair(it.substringBefore("="), it.substringAfter("=")) }
                 .groupBy { it.first }
                 .map {
@@ -25,8 +23,7 @@ object QueryBuilder {
                 }.toMap()
     }
 
-    fun graphqlPlayload(input: String): String {
-
+    fun graphqlPayload(input: String): String {
         val document = Parser().parseDocument(input)
         val rootField = (document.definitions[0].children[0] as SelectionSet).selections[0] as Field
         return queryURLFromField(rootField)
