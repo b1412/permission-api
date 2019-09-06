@@ -6,7 +6,7 @@ import javax.persistence.*
 class Branch(
         var name: String,
         var number: String,
-        @ManyToOne(cascade = [(CascadeType.REFRESH), (CascadeType.REMOVE)], optional = true)
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "parent_id")
         val parent: Branch? = null,
         @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
