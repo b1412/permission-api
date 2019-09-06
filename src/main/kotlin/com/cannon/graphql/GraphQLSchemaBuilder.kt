@@ -13,23 +13,14 @@ import javax.persistence.EntityManager
 import javax.persistence.metamodel.*
 
 
-class GraphQLSchemaBuilder : GraphQLSchema.Builder {
+class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSchema.Builder() {
 
-    private val entityManager: EntityManager
     private val classCache = HashMap<Class<*>, GraphQLType>()
     private val embeddableCache = HashMap<EmbeddableType<*>, GraphQLObjectType>()
     private val entityCache = HashMap<EntityType<*>, GraphQLObjectType>()
     private val attributeMappers = ArrayList<AttributeMapper>()
 
-    /**
-     * @return A freshly built [GraphQLSchema]
-     */
-    val graphQLSchema: GraphQLSchema
-        @Deprecated("Use {@link #build()} instead.\n" +
-                "      ")
-        get() = super.build()
-
-    val queryType: GraphQLObjectType
+    private val queryType: GraphQLObjectType
         get() {
             val queryType = GraphQLObjectType
                     .newObject()
@@ -41,11 +32,8 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
             return queryType.build()
         }
 
-    constructor(entityManager: EntityManager) {
-        this.entityManager = entityManager
-
+    init {
         populateStandardAttributeMappers()
-
         super.query(queryType)
     }
 
@@ -112,49 +100,6 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
                 .argument(map)
                 .build()
     }
-
-    private fun getQueryFieldPageableDefinition(entityType: EntityType<*>): GraphQLFieldDefinition {
-        val pageType = GraphQLObjectType.newObject()
-                .name(entityType.name + "Connection")
-                .description("'Connection' response wrapper object for " + entityType.name + ".  When pagination or aggregation is requested, this object will be returned with metadata about the query.")
-                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalPages").description("Total number of pages calculated on the database for this pageSize.").type(Scalars.GraphQLLong).build())
-                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalElements").description("Total number of results on the database for this query.").type(Scalars.GraphQLLong).build())
-                .field(GraphQLFieldDefinition.newFieldDefinition().name("content").description("The actual object results").type(GraphQLList(getObjectType(entityType))).build())
-                .build()
-
-        return GraphQLFieldDefinition.newFieldDefinition()
-                .name(entityType.name + "Connection")
-                .description("'Connection' request wrapper object for " + entityType.name + ".  Use this object in a query to request things like pagination or aggregation in an argument.  Use the 'content' field to request actual fields ")
-                .type(pageType)
-                // .dataFetcher(ExtendedJpaDataFetcher(entityManager, entityType))
-                .argument(paginationArgument)
-                .build()
-    }
-
-    private fun getArgumentFilter(attribute: Attribute<*, *>): List<GraphQLArgument> {
-
-        return getAttributeType(attribute)
-                .filterIsInstance<GraphQLInputType>()
-                .filter { type ->
-                    attribute.persistentAttributeType != Attribute.PersistentAttributeType.EMBEDDED ||
-                            attribute.persistentAttributeType == Attribute.PersistentAttributeType.EMBEDDED
-                            && type is GraphQLScalarType
-                }
-                .flatMap { type ->
-                    OPERATORS.map { operator ->
-                        var type = type
-                        if (operator == "in" || operator == "bt") {
-                            type = GraphQLList.list(type)
-                        }
-                        GraphQLArgument.newArgument()
-                                .name("${attribute.name}_$operator")
-                                .type(type)
-                                .build()
-                    }
-
-                }
-    }
-
 
     private fun getArgument(attribute: Attribute<*, *>): List<GraphQLArgument> {
         return getAttributeType(attribute)

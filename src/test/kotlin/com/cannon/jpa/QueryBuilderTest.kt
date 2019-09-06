@@ -29,7 +29,7 @@ query {
   }
 }
         """.trimIndent()
-        val url = QueryBuilder.graphqlPlayload(input)
+        val url = QueryBuilder.graphqlPayload(input)
         println(url)
         println(QueryBuilder.queryList(url))
     }

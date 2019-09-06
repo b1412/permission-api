@@ -25,7 +25,6 @@ class BlogController(
 
     @GetMapping("{id}")
     fun findOne(@PathVariable id: Long, req: HttpServletRequest): Blog {
-        val s = req.parameterMap
         return blogDao.findByIdOrNull(id)
                 .toOption()
                 .fold(
