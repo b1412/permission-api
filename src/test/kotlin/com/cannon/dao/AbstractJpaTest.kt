@@ -28,7 +28,6 @@ class AbstractJpaTest {
 
     @AfterEach
     fun cleanupAfterEach() {
-        println("after each clean up")
         truncateDatabaseService.truncate()
     }
 

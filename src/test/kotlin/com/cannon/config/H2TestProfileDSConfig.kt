@@ -1,4 +1,4 @@
-package com.cannon
+package com.cannon.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
