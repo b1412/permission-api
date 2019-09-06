@@ -4,7 +4,6 @@ import com.cannon.graphql.annotation.GraphQLIgnore
 import com.cannon.graphql.annotation.SchemaDocumentation
 import graphql.Scalars
 import graphql.schema.*
-import mu.KotlinLogging
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.math.BigDecimal
@@ -15,8 +14,6 @@ import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.metamodel.*
 
-
-private val logger = KotlinLogging.logger {}
 
 class GraphQLSchemaBuilder : GraphQLSchema.Builder {
 

@@ -4,7 +4,6 @@ import com.cannon.jpa.JpaUtil
 import com.cannon.jpa.QueryBuilder
 import graphql.language.*
 import graphql.schema.*
-import mu.KotlinLogging
 import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.TypedQuery
@@ -12,9 +11,6 @@ import javax.persistence.metamodel.Attribute
 import javax.persistence.metamodel.EntityType
 import javax.persistence.metamodel.PluralAttribute
 import kotlin.math.ceil
-
-
-private val logger = KotlinLogging.logger {}
 
 open class JpaDataFetcher(
         private var entityManager: EntityManager,
