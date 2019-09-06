@@ -28,6 +28,7 @@ class GraphQLExecutor(
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build()
 
     }
+
     @Transactional
     fun execute(query: String, arguments: Map<String, Any>?): ExecutionResult {
         return if (arguments == null) graphQL!!.execute(query) else graphQL!!.execute(ExecutionInput.newExecutionInput().query(query).variables(arguments).build())

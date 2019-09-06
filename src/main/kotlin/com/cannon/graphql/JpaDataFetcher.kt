@@ -4,7 +4,6 @@ import com.cannon.jpa.JpaUtil
 import com.cannon.jpa.QueryBuilder
 import graphql.language.*
 import graphql.schema.*
-import mu.KotlinLogging
 import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.TypedQuery

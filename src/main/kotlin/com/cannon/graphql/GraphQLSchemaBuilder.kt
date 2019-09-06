@@ -4,7 +4,6 @@ import com.cannon.graphql.annotation.GraphQLIgnore
 import com.cannon.graphql.annotation.SchemaDocumentation
 import graphql.Scalars
 import graphql.schema.*
-import mu.KotlinLogging
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.math.BigDecimal

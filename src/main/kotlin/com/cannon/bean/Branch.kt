@@ -8,6 +8,6 @@ import javax.persistence.OneToMany
 class Branch(
         var name: String,
         var number: String,
-        @OneToMany(mappedBy = "branch",fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
         var users: MutableList<User>
 ) : BaseEntity()
