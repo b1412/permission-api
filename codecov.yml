@@ -1,0 +1,21 @@
+codecov:
+  notify:
+    after_n_builds: 2
+coverage:
+  status:
+    project:
+      default: off
+      unittest:
+        flags: unittest
+        target: 50%
+      featuretest:
+        flags: featuretest
+flags:
+  unittest:
+    # only test unittests
+    paths:
+      - Tests/
+  featuretest:
+    # only test featuretest
+    paths:
+      - feature-test/
