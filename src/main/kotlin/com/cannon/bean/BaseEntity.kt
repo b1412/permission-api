@@ -17,11 +17,9 @@ abstract class BaseEntity(
         @Version
         var version: Long? = null,
 
-        @GraphQLIgnore
         @CreatedDate
         var createdAt: ZonedDateTime? = null,
 
-        @GraphQLIgnore
         @LastModifiedDate
         var updatedAt: ZonedDateTime? = null
 )

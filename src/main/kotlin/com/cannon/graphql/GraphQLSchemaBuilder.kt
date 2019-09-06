@@ -7,9 +7,7 @@ import graphql.schema.*
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.math.BigDecimal
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.metamodel.*
@@ -51,21 +49,8 @@ class GraphQLSchemaBuilder : GraphQLSchema.Builder {
         super.query(queryType)
     }
 
-    constructor(entityManager: EntityManager, attributeMappers: Collection<AttributeMapper>) {
-        this.entityManager = entityManager
-
-        this.attributeMappers.addAll(attributeMappers)
-        populateStandardAttributeMappers()
-
-        super.query(queryType)
-    }
-
     private fun populateStandardAttributeMappers() {
-        attributeMappers.add(createStandardAttributeMapper(UUID::class.java, JavaScalars.GraphQLUUID))
-        attributeMappers.add(createStandardAttributeMapper(Date::class.java, JavaScalars.GraphQLDate))
-        attributeMappers.add(createStandardAttributeMapper(LocalDateTime::class.java, JavaScalars.GraphQLLocalDateTime))
-        attributeMappers.add(createStandardAttributeMapper(Instant::class.java, JavaScalars.GraphQLInstant))
-        attributeMappers.add(createStandardAttributeMapper(LocalDate::class.java, JavaScalars.GraphQLLocalDate))
+        attributeMappers.add(createStandardAttributeMapper(ZonedDateTime::class.java, JavaScalars.GraphQLZonedDateTime))
     }
 
     private fun createStandardAttributeMapper(assignableClass: Class<*>, type: GraphQLType): AttributeMapper {
