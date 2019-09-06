@@ -13,9 +13,9 @@ services:
       - cannon-mysql-data:/var/lib/mysql
       - ./db:/docker-entrypoint-initdb.d
 
-  cannon:
-    container_name: cannon
-    image: cannon:latest
+  kotlin-cannon:
+    container_name: kotlin-cannon
+    image: kotlin-cannon:latest
     ports:
       - "8080:8080"
     links:
