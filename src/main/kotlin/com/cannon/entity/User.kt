@@ -1,9 +1,9 @@
-package com.cannon.bean
+package com.cannon.entity
 
 import javax.persistence.*
 
 @Entity
-class User(
+data class User(
         var login: String,
         var address: String,
         var email: String,
@@ -13,5 +13,7 @@ class User(
         @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
         var docs: MutableList<Doc> = mutableListOf(),
         @ManyToOne(fetch = FetchType.LAZY)
-        var role: Role? = null
+        var role: Role? = null,
+        var clientId: String? = null,
+        var expiresIn: Long? = null
 ) : BaseEntity()

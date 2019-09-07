@@ -1,6 +1,6 @@
 package com.cannon.dao
 
-import com.cannon.bean.User
+import com.cannon.entity.User
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

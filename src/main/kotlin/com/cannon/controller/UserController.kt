@@ -2,8 +2,8 @@ package com.cannon.controller
 
 import arrow.core.Try
 import arrow.core.toOption
-import com.cannon.bean.User
 import com.cannon.dao.UserDao
+import com.cannon.entity.User
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -31,9 +31,7 @@ class UserController(
     }
 
     @PostMapping
-    fun saveOne(@RequestBody input: User): User {
-        return userDao.save(input)
-    }
+    fun saveOne(@RequestBody input: User) = userDao.save(input)
 
     @PutMapping("{id}")
     fun updateOne(@PathVariable id: Long, @RequestBody input: User): User {
@@ -53,11 +51,11 @@ class UserController(
     }
 
     @DeleteMapping("{id}")
-    fun deleteOne(@PathVariable id: Long) {
-        return Try { userDao.deleteById(id) }
-                .fold(
-                        { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
-                        { ResponseEntity.noContent().build<User>() }
-                )
-    }
+    fun deleteOne(@PathVariable id: Long) =
+            Try { userDao.deleteById(id) }
+                    .fold(
+                            { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
+                            { ResponseEntity.noContent().build<User>() }
+                    )
+
 }
