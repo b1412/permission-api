@@ -1,6 +1,6 @@
 package com.cannon
 
-import com.cannon.bean.User
+import com.cannon.entity.User
 import com.cannon.controller.GraphQlController
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
@@ -72,6 +72,100 @@ class GraphQLIntegTest {
                 .andExpect(jsonPath("$.data.User.content.size()").value(10))
                 .andExpect(jsonPath("$.data.User.content[0].id").value(1))
                 .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
+    }
+
+    @Test
+    fun `users query where`() {
+        // Given
+        val query = """
+{
+  User (where: {id_eq: 1}){
+    totalPages
+    totalElements
+    content {
+      id
+      login
+      email
+      createdAt
+      updatedAt
+    }
+  }
+}
+        """
+        // When
+        val postResult = performGraphQlPost(query)
+        // Then
+        postResult.andExpect(status().isOk)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(jsonPath("$.errors").isEmpty)
+                .andExpect(jsonPath("$.data.User.totalPages").value(1))
+                .andExpect(jsonPath("$.data.User.content.size()").value(1))
+                .andExpect(jsonPath("$.data.User.content[0].id").value(1))
+                .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
+    }
+
+
+    @Test
+    fun `users query where 2`() {
+        // Given
+        val query = """
+{
+  User (where: {login_like: "f", notes_like: "note" }){
+    totalPages
+    totalElements
+    content {
+      id
+      login
+      email
+      createdAt
+      updatedAt
+    }
+  }
+}
+        """
+        // When
+        val postResult = performGraphQlPost(query)
+        // Then
+        postResult.andExpect(status().isOk)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(jsonPath("$.errors").isEmpty)
+                .andExpect(jsonPath("$.data.User.totalPages").value(1))
+                .andExpect(jsonPath("$.data.User.content.size()").value(10))
+                .andExpect(jsonPath("$.data.User.content[0].id").value(1))
+                .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
+    }
+
+
+
+    @Test
+    fun `users query page`() {
+        // Given
+        val query = """
+{
+  User(pageRequest: {size: 2, page: 2}) {
+    totalPages
+    totalElements
+    content {
+      id
+      login
+      email
+      createdAt
+      updatedAt
+    }
+  }
+}
+        """
+        // When
+        val postResult = performGraphQlPost(query)
+        // Then
+        postResult.andExpect(status().isOk)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(jsonPath("$.errors").isEmpty)
+                .andExpect(jsonPath("$.data.User.totalPages").value(5))
+                .andExpect(jsonPath("$.data.User.totalElements").value(10))
+                .andExpect(jsonPath("$.data.User.content.size()").value(2))
+                .andExpect(jsonPath("$.data.User.content[0].id").value(3))
+                .andExpect(jsonPath("$.data.User.content[0].email").value("foo2"))
     }
 
     @Autowired

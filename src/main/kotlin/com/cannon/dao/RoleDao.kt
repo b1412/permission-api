@@ -1,6 +1,6 @@
 package com.cannon.dao
 
-import com.cannon.bean.Role
+import com.cannon.entity.Role
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

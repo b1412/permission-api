@@ -1,6 +1,6 @@
 package com.cannon.dao
 
-import com.cannon.bean.Blog
+import com.cannon.entity.Blog
 import com.cannon.dao.base.BaseDao
 import org.springframework.stereotype.Repository
 

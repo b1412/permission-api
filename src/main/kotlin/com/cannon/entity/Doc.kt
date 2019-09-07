@@ -1,4 +1,4 @@
-package com.cannon.bean
+package com.cannon.entity
 
 import javax.persistence.Entity
 import javax.persistence.FetchType
