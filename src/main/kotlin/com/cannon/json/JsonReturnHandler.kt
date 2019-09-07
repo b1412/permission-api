@@ -1,6 +1,6 @@
 package com.cannon.json
 
-import com.cannon.bean.BaseEntity
+import com.cannon.entity.BaseEntity
 import com.cannon.controller.GraphQlController
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

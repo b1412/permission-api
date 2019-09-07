@@ -1,9 +1,7 @@
 package com.cannon.controller
 
-import com.cannon.bean.Blog
-import com.cannon.config.WebConfig
+import com.cannon.entity.Blog
 import com.cannon.dao.BlogDao
-import com.cannon.json.JsonReturnHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.every

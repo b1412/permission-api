@@ -2,7 +2,7 @@ package com.cannon.controller
 
 import arrow.core.Try
 import arrow.core.toOption
-import com.cannon.bean.Blog
+import com.cannon.entity.Blog
 import com.cannon.dao.BlogDao
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus

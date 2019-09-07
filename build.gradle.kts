@@ -48,10 +48,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-undertow")
+    springboot()
 
+    implementation("io.jsonwebtoken:jjwt:0.7.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("mysql:mysql-connector-java:6.0.5")
     arrow(arrowVersion)
@@ -70,6 +69,15 @@ dependencies {
     runtimeOnly("com.h2database:h2")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+
+fun DependencyHandlerScope.springboot() {
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-undertow")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 }
 
 fun DependencyHandlerScope.arrow(arrowVersion: String) {

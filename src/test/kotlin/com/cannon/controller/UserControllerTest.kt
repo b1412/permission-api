@@ -1,6 +1,6 @@
 package com.cannon.controller
 
-import com.cannon.bean.User
+import com.cannon.entity.User
 import com.cannon.dao.UserDao
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs

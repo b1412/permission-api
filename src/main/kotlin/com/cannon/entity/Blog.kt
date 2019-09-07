@@ -1,8 +1,8 @@
-package com.cannon.bean
+package com.cannon.entity
 
 import javax.persistence.Entity
 
 @Entity
-class Blog(
+data class Blog(
         var title: String
 ) : BaseEntity()

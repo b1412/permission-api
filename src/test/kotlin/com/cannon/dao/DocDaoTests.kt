@@ -1,8 +1,8 @@
 package com.cannon.dao
 
-import com.cannon.bean.Doc
-import com.cannon.bean.Role
-import com.cannon.bean.User
+import com.cannon.entity.Doc
+import com.cannon.entity.Role
+import com.cannon.entity.User
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.Session
 import org.hibernate.stat.Statistics

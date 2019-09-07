@@ -1,7 +1,7 @@
 package com.cannon.dao
 
-import com.cannon.bean.Branch
-import com.cannon.bean.User
+import com.cannon.entity.Branch
+import com.cannon.entity.User
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -1,6 +1,6 @@
 package com.cannon
 
-import com.cannon.bean.User
+import com.cannon.entity.User
 import com.cannon.controller.GraphQlController
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
