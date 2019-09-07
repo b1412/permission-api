@@ -27,7 +27,6 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
                     .name("JPA_GraphQL")
                     .description("All encompassing schema for this JPA environment")
             queryType.fields(entityManager.metamodel.entities.filter { this.isNotIgnored(it) }.map { this.getQueryFieldDefinition(it) })
-            queryType.fields(entityManager.metamodel.embeddables.filter { this.isNotIgnored(it) }.map { this.getQueryEmbeddedFieldDefinition(it) })
 
             return queryType.build()
         }
@@ -88,33 +87,6 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
                 .dataFetcher(JpaDataFetcher(entityManager, entityType))
                 .argument(listOf(argument, paginationArgument))
                 .build()
-    }
-
-    private fun getQueryEmbeddedFieldDefinition(embeddableType: EmbeddableType<*>): GraphQLFieldDefinition {
-        val embeddedName = embeddableType.javaType.simpleName
-        val map = embeddableType.attributes.filter { this.isValidInput(it) }.filter { this.isNotIgnored(it) }.flatMap { this.getArgument(it) }
-        return GraphQLFieldDefinition.newFieldDefinition()
-                .name(embeddedName)
-                .description(getSchemaDocumentation(embeddableType.javaType))
-                .type(GraphQLList(getObjectType(embeddableType)))
-                .argument(map)
-                .build()
-    }
-
-    private fun getArgument(attribute: Attribute<*, *>): List<GraphQLArgument> {
-        return getAttributeType(attribute)
-                .filterIsInstance<GraphQLInputType>()
-                .filter { type ->
-                    attribute.persistentAttributeType != Attribute.PersistentAttributeType.EMBEDDED ||
-                            attribute.persistentAttributeType == Attribute.PersistentAttributeType.EMBEDDED
-                            && type is GraphQLScalarType
-                }
-                .map { type ->
-                    GraphQLArgument.newArgument()
-                            .name(attribute.name)
-                            .type(type)
-                            .build()
-                }
     }
 
     private fun getObjectType(entityType: EntityType<*>): GraphQLObjectType {
