@@ -1,7 +1,9 @@
 package com.cannon.controller
 
-import com.cannon.entity.Blog
+import com.cannon.config.WebConfig
 import com.cannon.dao.BlogDao
+import com.cannon.entity.Blog
+import com.cannon.json.JsonReturnHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.every
@@ -21,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [BlogController::class])
+@ContextConfiguration(classes = [BlogController::class, WebConfig::class, JsonReturnHandler::class])
 @WebMvcTest
 class BlogControllerTest {
 

@@ -1,7 +1,6 @@
 package com.cannon.json
 
 import com.cannon.entity.BaseEntity
-import com.cannon.controller.GraphQlController
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
@@ -28,7 +28,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
     var advices: List<ResponseBodyAdvice<Any>> = emptyList()
 
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
-        return returnType.declaringClass != GraphQlController::class.java
+        return returnType.annotatedElement.declaredAnnotations.any { it is GetMapping }
     }
 
     override fun handleReturnValue(returnValue: Any?, returnType: MethodParameter, mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
@@ -38,7 +38,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
 
         val root = request.requestURI
         val embedded = request.getParameter("embedded")
-        val clazzName = BaseEntity::class.java.`package`.name + "." + root.substring(1).capitalize()
+        val clazzName = BaseEntity::class.java.`package`.name + "." + root.substring(1).substringBefore("/").capitalize()
         try {
             Class.forName(clazzName)
         } catch (ex: Exception) {
