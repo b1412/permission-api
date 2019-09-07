@@ -1,7 +1,8 @@
 package com.cannon
 
-import com.cannon.entity.User
 import com.cannon.controller.GraphQlController
+import com.cannon.entity.Role
+import com.cannon.entity.User
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -37,8 +38,11 @@ class GraphQLIntegTest {
     @BeforeEach
     fun setup() {
         this.mockMvc = standaloneSetup(this.graphQlController).build()
+
         repeat(10) {
-            val user = User(address = "address$it", email = "foo$it", notes = "notes$it", login = "foo$it")
+            val role = Role(name = "role$it")
+            entityManager!!.persist(role)
+            val user = User(address = "address$it", email = "foo$it", notes = "notes$it", login = "foo$it", role = role)
             entityManager!!.persist(user)
         }
         entityManager!!.flush()
@@ -72,6 +76,39 @@ class GraphQLIntegTest {
                 .andExpect(jsonPath("$.data.User.content.size()").value(10))
                 .andExpect(jsonPath("$.data.User.content[0].id").value(1))
                 .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
+    }
+    @Test
+    fun `users query embedded`() {
+        // Given
+        val query = """
+{
+  User {
+    totalPages
+    totalElements
+    content {
+      id
+      login
+      email
+      createdAt
+      updatedAt
+      role{
+        id
+      }
+    }
+  }
+}
+        """
+        // When
+        val postResult = performGraphQlPost(query)
+        // Then
+        postResult.andExpect(status().isOk)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(jsonPath("$.errors").isEmpty)
+                .andExpect(jsonPath("$.data.User.totalPages").value(1))
+                .andExpect(jsonPath("$.data.User.content.size()").value(10))
+                .andExpect(jsonPath("$.data.User.content[0].id").value(1))
+                .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
+                .andExpect(jsonPath("$.data.User.content[0].role.id").value(1))
     }
 
     @Test
@@ -134,7 +171,6 @@ class GraphQLIntegTest {
                 .andExpect(jsonPath("$.data.User.content[0].id").value(1))
                 .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
     }
-
 
 
     @Test
