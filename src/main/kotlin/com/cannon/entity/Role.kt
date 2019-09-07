@@ -6,12 +6,11 @@ import javax.persistence.*
 class Role(
         var name: String = "",
 
-        @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = [(CascadeType.ALL)])
+        @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
         var users: MutableList<User> = mutableListOf(),
 
 
-        @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
-        @JoinColumn(name = "role_id")
+        @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
         val rolePermissions: MutableList<RolePermission> = mutableListOf()
 
 ) : BaseEntity()

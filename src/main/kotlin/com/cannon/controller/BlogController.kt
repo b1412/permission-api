@@ -2,8 +2,8 @@ package com.cannon.controller
 
 import arrow.core.Try
 import arrow.core.toOption
-import com.cannon.entity.Blog
 import com.cannon.dao.BlogDao
+import com.cannon.entity.Blog
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,10 +18,7 @@ class BlogController(
 ) {
 
     @GetMapping
-    fun list(): List<Blog> {
-        return blogDao.findAll()
-    }
-
+    fun list(): List<Blog> = blogDao.findAll()
 
     @GetMapping("{id}")
     fun findOne(@PathVariable id: Long, req: HttpServletRequest): Blog {
@@ -34,9 +31,7 @@ class BlogController(
     }
 
     @PostMapping
-    fun saveOne(@RequestBody input: Blog): Blog {
-        return blogDao.save(input)
-    }
+    fun saveOne(@RequestBody input: Blog) = blogDao.save(input)
 
     @PutMapping("{id}")
     fun updateOne(@PathVariable id: Long, @RequestBody input: Blog): Blog {
