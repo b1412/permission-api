@@ -18,8 +18,4 @@ data class RolePermission(
                 inverseJoinColumns = [JoinColumn(name = "rule_id")])
         val rules: MutableList<Rule> = mutableListOf()
 
-) : BaseEntity(), Serializable {
-    override fun toString(): String {
-        return "RolePermission(rules=$rules)"
-    }
-}
+) : BaseEntity()

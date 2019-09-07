@@ -23,19 +23,19 @@ object JavaScalars {
 
         override fun parseLiteral(input: Any): Any? {
             if (input is StringValue) {
-                return parseStringToLocalDateTime(input.value)
+                return parseStringToZonedDateTime(input.value)
             } else if (input is IntValue) {
                 val value = input.value
-                return parseLongToLocalDateTime(value.toLong())
+                return parseLongToZonedDateTime(value.toLong())
             }
             return null
         }
 
-        private fun parseLongToLocalDateTime(input: Long): ZonedDateTime {
+        private fun parseLongToZonedDateTime(input: Long): ZonedDateTime {
             return ZonedDateTime.ofInstant(Instant.ofEpochSecond(input), TimeZone.getDefault().toZoneId())
         }
 
-        private fun parseStringToLocalDateTime(input: String): ZonedDateTime? {
+        private fun parseStringToZonedDateTime(input: String): ZonedDateTime? {
             return ZonedDateTime.parse(input)
         }
     })
