@@ -17,12 +17,12 @@ class BranchDaoTest : AbstractJpaTest() {
     @BeforeEach
     fun setup() {
         //given
-        val user1 = User(login = "login1", address = "address1", email = "email1", notes = "notes1")
-        val user2 = User(login = "login2", address = "address2", email = "email2", notes = "notes2")
+        val user1 = User(login = "login1", address = "address1", email = "email1", notes = "notes1", active = true)
+        val user2 = User(login = "login2", address = "address2", email = "email2", notes = "notes2", active = false)
         userDao.save(user1)
         userDao.save(user2)
-        val branchA = Branch(name = "branchA", number = "1", users = mutableListOf(user1))
-        val branchB = Branch(name = "branchB", number = "2", users = mutableListOf(user2))
+        val branchA = Branch(name = "branchA", number = "1", active = true, users = mutableListOf(user1))
+        val branchB = Branch(name = "branchB", number = "2", active = false, users = mutableListOf(user2))
         user1.branch = branchA
         user2.branch = branchB
         branchDao.save(branchA)
@@ -108,6 +108,28 @@ class BranchDaoTest : AbstractJpaTest() {
     fun `return branches when search by filter with parameter f_id=1,2&f_name_op=between`() {
         //when
         val queryMap = mapOf("f_id" to "1,2", "f_id_op" to "between")
+        val branches = branchDao.searchByFilter(queryMap)
+        //then
+        Assertions.assertThat(branches.size).isEqualTo(2)
+        Assertions.assertThat(branches[0].id).isEqualTo(1)
+        Assertions.assertThat(branches[1].id).isEqualTo(2)
+    }
+
+    //http://localhost:8080/branch?f_users.notes=4
+    @Test
+    fun `return branches when search by filter with parameter f_active=false`() {
+        //when
+        val queryMap = mapOf("f_active" to "false")
+        val branches = branchDao.searchByFilter(queryMap)
+        //then
+        Assertions.assertThat(branches.size).isEqualTo(1)
+        Assertions.assertThat(branches[0].id).isEqualTo(2)
+    }
+
+    @Test
+    fun `return branches when search by filter with parameter f_active=false,true&f_active_op=in`() {
+        //when
+        val queryMap = mapOf("f_active" to "false,true","f_active_op" to "in")
         val branches = branchDao.searchByFilter(queryMap)
         //then
         Assertions.assertThat(branches.size).isEqualTo(2)

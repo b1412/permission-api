@@ -32,6 +32,7 @@ object JpaUtil {
                 val searchPath: Path<Any>
                 val fields = field.split(".")
                 var javaType: Class<*>? = null
+                var converttedValues = listOf<Any>()
                 if (fields.size > 1) {//embedded field
                     var join: Join<Any, Any> = root.join<Any, Any>(fields[0])
                     for (i in 1 until fields.size - 1) {
@@ -45,24 +46,31 @@ object JpaUtil {
                     searchPath = root.get<Any>(field)
                 }
                 logger.debug { "javaType $javaType" }
+
+                converttedValues = when {
+                    javaType!!.isAssignableFrom(java.lang.Long::class.java) -> value.split(",").map { v -> v.toLong() }
+                    javaType.isAssignableFrom(java.lang.Boolean::class.java) -> value.split(",").map { v -> v.toBoolean() }
+                    else -> value.split(",")
+                }
+
                 when (operator) {
                     "like" -> {
                         cb.like(searchPath as Path<String>, "%$value%")
                     }
                     "in" -> {
-                        searchPath.`in`(*value.split(",").toTypedArray())
+                        searchPath.`in`(*converttedValues.toTypedArray())
                     }
                     "between" -> {
-                        if (javaType!!.isAssignableFrom(java.lang.Long::class.java)) {
-                            val (lowerbond, upperbond) = value.split(",").map { v ->
-                                v.toLong()
-                            }
+                        if (javaType.isAssignableFrom(java.lang.Long::class.java)) {
+                            val (lowerbond, upperbond) = converttedValues.map { v -> v as Long }
                             cb.between(searchPath as Path<Long>, lowerbond, upperbond)
                         } else {
                             throw  IllegalArgumentException()
                         }
                     }
-                    else -> cb.equal(searchPath, value)
+                    else -> {
+                        cb.equal(searchPath, converttedValues.first())
+                    }
                 }
             }.reduce { l, r ->
                 cb.and(l, r)
