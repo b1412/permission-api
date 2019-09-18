@@ -104,14 +104,14 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches[1].id).isEqualTo(2)
     }
 
-//    @Test
-//    fun `return branches when search by filter with parameter f_id=1,2&f_name_op=between`() {
-//        //when
-//        val queryMap = mapOf("f_id" to "1,2", "f_id_op" to "between")
-//        val branches = branchDao.searchByFilter(queryMap)
-//        //then
-//        Assertions.assertThat(branches.size).isEqualTo(2)
-//        Assertions.assertThat(branches[0].id).isEqualTo(1)
-//        Assertions.assertThat(branches[1].id).isEqualTo(2)
-//    }
+    @Test
+    fun `return branches when search by filter with parameter f_id=1,2&f_name_op=between`() {
+        //when
+        val queryMap = mapOf("f_id" to "1,2", "f_id_op" to "between")
+        val branches = branchDao.searchByFilter(queryMap)
+        //then
+        Assertions.assertThat(branches.size).isEqualTo(2)
+        Assertions.assertThat(branches[0].id).isEqualTo(1)
+        Assertions.assertThat(branches[1].id).isEqualTo(2)
+    }
 }

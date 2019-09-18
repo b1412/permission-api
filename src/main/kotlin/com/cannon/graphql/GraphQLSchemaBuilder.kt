@@ -4,6 +4,7 @@ import com.cannon.graphql.annotation.GraphQLIgnore
 import com.cannon.graphql.annotation.SchemaDocumentation
 import graphql.Scalars
 import graphql.schema.*
+import org.springframework.stereotype.Component
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.math.BigDecimal
@@ -12,28 +13,34 @@ import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.metamodel.*
 
-
-class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSchema.Builder() {
+@Component
+class GraphQLSchemaBuilder(
+        private val entityManager: EntityManager
+) : GraphQLSchema.Builder() {
 
     private val classCache = HashMap<Class<*>, GraphQLType>()
     private val embeddableCache = HashMap<EmbeddableType<*>, GraphQLObjectType>()
     private val entityCache = HashMap<EntityType<*>, GraphQLObjectType>()
     private val attributeMappers = ArrayList<AttributeMapper>()
 
-    private val queryType: GraphQLObjectType
-        get() {
-            val queryType = GraphQLObjectType
-                    .newObject()
-                    .name("JPA_GraphQL")
-                    .description("All encompassing schema for this JPA environment")
-            queryType.fields(entityManager.metamodel.entities.filter { this.isNotIgnored(it) }.map { this.getQueryFieldDefinition(it) })
+    fun getQueryType(): GraphQLObjectType {
+        val queryType = GraphQLObjectType
+                .newObject()
+                .name("JPA_GraphQL")
+                .description("All encompassing schema for this JPA environment")
+        queryType.fields(
+                entityManager.metamodel.entities
+                        .filter { this.isNotIgnored(it) }
+                        .map { this.getQueryFieldDefinition(it) }
+        )
 
-            return queryType.build()
-        }
+        return queryType.build()
+    }
+
 
     init {
         populateStandardAttributeMappers()
-        super.query(queryType)
+        super.query(getQueryType())
     }
 
     private fun populateStandardAttributeMappers() {
@@ -52,12 +59,11 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
         }
     }
 
-    private fun getQueryFieldDefinition(entityType: EntityType<*>): GraphQLFieldDefinition {
-        val fields = entityType.attributes
-                .filter { isValidInput(it) }
-                .filter { isNotIgnored(it) }
-                .flatMap { getFieldsFilter(it) }
-
+    fun getQueryFieldDefinition(entityType: EntityType<*>): GraphQLFieldDefinition {
+        val (basicFields, entityFields) = entityType.attributes.filter { isNotIgnored(it) }
+                .partition { isValidInput(it) }
+        val fields = basicFields.flatMap { createFilterFields(it) }
+        entityFields.flatMap { createFilterFields(it) }
         val argument = GraphQLArgument.newArgument()
                 .name("where")
                 .type(GraphQLInputObjectType.newInputObject()
@@ -127,7 +133,7 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
                 .filterIsInstance<GraphQLOutputType>()
                 .map { type ->
                     val arguments = ArrayList<GraphQLArgument>()
-                    arguments.add(GraphQLArgument.newArgument().name("orderBy").type(orderByDirectionEnum).build())            // Always add the orderBy argument
+                    arguments.add(GraphQLArgument.newArgument().name("orderBy").type(orderByDirectionEnum).build())
                     // Get the fields that can be queried on (i.e. Simple Types, no Sub-Objects)
                     if (attribute is SingularAttribute<*, *> && attribute.getPersistentAttributeType() != Attribute.PersistentAttributeType.BASIC) {
                         val foreignType = attribute.type as ManagedType<*>
@@ -185,7 +191,23 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
                 "Class could not be mapped to GraphQL: '" + javaType.typeName + "'")
     }
 
-    private fun getAttributeType(attribute: Attribute<*, *>): List<GraphQLType> {
+    fun getAttributeEntity(attribute: Attribute<*, *>): EntityType<*> {
+        val declaringType = attribute.declaringType.javaType.name // fully qualified name of the entity class
+        val declaringMember = attribute.javaMember.name // field name in the entity class
+
+         if (attribute.persistentAttributeType == Attribute.PersistentAttributeType.ONE_TO_MANY || attribute.persistentAttributeType == Attribute.PersistentAttributeType.MANY_TO_MANY) {
+            val foreignType = (attribute as PluralAttribute<*, *, *>).elementType as EntityType<*>
+            return foreignType
+        } else if (attribute.persistentAttributeType == Attribute.PersistentAttributeType.MANY_TO_ONE || attribute.persistentAttributeType == Attribute.PersistentAttributeType.ONE_TO_ONE) {
+            val foreignType = (attribute as SingularAttribute<*, *>).type as EntityType<*>
+            return foreignType
+        }
+
+        throw UnsupportedOperationException(
+                "Attribute could not be mapped to GraphQL: field '$declaringMember' of entity class '$declaringType' ${attribute.persistentAttributeType}")
+    }
+
+    fun getAttributeType(attribute: Attribute<*, *>): List<GraphQLType> {
         val declaringType = attribute.declaringType.javaType.name // fully qualified name of the entity class
         val declaringMember = attribute.javaMember.name // field name in the entity class
 
@@ -211,8 +233,6 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
             val embeddableType = (attribute as SingularAttribute<*, *>).type as EmbeddableType<*>
             return listOf(GraphQLTypeReference(embeddableType.javaType.simpleName))
         }
-
-
 
         throw UnsupportedOperationException(
                 "Attribute could not be mapped to GraphQL: field '$declaringMember' of entity class '$declaringType' ${attribute.persistentAttributeType}")
@@ -296,7 +316,7 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
         coercing.set(type, IdentityCoercing())
     }
 
-    private fun getFieldsFilter(attribute: Attribute<*, *>): List<GraphQLInputObjectField> {
+    fun createFilterFields(attribute: Attribute<*, *>): List<GraphQLInputObjectField> {
         return getAttributeType(attribute)
                 .filterIsInstance<GraphQLInputType>()
                 .filter { type ->
@@ -313,7 +333,6 @@ class GraphQLSchemaBuilder(private val entityManager: EntityManager) : GraphQLSc
                                 .name("${attribute.name}_$operator")
                                 .type(type).build()
                     }
-
                 }
     }
 

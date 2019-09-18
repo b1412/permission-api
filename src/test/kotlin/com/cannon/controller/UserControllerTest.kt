@@ -3,6 +3,7 @@ package com.cannon.controller
 import com.cannon.config.WebConfig
 import com.cannon.dao.UserDao
 import com.cannon.entity.User
+import com.cannon.exceptions.GlobalExceptionHandler
 import com.cannon.json.JsonReturnHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -25,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [UserController::class, WebConfig::class, JsonReturnHandler::class])
+@ContextConfiguration(classes = [UserController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
 @WebMvcTest
 class UserControllerTest {
 
