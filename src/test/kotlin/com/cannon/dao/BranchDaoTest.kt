@@ -1,6 +1,7 @@
 package com.cannon.dao
 
 import com.cannon.entity.Branch
+import com.cannon.entity.Role
 import com.cannon.entity.User
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -14,11 +15,17 @@ class BranchDaoTest : AbstractJpaTest() {
     @Autowired
     lateinit var userDao: UserDao
 
+    @Autowired
+    lateinit var roleDao: RoleDao
+
     @BeforeEach
     fun setup() {
         //given
-        val user1 = User(login = "login1", address = "address1", email = "email1", notes = "notes1", active = true)
-        val user2 = User(login = "login2", address = "address2", email = "email2", notes = "notes2", active = false)
+        val role1 = Role(name = "admin")
+        val role2 = Role(name = "manager")
+        roleDao.saveAll(listOf(role1, role2))
+        val user1 = User(login = "login1", address = "address1", email = "email1", notes = "notes1", active = true,role = role1)
+        val user2 = User(login = "login2", address = "address2", email = "email2", notes = "notes2", active = false,role = role2)
         userDao.save(user1)
         userDao.save(user2)
         val branchA = Branch(name = "branchA", number = "1", active = true, users = mutableListOf(user1))
@@ -86,10 +93,18 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches[0].id).isEqualTo(1)
         Assertions.assertThat(branches[0].users[0].id).isEqualTo(1)
         Assertions.assertThat(branches[0].users[0].notes).isEqualTo("notes1")
-        // TODO
-        /*
-        PROBLEM: the sql is inner join when query the association fields, but expected is left join!
-        */
+    }
+
+    //http://localhost:8080/branch?f_users.role.id=1
+    @Test
+    fun `return branches when search by filter with parameter f_users*role*id=1`() {
+        //when
+        val queryMap = mapOf("f_users.role.id" to "1")
+        val branches = branchDao.searchByFilter(queryMap)
+        //then
+        Assertions.assertThat(branches.size).isEqualTo(1)
+        Assertions.assertThat(branches[0].id).isEqualTo(1)
+        Assertions.assertThat(branches[0].users[0].id).isEqualTo(1)
     }
 
     // http://localhost:8080/branch?f_name=branchA,branchB&f_name_op=in
@@ -129,7 +144,7 @@ class BranchDaoTest : AbstractJpaTest() {
     @Test
     fun `return branches when search by filter with parameter f_active=false,true&f_active_op=in`() {
         //when
-        val queryMap = mapOf("f_active" to "false,true","f_active_op" to "in")
+        val queryMap = mapOf("f_active" to "false,true", "f_active_op" to "in")
         val branches = branchDao.searchByFilter(queryMap)
         //then
         Assertions.assertThat(branches.size).isEqualTo(2)
