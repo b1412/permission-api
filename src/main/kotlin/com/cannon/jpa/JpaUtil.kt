@@ -96,8 +96,7 @@ object JpaUtil {
         }.map {
             GraphParser.parse(domainClass, it, entityManager)
         }
-        val graph = EntityGraphs.merge(entityManager, domainClass, *graphs.toTypedArray())
-        return graph
+        return EntityGraphs.merge(entityManager, domainClass, *graphs.toTypedArray())
     }
 
     private fun getJavaType(entityType: EntityType<*>, field: String): Class<*> {
