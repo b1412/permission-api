@@ -3,6 +3,7 @@ package com.cannon.controller
 import com.cannon.config.WebConfig
 import com.cannon.dao.BlogDao
 import com.cannon.entity.Blog
+import com.cannon.exceptions.GlobalExceptionHandler
 import com.cannon.json.JsonReturnHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -23,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [BlogController::class, WebConfig::class, JsonReturnHandler::class])
+@ContextConfiguration(classes = [BlogController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
 @WebMvcTest
 class BlogControllerTest {
 
@@ -105,9 +106,17 @@ class BlogControllerTest {
     fun `update blog return empty body with 404 when id doesn't exist`() {
         //given
         every { blogDao.findByIdOrNull(1) } returns null
+        val body = """
+        {
+            "title": "New Title of Blog"
+        }
+"""
         //when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/blog/1"))
-        //then
+        val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.put("/blog/1")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+        )        //then
         resultActions.andExpect(status().isNotFound)
     }
 

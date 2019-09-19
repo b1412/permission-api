@@ -4,11 +4,10 @@ import arrow.core.Try
 import arrow.core.toOption
 import com.cannon.dao.UserDao
 import com.cannon.entity.User
+import com.cannon.exceptions.ResultNotFoundException
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/user")
@@ -25,7 +24,7 @@ class UserController(
         return userDao.findByIdOrNull(id)
                 .toOption()
                 .fold(
-                        { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
+                        { throw ResultNotFoundException() },
                         { it }
                 )
     }
@@ -38,7 +37,7 @@ class UserController(
         val persisted = userDao.findByIdOrNull(id)
         persisted.toOption()
                 .fold(
-                        { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
+                        { throw ResultNotFoundException() },
                         {
                             it.login = input.login
                             it.address = input.address
@@ -54,7 +53,7 @@ class UserController(
     fun deleteOne(@PathVariable id: Long) =
             Try { userDao.deleteById(id) }
                     .fold(
-                            { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
+                            { throw ResultNotFoundException() },
                             { ResponseEntity.noContent().build<User>() }
                     )
 

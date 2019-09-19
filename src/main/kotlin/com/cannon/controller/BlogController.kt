@@ -4,6 +4,7 @@ import arrow.core.Try
 import arrow.core.toOption
 import com.cannon.dao.BlogDao
 import com.cannon.entity.Blog
+import com.cannon.exceptions.ResultNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -25,7 +26,7 @@ class BlogController(
         return blogDao.findByIdOrNull(id)
                 .toOption()
                 .fold(
-                        { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
+                        { throw ResultNotFoundException() },
                         { it }
                 )
     }
@@ -38,7 +39,7 @@ class BlogController(
         val persisted = blogDao.findByIdOrNull(id)
         persisted.toOption()
                 .fold(
-                        { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
+                        { throw ResultNotFoundException() },
                         {
                             it.title = input.title
                             blogDao.save(it)
@@ -51,7 +52,7 @@ class BlogController(
     fun deleteOne(@PathVariable id: Long): ResponseEntity<Blog> {
         return Try { blogDao.deleteById(id) }
                 .fold(
-                        { throw ResponseStatusException(HttpStatus.NOT_FOUND) },
+                        { throw ResultNotFoundException() },
                         { ResponseEntity.noContent().build<Blog>() }
                 )
     }

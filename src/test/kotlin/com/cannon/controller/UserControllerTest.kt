@@ -3,6 +3,7 @@ package com.cannon.controller
 import com.cannon.config.WebConfig
 import com.cannon.dao.UserDao
 import com.cannon.entity.User
+import com.cannon.exceptions.GlobalExceptionHandler
 import com.cannon.json.JsonReturnHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -25,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [UserController::class, WebConfig::class, JsonReturnHandler::class])
+@ContextConfiguration(classes = [UserController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
 @WebMvcTest
 class UserControllerTest {
 
@@ -145,8 +146,21 @@ class UserControllerTest {
     fun `update user return empty body with 404 when id doesn't exist`() {
         //given
         every { userDao.findByIdOrNull(1) } returns null
-        //when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/user/1"))
+        val body = """
+  {
+    "login": "login of user",
+    "address": "address of user",
+    "email": "email of user",
+    "notes": "notes of user"
+  }
+        """
+        // when
+        val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .put("/user/1")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
         //then
         resultActions.andExpect(status().isNotFound)
     }

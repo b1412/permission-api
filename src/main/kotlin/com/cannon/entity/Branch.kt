@@ -1,5 +1,6 @@
 package com.cannon.entity
 
+import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @Entity
@@ -16,6 +17,8 @@ data class Branch(
         val children: MutableList<Branch> = mutableListOf(),
 
         @OneToMany(fetch = FetchType.LAZY, mappedBy = "branch")
-        var users: MutableList<User> = mutableListOf()
+        var users: MutableList<User> = mutableListOf(),
 
+        @Type(type = "yes_no")
+        var active: Boolean? = null
 ) : BaseEntity()

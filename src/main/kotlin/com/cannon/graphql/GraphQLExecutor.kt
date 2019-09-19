@@ -11,18 +11,14 @@ import javax.transaction.Transactional
 
 @Component
 class GraphQLExecutor(
-        val entityManager: EntityManager
+        val entityManager: EntityManager,
+        var builder: GraphQLSchema.Builder
 ) {
     var graphQL: GraphQL? = null
-    var graphQLSchema: GraphQLSchema? = null
-    var builder: GraphQLSchema.Builder? = null
-
     @PostConstruct
     @Synchronized
     protected fun createGraphQL() {
-        this.builder = GraphQLSchemaBuilder(entityManager)
-        this.graphQLSchema = builder!!.build()
-        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build()
+        this.graphQL = GraphQL.newGraphQL(builder.build()).build()
     }
 
     @Transactional
