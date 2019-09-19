@@ -44,7 +44,7 @@ class GlobalExceptionHandler {
         return apiResp.responseEntityBadRequest()
     }
 
-    @ExceptionHandler(value = [AccessDeniedException::class) )
+    @ExceptionHandler(value = [AccessDeniedException::class])
     @Throws(Exception::class)
     fun noPermission(req: HttpServletRequest, e: Exception): ResponseEntity<ApiResp> {
         val apiResp = ApiResp()
