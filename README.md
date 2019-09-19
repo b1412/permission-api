@@ -40,7 +40,6 @@ write your first GraphQL query
 }
 ```
 
-
 ##References
 
 https://github.com/jcrygier/graphql-jpa
