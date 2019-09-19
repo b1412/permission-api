@@ -1,5 +1,6 @@
 package com.cannon.entity
 
+import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @Entity
@@ -15,5 +16,8 @@ data class User(
         @ManyToOne(fetch = FetchType.LAZY)
         var role: Role? = null,
         var clientId: String? = null,
-        var expiresIn: Long? = null
+        var expiresIn: Long? = null,
+
+        @Type(type = "yes_no")
+        var active: Boolean? = null
 ) : BaseEntity()
