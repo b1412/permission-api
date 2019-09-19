@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.ModelAndView
-import java.util.concurrent.Executors
 import javax.servlet.http.HttpServletRequest
 import javax.validation.ConstraintViolationException
 
@@ -21,7 +20,7 @@ import javax.validation.ConstraintViolationException
 class GlobalExceptionHandler {
     val log = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)!!
 
-    @ExceptionHandler(value = [(MethodArgumentNotValidException::class)])
+    @ExceptionHandler(value = [MethodArgumentNotValidException::class])
     fun methodArgumentNotValid(req: HttpServletRequest, e: Exception): ResponseEntity<ApiResp> {
         val exception = e as MethodArgumentNotValidException
         val errorMsg = exception.bindingResult.fieldErrors
@@ -32,7 +31,7 @@ class GlobalExceptionHandler {
         return apiResp.responseEntityBadRequest()
     }
 
-    @ExceptionHandler(value = [(ConstraintViolationException::class)])
+    @ExceptionHandler(value = [ConstraintViolationException::class])
     fun constraintViolationExceptionHandler(req: HttpServletRequest, e: Exception): ResponseEntity<*> {
         val rootCause = e as ConstraintViolationException
 
@@ -45,7 +44,7 @@ class GlobalExceptionHandler {
         return apiResp.responseEntityBadRequest()
     }
 
-    @ExceptionHandler(value = [(AccessDeniedException::class)])
+    @ExceptionHandler(value = [AccessDeniedException::class) )
     @Throws(Exception::class)
     fun noPermission(req: HttpServletRequest, e: Exception): ResponseEntity<ApiResp> {
         val apiResp = ApiResp()
@@ -53,7 +52,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResp)
     }
 
-    @ExceptionHandler(value = [(HttpRequestMethodNotSupportedException::class)])
+    @ExceptionHandler(value = [HttpRequestMethodNotSupportedException::class])
     @Throws(Exception::class)
     fun methodNotSupported(req: HttpServletRequest, e: Exception): ResponseEntity<ApiResp> {
         val apiResp = ApiResp()
@@ -62,7 +61,7 @@ class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(value = [(HttpMessageNotReadableException::class)])
+    @ExceptionHandler(value = [HttpMessageNotReadableException::class])
     @Throws(Exception::class)
     fun httpMessageNotReadableException(req: HttpServletRequest, e: Exception): ResponseEntity<ApiResp> {
         val apiResp = ApiResp()
@@ -71,7 +70,7 @@ class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(value = [(IllegalArgumentException::class)])
+    @ExceptionHandler(value = [IllegalArgumentException::class])
     @Throws(Exception::class)
     fun illegalArgumentException(e: Exception): ResponseEntity<ApiResp> {
         // log.error(e.getMessage(), e);
@@ -81,7 +80,7 @@ class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(value = [(ResultNotFoundException::class)])
+    @ExceptionHandler(value = [ResultNotFoundException::class])
     @Throws(Exception::class)
     fun resultNotFoundException(e: Exception): ResponseEntity<ApiResp> {
         // log.error(e.getMessage(), e);
@@ -90,7 +89,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResp)
     }
 
-    @ExceptionHandler(value = [(MethodArgumentTypeMismatchException::class)])
+    @ExceptionHandler(value = [MethodArgumentTypeMismatchException::class])
     fun methodArgumentTypeMismatchException(e: Exception): ResponseEntity<ApiResp> {
         val apiResp = ApiResp()
         apiResp.error = e.message
@@ -98,7 +97,7 @@ class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(value = [(DataIntegrityViolationException::class)])
+    @ExceptionHandler(value = [DataIntegrityViolationException::class])
     @Throws(Exception::class)
     fun sqlErrorHandler(req: HttpServletRequest, e: Exception): ResponseEntity<ApiResp> {
         val rootCause = (e as DataIntegrityViolationException).rootCause!!
@@ -109,8 +108,8 @@ class GlobalExceptionHandler {
             message = StringUtils.substringBetween(message, "Duplicate entry", " for key")
             message = "Duplicate data: $message"
         } else {
-            // 外键约束
-            val db = "collinson"
+            // FK
+            val db = "db name"
             message = StringUtils.substringBetween(message, "a foreign key constraint fails (`$db`.`", "`, CONSTRAINT")
             message = "It's used by a $message"
 
@@ -118,17 +117,11 @@ class GlobalExceptionHandler {
         return ApiResp(error = message, message = e.message).responseEntityBadRequest()
     }
 
-    @ExceptionHandler(value = [(Exception::class)])
+    @ExceptionHandler(value = [Exception::class])
     fun defaultErrorHandler(req: HttpServletRequest, e: Exception): ResponseEntity<ApiResp> {
         log.error("unknown error ", e)
         val apiResp = ApiResp()
         apiResp.error = e.message
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResp)
     }
-
-    companion object {
-        private val service = Executors.newCachedThreadPool()
-    }
-
-
 }
