@@ -25,8 +25,6 @@ object JpaUtil {
             return Option.empty()
         } else {
             var entityType = root.model
-            println(entityType)
-
             val predicates = filterFields.map {
                 val value = it.value
                 val operator = filter[it.key + "_op"].toOption().getOrElse { "=" }
@@ -34,47 +32,44 @@ object JpaUtil {
                 val searchPath: Path<Any>
                 val fields = field.split(".")
                 var javaType: Class<*>? = null
-                var converttedValues = listOf<Any>()
-                if (fields.size > 1) {//embedded field
+                val convertedValues: List<Any>
+                if (fields.size > 1) {
                     var join: Join<Any, Any> = root.join<Any, Any>(fields[0])
                     for (i in 1 until fields.size - 1) {
                         join = join.join(fields[i])
                     }
                     searchPath = join.get(fields[fields.size - 1])
-                    fields.windowed(2, 1).forEach {
-                        val (e, f) = it
+                    fields.windowed(2, 1).forEach { (e, f) ->
                         entityType = getReferenceEntityType(entityType, e)
-                        javaType = getJavaType(entityType, f) //FIXME
+                        javaType = getJavaType(entityType, f)
                     }
                 } else {
                     javaType = getJavaType(entityType, field)
                     searchPath = root.get<Any>(field)
                 }
                 logger.debug { "javaType $javaType" }
-
-                converttedValues = when {
+                convertedValues = when {
                     javaType!!.isAssignableFrom(java.lang.Long::class.java) -> value.split(",").map { v -> v.toLong() }
                     javaType!!.isAssignableFrom(java.lang.Boolean::class.java) -> value.split(",").map { v -> v.toBoolean() }
                     else -> value.split(",")
                 }
-
                 when (operator) {
                     "like" -> {
                         cb.like(searchPath as Path<String>, "%$value%")
                     }
                     "in" -> {
-                        searchPath.`in`(*converttedValues.toTypedArray())
+                        searchPath.`in`(*convertedValues.toTypedArray())
                     }
                     "between" -> {
                         if (javaType!!.isAssignableFrom(java.lang.Long::class.java)) {
-                            val (lowerbond, upperbond) = converttedValues.map { v -> v as Long }
+                            val (lowerbond, upperbond) = convertedValues.map { v -> v as Long }
                             cb.between(searchPath as Path<Long>, lowerbond, upperbond)
                         } else {
                             throw  IllegalArgumentException()
                         }
                     }
                     else -> {
-                        cb.equal(searchPath, converttedValues.first())
+                        cb.equal(searchPath, convertedValues.first())
                     }
                 }
             }.reduce { l, r ->

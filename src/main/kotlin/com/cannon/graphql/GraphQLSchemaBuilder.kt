@@ -179,7 +179,7 @@ class GraphQLSchemaBuilder(
             return Scalars.GraphQLFloat
         else if (Long::class.javaObjectType.isAssignableFrom(javaType) || Long::class.java.isAssignableFrom(javaType) || Long::class.javaPrimitiveType!!.isAssignableFrom(javaType))
             return Scalars.GraphQLLong
-        else if (Boolean::class.java.isAssignableFrom(javaType) || Boolean::class.javaPrimitiveType!!.isAssignableFrom(javaType))
+        else if (Boolean::class.javaObjectType.isAssignableFrom(javaType) || Boolean::class.java.isAssignableFrom(javaType) || Boolean::class.javaPrimitiveType!!.isAssignableFrom(javaType))
             return Scalars.GraphQLBoolean
         else if (javaType.isEnum) {
             return getTypeFromJavaType(javaType)
