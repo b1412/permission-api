@@ -106,9 +106,17 @@ class BlogControllerTest {
     fun `update blog return empty body with 404 when id doesn't exist`() {
         //given
         every { blogDao.findByIdOrNull(1) } returns null
+        val body = """
+        {
+            "title": "New Title of Blog"
+        }
+"""
         //when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/blog/1"))
-        //then
+        val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.put("/blog/1")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+        )        //then
         resultActions.andExpect(status().isNotFound)
     }
 

@@ -146,8 +146,21 @@ class UserControllerTest {
     fun `update user return empty body with 404 when id doesn't exist`() {
         //given
         every { userDao.findByIdOrNull(1) } returns null
-        //when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/user/1"))
+        val body = """
+  {
+    "login": "login of user",
+    "address": "address of user",
+    "email": "email of user",
+    "notes": "notes of user"
+  }
+        """
+        // when
+        val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .put("/user/1")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
         //then
         resultActions.andExpect(status().isNotFound)
     }

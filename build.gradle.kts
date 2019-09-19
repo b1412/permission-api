@@ -16,6 +16,11 @@ tasks.jacocoTestReport {
         xml.isEnabled = true
         html.isEnabled = false
     }
+    classDirectories.setFrom(
+            sourceSets.main.get().output.asFileTree.matching {
+                exclude("graph/*.class")
+            }
+    )
 }
 
 allOpen {
