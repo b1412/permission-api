@@ -1,6 +1,5 @@
 package com.cannon.entity
 
-import java.io.Serializable
 import javax.persistence.*
 
 @Entity

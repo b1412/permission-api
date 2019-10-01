@@ -6,8 +6,4 @@ import com.cannon.dao.base.BaseDao
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PermissionDao : BaseDao<Permission, Long> {
-
-    fun findByHttpMethod(httpMethod: String): Permission
-
-}
+interface PermissionDao : BaseDao<Permission, Long>

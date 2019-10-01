@@ -110,24 +110,6 @@ class GraphQLSchemaBuilder(
         return answer
     }
 
-    private fun getObjectType(embeddableType: EmbeddableType<*>): GraphQLObjectType {
-
-        if (embeddableCache.containsKey(embeddableType))
-            return embeddableCache[embeddableType]!!
-
-        val embeddableName = embeddableType.javaType.simpleName
-        val list = embeddableType.attributes.filter { this.isNotIgnored(it) }.flatMap { this.getObjectField(it) }
-        val answer = GraphQLObjectType.newObject()
-                .name(embeddableName)
-                .description(getSchemaDocumentation(embeddableType.javaType))
-                .fields(list)
-                .build()
-
-        embeddableCache[embeddableType] = answer
-
-        return answer
-    }
-
     private fun getObjectField(attribute: Attribute<*, *>): List<GraphQLFieldDefinition> {
         return getAttributeType(attribute)
                 .filterIsInstance<GraphQLOutputType>()
@@ -189,22 +171,6 @@ class GraphQLSchemaBuilder(
 
         throw UnsupportedOperationException(
                 "Class could not be mapped to GraphQL: '" + javaType.typeName + "'")
-    }
-
-    fun getAttributeEntity(attribute: Attribute<*, *>): EntityType<*> {
-        val declaringType = attribute.declaringType.javaType.name // fully qualified name of the entity class
-        val declaringMember = attribute.javaMember.name // field name in the entity class
-
-         if (attribute.persistentAttributeType == Attribute.PersistentAttributeType.ONE_TO_MANY || attribute.persistentAttributeType == Attribute.PersistentAttributeType.MANY_TO_MANY) {
-            val foreignType = (attribute as PluralAttribute<*, *, *>).elementType as EntityType<*>
-            return foreignType
-        } else if (attribute.persistentAttributeType == Attribute.PersistentAttributeType.MANY_TO_ONE || attribute.persistentAttributeType == Attribute.PersistentAttributeType.ONE_TO_ONE) {
-            val foreignType = (attribute as SingularAttribute<*, *>).type as EntityType<*>
-            return foreignType
-        }
-
-        throw UnsupportedOperationException(
-                "Attribute could not be mapped to GraphQL: field '$declaringMember' of entity class '$declaringType' ${attribute.persistentAttributeType}")
     }
 
     fun getAttributeType(attribute: Attribute<*, *>): List<GraphQLType> {
