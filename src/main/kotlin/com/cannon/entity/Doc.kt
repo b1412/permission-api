@@ -5,7 +5,7 @@ import javax.persistence.FetchType
 import javax.persistence.ManyToOne
 
 @Entity
-class Doc(
+data class Doc(
         var name: String,
         @ManyToOne(fetch = FetchType.LAZY)
         var user: User
