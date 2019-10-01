@@ -1,5 +1,7 @@
 package com.cannon.json
 
+import arrow.core.getOrElse
+import arrow.core.toOption
 import com.cannon.entity.BaseEntity
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletResponse
 class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
     var advices: List<ResponseBodyAdvice<Any>> = emptyList()
 
+
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
         return returnType.annotatedElement.declaredAnnotations.any { it is GetMapping }
     }
@@ -44,33 +47,61 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         } catch (ex: Exception) {
             return
         }
-        val entityClass = Class.forName(clazzName)
-        val firstLevelFields = fieldsOfClass(entityClass)
+        val rootEntityClass = Class.forName(clazzName)
+        val firstLevelFields = fieldsOfClass(rootEntityClass)
         val objectMapper = ObjectMapper()
         objectMapper.registerModule(Jdk8Module())
         objectMapper.registerModule(JavaTimeModule())
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonFilter = JacksonJsonFilter(
-                fields = mutableMapOf(entityClass to firstLevelFields)
+                fields = mutableMapOf(rootEntityClass to firstLevelFields)
         )
-        objectMapper.setFilterProvider(jsonFilter)
-        objectMapper.addMixIn(entityClass, jsonFilter.javaClass)
+        val entityClassMap = mutableMapOf<String, Class<*>>()
 
-        if (embedded.isNullOrEmpty().not()) {
-            val embeddedFields = entityClass.declaredFields.first { it.name == embedded }
-            val embeddedClazzName = (embeddedFields.genericType as ParameterizedType).actualTypeArguments.first().typeName
-            val embeddedClazz = Class.forName(embeddedClazzName)
-            val embeddedFirstLevelFields = fieldsOfClass(embeddedClazz)
-            jsonFilter.fields[entityClass]!!.add(embeddedFields.name)
-            jsonFilter.fields[embeddedClazz] = embeddedFirstLevelFields
-            objectMapper.addMixIn(embeddedClazz, jsonFilter.javaClass)
-        }
+        objectMapper.setFilterProvider(jsonFilter)
+        objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
+
+        embedded.toOption()
+                .map { it.split(",").toList() }
+                .getOrElse { emptyList() }
+                .filter { it.isNotBlank() }
+                .map { e -> e.split(".").toList() }
+                .filter { it.isNotEmpty() }
+                .sortedBy { it.size }
+                .forEach {
+                    if (it.size == 1) { //root node
+                        val embeddedNode = it.first()
+                        addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
+                    } else {
+                        val embeddedNode = it.last()
+                        val lastParentNode = it.dropLast(1).last()
+                        val parentEntityClass = entityClassMap[lastParentNode]!!
+                        addEmbedded(objectMapper, entityClassMap, jsonFilter, parentEntityClass, embeddedNode)
+                    }
+                }
 
         val json = objectMapper.writeValueAsString(returnValue)
-        response.contentType = MediaType.APPLICATION_JSON_UTF8_VALUE
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.writer.write(json)
     }
+
+    private fun addEmbedded(objectMapper: ObjectMapper, entityClassMap: MutableMap<String, Class<*>>, jsonFilter: JacksonJsonFilter, entityClass: Class<*>, embeddedNode: String) {
+        val embeddedFields = entityClass.declaredFields.first { it.name == embeddedNode }
+        val genericType = embeddedFields.genericType
+        val embeddedClazz: Class<*>
+        embeddedClazz = when (genericType) {
+            is ParameterizedType -> Class.forName(genericType.actualTypeArguments.first().typeName)
+            else -> genericType as Class<*>
+        }
+
+        entityClassMap.putIfAbsent(embeddedNode, embeddedClazz)
+        val embeddedFirstLevelFields = fieldsOfClass(embeddedClazz)
+        jsonFilter.fields[entityClass]!!.add(embeddedFields.name)
+        jsonFilter.fields[embeddedClazz] = embeddedFirstLevelFields
+        objectMapper.addMixIn(embeddedClazz, jsonFilter.javaClass)
+    }
+
 
     private fun fieldsOfClass(entityClass: Class<*>): MutableList<String> {
         return (entityClass.declaredFields + entityClass.superclass.declaredFields).filter { field ->

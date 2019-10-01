@@ -72,7 +72,7 @@ class DocDaoTests : AbstractJpaTest() {
 
         statistics.clear()
 
-        user.role.toString()
+        println(user.role!!.toString())
         assertThat(statistics.prepareStatementCount).isEqualTo(1)
         assertThat(statistics.entityLoadCount).isEqualTo(1)
     }
@@ -84,7 +84,7 @@ class DocDaoTests : AbstractJpaTest() {
         graph.addAttributeNodes("users")
         val role = entityManager.find(Role::class.java, 1L, mapOf("javax.persistence.fetchgraph" to graph))
 
-        role.users.forEach { it.docs.toString() }
+        role.users.forEach { println(it.docs.size) }
 
         assertThat(role.users.size).isEqualTo(2)
         assertThat(statistics.prepareStatementCount).isEqualTo(3)
@@ -100,13 +100,6 @@ class DocDaoTests : AbstractJpaTest() {
         val role = entityManager.find(Role::class.java, 1L, mapOf("javax.persistence.fetchgraph" to graph))
     }
 
-
-    @Test
-    fun `Role`() {
-        //when
-        val user = userDao.findByIdOrNull(1L)
-        println(user)
-    }
 
     @Test
     fun `First level cache`() {
