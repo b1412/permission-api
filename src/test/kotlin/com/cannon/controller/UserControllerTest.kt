@@ -36,10 +36,6 @@ class UserControllerTest {
     @MockkBean
     lateinit var userDao: UserDao
 
-    @BeforeAll
-    fun setup() {
-        println(">> Setup")
-    }
 
     @Test
     fun `return a list of users with 200`() {
@@ -229,10 +225,5 @@ class UserControllerTest {
         resultActions.andExpect(status().isNotFound)
     }
 
-
-    @AfterAll
-    fun teardown() {
-        println(">> Tear down")
-    }
 
 }

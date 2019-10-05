@@ -3,9 +3,9 @@ package com.cannon.jpa
 import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.core.toOption
-import graph.EntityGraphs
-import graph.GraphParser
 import mu.KotlinLogging
+import org.hibernate.graph.EntityGraphs
+import org.hibernate.graph.GraphParser
 import javax.persistence.EntityGraph
 import javax.persistence.EntityManager
 import javax.persistence.criteria.*
