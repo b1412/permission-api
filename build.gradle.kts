@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    val kotlinVersion = "1.3.50"
     jacoco
-    id("org.springframework.boot") version "2.2.0.M5"
+    id("org.springframework.boot") version "2.2.0.RC1"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    val kotlinVersion = "1.3.41"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
@@ -18,7 +18,7 @@ tasks.jacocoTestReport {
     }
     classDirectories.setFrom(
             sourceSets.main.get().output.asFileTree.matching {
-                exclude("graph/*.class")
+                exclude("/*.class")
             }
     )
 }
