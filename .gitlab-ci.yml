@@ -1,0 +1,10 @@
+language: jvm
+os: linux
+dist: trusty
+jdk: openjdk8
+script:
+  - "./gradlew build"
+  - "./gradlew jacocoTestReport"
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - docker build -t kotlin-cannon .
