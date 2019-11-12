@@ -9,7 +9,7 @@ import com.github.b1412.generator.findClasses
 
 fun uiTemplateTasks(): List<Task> {
     TaskConstants.init()
-    val pattern = "classpath*:com/github/leon/template/task/*/*.class"
+    val pattern = "classpath*:com/github/b1412/template/task/*/*.class"
     val list = findClasses(Task::class.java, pattern)
             .map {
                 (it.newInstance() as Task)
@@ -19,7 +19,7 @@ fun uiTemplateTasks(): List<Task> {
 
 fun apiTasks(): List<Task> {
     TaskConstants.init()
-    val pattern = "classpath*:com/github/leon/template/task/*/*.class"
+    val pattern = "classpath*:com/github/b1412/template/task/*/*.class"
     val list = findClasses(Task::class.java, pattern)
             .map {
                 (it.newInstance() as Task)
@@ -30,7 +30,7 @@ fun apiTasks(): List<Task> {
 
 fun uiTasks(): List<Task> {
     TaskConstants.init()
-    val pattern = "classpath*:com/github/leon/template/task/*/*.class"
+    val pattern = "classpath*:com/github/b1412/template/task/*/*.class"
     val list = findClasses(Task::class.java, pattern)
             .map {
                 (it.newInstance() as Task)
@@ -38,12 +38,3 @@ fun uiTasks(): List<Task> {
     return list
 }
 
-fun testTasks(): List<Task> {
-    TaskConstants.init()
-    val pattern = "classpath*:com/github/leon/template/task/*/*.class"
-    val list = findClasses(Task::class.java, pattern)
-            .map {
-                (it.newInstance() as Task)
-            }.filter { it.taskOfProject == TaskOfProject.TEST }
-    return list
-}
