@@ -338,31 +338,31 @@ fun entityClass2CodeEntity(clazz: Class<*>): CodeEntity {
         }
         val entityFeature = clazz.getAnnotation(EntityFeature::class.java)
         when (codeField.name) {
-            "createdAt" -> {
-                codeField = codeField.copy(hiddenInForm = !entityFeature.createdAtInForm)
-                codeField = codeField.copy(hiddenInList = !entityFeature.createdAtInList)
-            }
-            "creator" -> {
-                codeField = codeField.copy(hiddenInForm = !entityFeature.creatorInForm, display = listOf("name"))
-                codeField = codeField.copy(hiddenInList = !entityFeature.creatorInList)
-            }
-            "updatedAt" -> {
-                codeField = codeField.copy(hiddenInForm = !entityFeature.updatedAtInForm)
-                codeField = codeField.copy(hiddenInList = !entityFeature.updatedAtInList)
-            }
-            "modifier" -> {
-                codeField = codeField.copy(hiddenInForm = !entityFeature.modifierInForm, display = listOf("name"))
-                codeField = codeField.copy(hiddenInList = !entityFeature.modifierInList)
-            }
-            "user" -> {
-                codeField = codeField.copy(hiddenInForm = !entityFeature.userInForm)
-                codeField = codeField.copy(hiddenInList = !entityFeature.userInList)
-                codeField = codeField.copy(selectOne = true, display = listOf("name"))
-            }
-            "version" -> {
-                codeField = codeField.copy(hiddenInForm = !entityFeature.versionInForm)
-                codeField = codeField.copy(hiddenInList = !entityFeature.versionInList)
-            }
+//            "createdAt" -> {
+//                codeField = codeField.copy(hiddenInForm = !entityFeature.createdAtInForm)
+//                codeField = codeField.copy(hiddenInList = !entityFeature.createdAtInList)
+//            }
+//            "creator" -> {
+//                codeField = codeField.copy(hiddenInForm = !entityFeature.creatorInForm, display = listOf("name"))
+//                codeField = codeField.copy(hiddenInList = !entityFeature.creatorInList)
+//            }
+//            "updatedAt" -> {
+//                codeField = codeField.copy(hiddenInForm = !entityFeature.updatedAtInForm)
+//                codeField = codeField.copy(hiddenInList = !entityFeature.updatedAtInList)
+//            }
+//            "modifier" -> {
+//                codeField = codeField.copy(hiddenInForm = !entityFeature.modifierInForm, display = listOf("name"))
+//                codeField = codeField.copy(hiddenInList = !entityFeature.modifierInList)
+//            }
+//            "user" -> {
+//                codeField = codeField.copy(hiddenInForm = !entityFeature.userInForm)
+//                codeField = codeField.copy(hiddenInList = !entityFeature.userInList)
+//                codeField = codeField.copy(selectOne = true, display = listOf("name"))
+//            }
+//            "version" -> {
+//                codeField = codeField.copy(hiddenInForm = !entityFeature.versionInForm)
+//                codeField = codeField.copy(hiddenInList = !entityFeature.versionInList)
+//            }
             else -> codeField
         }
         codeField

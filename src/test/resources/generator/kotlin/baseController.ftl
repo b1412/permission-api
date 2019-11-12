@@ -91,35 +91,4 @@ abstract class Base${entity.name}Controller(
         </#if>
     }
 
-    @DeleteMapping("clear")
-    override fun deleteAll(request: HttpServletRequest,pageable: Pageable): ResponseEntity<*> {
-        <#if entity.security >
-        return super.deleteAll(request, pageable)
-        <#else>
-        val list = baseService.findByRequestParameters(request.parameterMap, pageable)
-        list.forEach {
-            baseService.delete(it)
-        }
-        return ResponseEntity.noContent().build<Any>()
-        </#if>
-    }
-//
-   // @GetMapping("excel")
-    open fun excel(pageable: Pageable, request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Page<${entity.name}>> {
-        <#if entity.security >
-        val page = baseService.findBySecurity(request.method, request.requestURI, request.parameterMap, pageable)
-        <#else>
-        val page = baseService.findByRequestParameters( request.parameterMap, pageable)
-        </#if>
-        val headers:List<String> = ${entity.headerListStr}
-        val columns:List<String> = ${entity.columnListStr}
-        PoiExporter.data(page.content)
-                 .sheetNames("${entity.name?uncap_first}")
-                 .headers(headers)
-                 .columns(columns)
-                 .render(response)
-
-        return ResponseEntity.ok(page)
-    }
-
 }
