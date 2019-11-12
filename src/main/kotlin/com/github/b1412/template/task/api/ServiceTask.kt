@@ -7,7 +7,7 @@ import com.github.b1412.template.TaskConstants
 
 class ServiceTask : Task(
         replaceFile = false,
-        taskOfProject = TaskOfProject.API,
+       
         name = "Service",
         folder = """ "${TaskConstants.apiPath}"+"${TaskConstants.srcPath}"+project.packageName.replaceAll("\\.","/")+"/"+"service" """,
         taskType = "multiple",

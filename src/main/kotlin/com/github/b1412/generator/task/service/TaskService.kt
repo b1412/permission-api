@@ -2,7 +2,6 @@ package com.github.b1412.generator.task.service
 
 import com.github.b1412.generator.entity.CodeProject
 import com.github.b1412.generator.entity.Task
-import com.github.b1412.generator.entity.TaskOfProject
 import com.google.common.collect.Maps
 import freemarker.ext.beans.BeansWrapper
 import freemarker.template.TemplateHashModel
@@ -16,7 +15,7 @@ object TaskService {
         val paths: List<String>
         val scope = Maps.newHashMap<String, Any>()
         val codeProjectMap = PropertyUtils.describe(codeProject)
-      //  codeProjectMap.putAll(task.projectExtProcessor!!.invoke(task, codeProject))
+        //  codeProjectMap.putAll(task.projectExtProcessor!!.invoke(task, codeProject))
         scope["project"] = codeProjectMap
         scope["enums"] = codeProject.enums
 
@@ -43,12 +42,8 @@ object TaskService {
         if (task.multiFiles.isEmpty()) {
             val templateFilename = codeProject.scriptHelper.exec<Any>(task.templatePath, root).toString()
             var folder = codeProject.scriptHelper.exec<Any>(task.folder, root).toString()
-            folder = when (task.taskOfProject) {
-                TaskOfProject.API -> codeProject.apiTargetPath + File.separator + folder
-                TaskOfProject.UI -> codeProject.uiTargetPath + File.separator + folder
-                TaskOfProject.TEST -> codeProject.testTargetPath + File.separator + folder
-                TaskOfProject.UI_TEMPLATE -> codeProject.uiTemplateTargetPath + File.separator + folder
-            }
+            folder = task.targetPath + File.separator + folder
+
             val folderDir = File(folder)
             if (!folderDir.exists()) {
                 folderDir.mkdirs()
@@ -68,12 +63,7 @@ object TaskService {
                 }
                 val templateFilename = codeProject.scriptHelper.exec<Any>(task.templatePath, newRoot).toString()
                 var folder = codeProject.scriptHelper.exec<Any>(task.folder, newRoot).toString()
-                folder = when (task.taskOfProject) {
-                    TaskOfProject.API -> codeProject.apiTargetPath + File.separator + folder
-                    TaskOfProject.UI -> codeProject.uiTargetPath + File.separator + folder
-                    TaskOfProject.TEST -> codeProject.testTargetPath + File.separator + folder
-                    TaskOfProject.UI_TEMPLATE -> codeProject.uiTemplateTargetPath + File.separator + folder
-                }
+                folder = task.targetPath + File.separator + folder
                 val folderDir = File(folder)
                 if (!folderDir.exists()) {
                     folderDir.mkdirs()

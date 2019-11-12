@@ -6,7 +6,7 @@ import com.github.b1412.template.TaskConstants
 
 
 class BaseServiceTask : Task(
-        taskOfProject = TaskOfProject.API,
+       
         name = "baseService",
         folder = """ "${TaskConstants.generatedPath}"+"${TaskConstants.srcPath}"+project.packageName.replaceAll("\\.","/")+"/"+"service/base" """,
         taskType = "multiple",

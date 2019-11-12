@@ -6,7 +6,7 @@ import com.github.b1412.template.TaskConstants
 
 
 class BaseDaoTask : Task(
-        taskOfProject = TaskOfProject.API,
+       
         name = "BaseDao",
         folder = """ "${TaskConstants.generatedPath}"+"${TaskConstants.srcPath}"+project.packageName.replaceAll("\\.","/")+"/"+"dao/base" """,
         taskType = "multiple",

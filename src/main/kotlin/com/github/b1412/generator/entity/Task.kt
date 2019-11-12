@@ -19,7 +19,7 @@ open class Task(
 
         var multiFiles: List<Map<String, Any>> = mutableListOf(),
 
-        var taskOfProject: TaskOfProject = TaskOfProject.API,
+        var targetPath: String = "",
 
         var folder: String = "",
 

@@ -19,30 +19,11 @@ data class CodeProject(
 
         var utilClasses: List<Class<*>> = listOf(),
 
-        var apiTasks: List<Task> = listOf(),
-
-        var apiTargetPath: String,
-
-        var uiTargetPath: String,
-
-        var uiTasks: List<Task> = listOf(),
-
-        var uiTemplateTargetPath: String,
-
-        var uiTemplateTasks: List<Task> = listOf(),
-
-        var testTargetPath: String,
-
-        var testTasks: List<Task> = listOf()
-
+        var tasks: List<Task> = listOf()
 ) {
-    fun generate(env: CodeEnv? = null): List<Pair<Task, List<String>>> {
-        var taskes = apiTasks + uiTasks + testTasks + uiTemplateTasks
-        if (env != null) {
-            taskes = env.tasks
-            entities = env.entities
-        }
-        return taskes.filter { it.active }
+    fun generate(): List<Pair<Task, List<String>>> {
+
+        return tasks.filter { it.active }
                 //   .parallelStream()
                 .map {
                     TaskService.processTask(this, it)
