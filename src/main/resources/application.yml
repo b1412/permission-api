@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: cannon
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
@@ -17,4 +19,6 @@ spring:
     lazy-initialization: true
 server:
   port: 8080
-
+cannon:
+  jwt:
+    anonymousUrls: /branch,/user
