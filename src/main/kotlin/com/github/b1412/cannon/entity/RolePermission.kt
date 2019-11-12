@@ -1,5 +1,6 @@
 package com.github.b1412.cannon.entity
 
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -17,4 +18,4 @@ data class RolePermission(
                 inverseJoinColumns = [JoinColumn(name = "rule_id")])
         val rules: MutableList<Rule> = mutableListOf()
 
-) : BaseEntity()
+) : BaseEntity(), Serializable

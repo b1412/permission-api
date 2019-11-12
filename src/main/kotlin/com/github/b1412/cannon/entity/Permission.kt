@@ -1,6 +1,7 @@
 package com.github.b1412.cannon.entity
 
 
+import java.io.Serializable
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.OneToMany
@@ -19,4 +20,4 @@ data class Permission(
         @OneToMany(fetch = FetchType.LAZY, mappedBy = "permission")
         var rolePermission: MutableList<RolePermission> = mutableListOf()
 
-) : BaseEntity()
+) : BaseEntity(), Serializable

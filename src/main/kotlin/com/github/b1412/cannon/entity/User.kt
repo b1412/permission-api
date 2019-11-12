@@ -3,6 +3,7 @@ package com.github.b1412.cannon.entity
 import org.hibernate.annotations.Type
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -30,7 +31,7 @@ data class User(
         @Transient
         var grantedAuthorities: MutableList<GrantedAuthority> = mutableListOf()
 
-) : BaseEntity(), UserDetails {
+) : BaseEntity(), UserDetails, Serializable {
     override fun getUsername(): String {
         return username
     }

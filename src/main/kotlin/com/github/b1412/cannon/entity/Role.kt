@@ -1,5 +1,6 @@
 package com.github.b1412.cannon.entity
 
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -13,7 +14,7 @@ data class Role(
         @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
         val rolePermissions: MutableList<RolePermission> = mutableListOf()
 
-) : BaseEntity() {
+) : BaseEntity(),Serializable {
         override fun toString(): String {
                 return "Role(name='$name')"
         }

@@ -1,6 +1,7 @@
 package com.github.b1412.cannon.entity
 
 import org.hibernate.annotations.Type
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -21,4 +22,4 @@ data class Branch(
 
         @Type(type = "yes_no")
         var active: Boolean? = null
-) : BaseEntity()
+) : BaseEntity(), Serializable

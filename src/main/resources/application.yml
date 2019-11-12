@@ -21,4 +21,4 @@ server:
   port: 8080
 cannon:
   jwt:
-    anonymousUrls: /branch,/user
+    anonymousUrls: /branch,/user,/v1/login
