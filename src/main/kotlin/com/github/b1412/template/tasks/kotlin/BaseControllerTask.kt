@@ -5,7 +5,7 @@ import com.github.b1412.template.TaskConstants
 
 
 class BaseControllerTask : MultipleTask(
-        folder = { _, project, entity -> TaskConstants.generatedPath + TaskConstants.srcPath + project.packageName.replace("\\.", "/") + "/" + "controller/base" },
-        filename = { _, _, entity -> "Base" + entity!!.name + "Controller.kt" },
+        folder = {  project, _ -> TaskConstants.generatedPath + TaskConstants.srcPath + project.packageName.replace(".", "/") + "/" + "controller/base" },
+        filename = {  _, entity -> "Base" + entity!!.name + "Controller.kt" },
         templatePath = "kotlin/baseController.ftl"
 )

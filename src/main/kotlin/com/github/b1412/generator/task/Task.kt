@@ -7,7 +7,7 @@ import com.github.b1412.generator.entity.CodeProject
 import com.github.b1412.generator.task.processor.ITaskProcessor
 
 
-typealias FilenameProcessor = (Task, CodeProject, CodeEntity?) -> String
+typealias FilenameProcessor = (CodeProject, CodeEntity?) -> String
 
 open class Task(
         var taskType: ITaskProcessor,

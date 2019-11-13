@@ -5,8 +5,8 @@ import com.github.b1412.template.TaskConstants
 
 
 class BaseDaoTask : MultipleTask(
-        folder = { _, project, entity -> TaskConstants.generatedPath + TaskConstants.srcPath + project.packageName.replace("\\.", "/") + "/" + "dao/base" },
-        filename = { _, _, entity -> "Base" + entity!!.name + "Dao.kt" },
+        folder = { project, _ -> TaskConstants.generatedPath + TaskConstants.srcPath + project.packageName.replace(".", "/") + "/" + "dao/base" },
+        filename = {  _, entity -> "Base" + entity!!.name + "Dao.kt" },
         templatePath = "kotlin/baseDao.ftl"
 )
 

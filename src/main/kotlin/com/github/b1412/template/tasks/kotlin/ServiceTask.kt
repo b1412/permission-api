@@ -6,7 +6,7 @@ import com.github.b1412.template.TaskConstants
 
 class ServiceTask : MultipleTask(
         replaceFile = false,
-        folder = { _, project, entity -> TaskConstants.apiPath + TaskConstants.srcPath + project.packageName.replace("\\.", "/") + "/" + "service" },
-        filename = { _, _, entity -> entity!!.name + "Service.kt" },
+        folder = { project, _ -> TaskConstants.apiPath + TaskConstants.srcPath + project.packageName.replace(".", "/") + "/" + "service" },
+        filename = { _, entity -> entity!!.name + "Service.kt" },
         templatePath = "kotlin/service.ftl"
 )

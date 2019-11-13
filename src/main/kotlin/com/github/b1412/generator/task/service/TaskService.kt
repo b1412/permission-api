@@ -30,17 +30,18 @@ object TaskService {
         paths = task.run(codeProject, scope)
         return Pair(task, paths)
     }
+
     fun processTemplate(codeProject: CodeProject, codeEntity: CodeEntity?, task: Task, root: Map<String, Any>): List<String> {
         if (task.multiFiles.isEmpty()) {
             val templateFilename = task.templatePath
-            var folder = task.folder(task, codeProject, codeEntity)
+            var folder = task.folder(codeProject, codeEntity)
             folder = task.targetPath + File.separator + folder
 
             val folderDir = File(folder)
             if (!folderDir.exists()) {
                 folderDir.mkdirs()
             }
-            val filename = task.filename(task, codeProject, codeEntity)
+            val filename = task.filename(codeProject, codeEntity)
             val outputFilename = folder + File.separator + filename
             val outputFile = File(outputFilename)
             if (task.replaceFile || !outputFile.exists()) {
@@ -53,13 +54,13 @@ object TaskService {
                     task.templateHelper!!.put(e.key, e.value)
                 }
                 val templateFilename = task.templatePath
-                var folder = task.folder(task, codeProject, codeEntity)
+                var folder = task.folder(codeProject, codeEntity)
                 folder = task.targetPath + File.separator + folder
                 val folderDir = File(folder)
                 if (!folderDir.exists()) {
                     folderDir.mkdirs()
                 }
-                val filename = task.filename(task, codeProject, codeEntity)
+                val filename = task.filename(codeProject, codeEntity)
                 val outputFilename = folder + File.separator + filename
                 val outputFile = File(outputFilename)
                 if (task.replaceFile || !outputFile.exists()) {
