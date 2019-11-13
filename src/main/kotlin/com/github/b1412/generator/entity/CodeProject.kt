@@ -1,6 +1,5 @@
 package com.github.b1412.generator.entity
 
-import com.github.b1412.generator.core.ScriptHelper
 import com.github.b1412.generator.core.TemplateHelper
 import com.github.b1412.generator.task.service.TaskService
 
@@ -8,8 +7,6 @@ import com.github.b1412.generator.task.service.TaskService
 data class CodeProject(
         var name: String,
         var packageName: String,
-
-        var scriptHelper: ScriptHelper,
 
         var templateEngine: TemplateHelper,
 

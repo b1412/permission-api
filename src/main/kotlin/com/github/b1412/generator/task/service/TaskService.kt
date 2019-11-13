@@ -1,5 +1,6 @@
 package com.github.b1412.generator.task.service
 
+import com.github.b1412.generator.entity.CodeEntity
 import com.github.b1412.generator.entity.CodeProject
 import com.github.b1412.generator.entity.Task
 import com.google.common.collect.Maps
@@ -31,7 +32,7 @@ object TaskService {
         return Pair(task, paths)
     }
 
-    fun processTemplate(codeProject: CodeProject, task: Task, root: Map<String, Any>): List<String> {
+    fun processTemplate(codeProject: CodeProject, codeEntity: CodeEntity?, task: Task, root: Map<String, Any>): List<String> {
         /*    List<TaskParam> params = task.getTaskParams();
         for (TaskParam param : params) {
             if (StrKit.isBlank(param.getStr("name"))) continue;
@@ -40,15 +41,16 @@ object TaskService {
         }*/
 
         if (task.multiFiles.isEmpty()) {
-            val templateFilename = codeProject.scriptHelper.exec<Any>(task.templatePath, root).toString()
-            var folder = codeProject.scriptHelper.exec<Any>(task.folder, root).toString()
+            val templateFilename = task.templatePath
+            var folder = task.folder(task, codeProject, codeEntity)
             folder = task.targetPath + File.separator + folder
 
             val folderDir = File(folder)
             if (!folderDir.exists()) {
                 folderDir.mkdirs()
             }
-            val filename = codeProject.scriptHelper.exec<Any>(task.filename, root).toString()
+            // val filename = codeProject.scriptHelper.exec<Any>(task.filename, root).toString()
+            val filename = task.filename(task, codeProject, codeEntity)
             val outputFilename = folder + File.separator + filename
             val outputFile = File(outputFilename)
             if (task.replaceFile || !outputFile.exists()) {
@@ -61,14 +63,15 @@ object TaskService {
                 it.forEach { e ->
                     task.templateHelper!!.put(e.key, e.value)
                 }
-                val templateFilename = codeProject.scriptHelper.exec<Any>(task.templatePath, newRoot).toString()
-                var folder = codeProject.scriptHelper.exec<Any>(task.folder, newRoot).toString()
+                val templateFilename = task.templatePath
+                var folder = task.folder(task, codeProject, codeEntity)
                 folder = task.targetPath + File.separator + folder
                 val folderDir = File(folder)
                 if (!folderDir.exists()) {
                     folderDir.mkdirs()
                 }
-                val filename = codeProject.scriptHelper.exec<Any>(task.filename, newRoot).toString()
+                // val filename = codeProject.scriptHelper.exec<Any>(task.filename(ta), newRoot).toString()
+                val filename = task.filename(task, codeProject, codeEntity)
                 val outputFilename = folder + File.separator + filename
                 val outputFile = File(outputFilename)
                 if (task.replaceFile || !outputFile.exists()) {

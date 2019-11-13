@@ -14,7 +14,7 @@ class MultipleTaskProcessor : ITaskProcessor {
  //           codeEntityMap.putAll(task.entityExtProcessor!!.invoke(task, codeEntity))
             task.templateHelper!!.put("entity", codeEntityMap)
             context["entity"] = codeEntityMap
-            paths.addAll(TaskService.processTemplate(codeProject, task, context))
+            paths.addAll(TaskService.processTemplate(codeProject,codeEntity, task, context))
         }
         return paths
     }

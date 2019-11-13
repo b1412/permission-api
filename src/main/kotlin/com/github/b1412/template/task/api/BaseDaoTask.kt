@@ -1,15 +1,13 @@
 package com.github.b1412.template.task.api
 
 import com.github.b1412.generator.entity.Task
-import com.github.b1412.generator.entity.TaskOfProject
 import com.github.b1412.template.TaskConstants
 
 
 class BaseDaoTask : Task(
-       
-        name = "BaseDao",
-        folder = """ "${TaskConstants.generatedPath}"+"${TaskConstants.srcPath}"+project.packageName.replaceAll("\\.","/")+"/"+"dao/base" """,
+        folder = { _, project, entity -> TaskConstants.generatedPath + TaskConstants.srcPath + project.packageName.replace("\\.", "/") + "/" + "dao/base" },
         taskType = "multiple",
-        filename = """ "Base"+entity.name+"Dao.kt" """,
-        templatePath = """ "kotlin/baseDao.ftl" """
+        filename = { _, _, entity -> "Base" + entity!!.name + "Dao.kt" },
+        templatePath = "kotlin/baseDao.ftl"
 )
+

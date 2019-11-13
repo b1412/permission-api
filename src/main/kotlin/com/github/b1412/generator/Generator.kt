@@ -5,7 +5,6 @@ import com.github.b1412.generator.entity.Task
 import com.github.b1412.generator.entity.scanForCodeEntities
 import com.github.b1412.generator.entity.scanForCodeEnum
 import com.github.b1412.generator.ext.Utils
-import com.github.b1412.generator.script.DefaultScriptHelper
 import com.github.b1412.generator.template.FreeMarkerHelper
 import com.github.b1412.template.apiTasks
 import java.util.*
@@ -26,7 +25,6 @@ fun generate(): List<Pair<Task, List<String>>> {
             utilClasses = listOf(Utils::class.java),
             packageName = packageName,
             tasks = apiTasks(),
-            scriptHelper = DefaultScriptHelper("groovy"),
             templateEngine = FreeMarkerHelper()
     ).generate()
 }
