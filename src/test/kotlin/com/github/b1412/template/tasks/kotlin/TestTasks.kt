@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test
 
 class TestTasks {
 
-    val project = CodeProject(name = "test", packageName = "com.github.test", templateEngine = FreeMarkerHelper())
-    val entity = CodeEntity(name = "User")
+    private val project = CodeProject(name = "test", packageName = "com.github.test", templateEngine = FreeMarkerHelper())
+    private val entity = CodeEntity(name = "User")
 
     @BeforeEach
     fun init() {

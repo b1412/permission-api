@@ -1,6 +1,8 @@
-package com.github.b1412.generator.task
+package com.github.b1412.template
 
 import com.github.b1412.generator.core.TemplateHelper
+import com.github.b1412.generator.task.FilenameProcessor
+import com.github.b1412.generator.task.Task
 import com.github.b1412.generator.task.processor.SingleTaskProcessor
 
 open class SingleTask(

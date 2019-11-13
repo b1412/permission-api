@@ -15,8 +15,6 @@ data class CodeProject(
 
         val enums: List<CodeEnum> = listOf(),
 
-        var utilClasses: List<Class<*>> = listOf(),
-
         var tasks: List<Task> = listOf()
 ) {
     fun generate(): List<Pair<Task, List<String>>> {
