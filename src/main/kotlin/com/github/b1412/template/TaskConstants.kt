@@ -7,8 +7,7 @@ object TaskConstants {
     lateinit var apiPath: String
     lateinit var srcPath: String
     fun init() {
-        val classLoader = javaClass.classLoader
-        val inputStream = classLoader.getResourceAsStream("generator/local.properties")
+        val inputStream = javaClass.classLoader.getResourceAsStream("generator/local.properties")
         val appProps = Properties()
         appProps.load(inputStream)
         val projectName = appProps.getProperty("projectName")

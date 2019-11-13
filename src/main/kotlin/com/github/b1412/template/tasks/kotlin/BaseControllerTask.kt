@@ -1,13 +1,11 @@
-package com.github.b1412.template.task.api
+package com.github.b1412.template.tasks.kotlin
 
-import com.github.b1412.generator.entity.Task
+import com.github.b1412.generator.task.MultipleTask
 import com.github.b1412.template.TaskConstants
 
 
-class BaseControllerTask : Task(
-        active = true,
+class BaseControllerTask : MultipleTask(
         folder = { _, project, entity -> TaskConstants.generatedPath + TaskConstants.srcPath + project.packageName.replace("\\.", "/") + "/" + "controller/base" },
-        taskType = "multiple",
         filename = { _, _, entity -> "Base" + entity!!.name + "Controller.kt" },
         templatePath = "kotlin/baseController.ftl"
 )

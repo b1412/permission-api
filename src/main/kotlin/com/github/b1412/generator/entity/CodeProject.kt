@@ -1,6 +1,7 @@
 package com.github.b1412.generator.entity
 
 import com.github.b1412.generator.core.TemplateHelper
+import com.github.b1412.generator.task.Task
 import com.github.b1412.generator.task.service.TaskService
 
 
@@ -20,7 +21,7 @@ data class CodeProject(
 ) {
     fun generate(): List<Pair<Task, List<String>>> {
 
-        return tasks.filter { it.active }
+        return tasks
                 //   .parallelStream()
                 .map {
                     TaskService.processTask(this, it)
