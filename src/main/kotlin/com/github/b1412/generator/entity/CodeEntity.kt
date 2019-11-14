@@ -49,15 +49,6 @@ fun String.remainLastIndexOf(s: String): String {
     return this.substring(0, index++)
 }
 
-fun scanForCodeEnum(): List<CodeEnum> {
-    return com.github.b1412.classpath.ClassSearcher.of(Enum::class.java).search<Enum<*>>().map {
-        CodeEnum(
-                name = it.name.remainLastIndexOf("."),
-                value = (Reflect.on(it).call("values").get() as Array<*>)
-                        .map { it.toString().remainLastIndexOf(".") }
-                        .toList())
-    }
-}
 
 val entityCode: MutableMap<String, Int> = mutableMapOf()
 

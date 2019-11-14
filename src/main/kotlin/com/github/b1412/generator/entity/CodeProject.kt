@@ -13,8 +13,6 @@ data class CodeProject(
 
         var entities: List<CodeEntity> = listOf(),
 
-        val enums: List<CodeEnum> = listOf(),
-
         var tasks: List<Task> = listOf()
 ) {
     fun generate(): List<Pair<Task, List<String>>> {

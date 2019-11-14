@@ -11,10 +11,12 @@ class MultipleTaskProcessor : ITaskProcessor {
         val paths = Lists.newArrayList<String>()
         for (codeEntity in codeProject.entities) {
             val codeEntityMap = PropertyUtils.describe(codeEntity)
- //           codeEntityMap.putAll(task.entityExtProcessor!!.invoke(task, codeEntity))
+            task.entityExtProcessors.forEach {
+                codeEntityMap.putAll(it.invoke(task, codeEntity))
+            }
             task.templateHelper!!.put("entity", codeEntityMap)
-            context["entity"] = codeEntityMap
-            paths.addAll(TaskService.processTemplate(codeProject,codeEntity, task, context))
+
+            paths.addAll(TaskService.processTemplate(codeProject, codeEntity, task, context))
         }
         return paths
     }

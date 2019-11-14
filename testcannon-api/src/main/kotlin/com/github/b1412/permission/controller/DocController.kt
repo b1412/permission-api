@@ -1,9 +1,9 @@
-package ${project.packageName}.controller
+package com.github.b1412.permission.controller
 
-import ${project.packageName}.controller.base.Base${entity.name}Controller
+import com.github.b1412.permission.controller.base.BaseDocController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import ${project.packageName}.service.${entity.name}Service
+import com.github.b1412.permission.service.DocService
 import org.springframework.beans.factory.annotation.Autowired
 import com.github.leon.aci.extenstions.responseEntityOk
 import org.springframework.data.domain.Pageable
@@ -13,10 +13,10 @@ import javax.servlet.http.HttpServletRequest
 
 
 @RestController
-@RequestMapping("/v1/${entity.lowerHyphenName}")
-class ${entity.name}Controller(
+@RequestMapping("/v1/doc")
+class DocController(
 
-) : Base${entity.name}Controller() {
+) : BaseDocController() {
 
 
 

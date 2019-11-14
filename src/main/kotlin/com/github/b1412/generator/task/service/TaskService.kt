@@ -17,14 +17,6 @@ object TaskService {
         val codeProjectMap = PropertyUtils.describe(codeProject)
         //  codeProjectMap.putAll(task.projectExtProcessor!!.invoke(task, codeProject))
         scope["project"] = codeProjectMap
-        scope["enums"] = codeProject.enums
-
-        codeProject.utilClasses.forEach {
-            val wrapper = BeansWrapper.getDefaultInstance()
-            val staticModels = wrapper.staticModels
-            val fileStatics = staticModels.get(it.name) as TemplateHashModel
-            scope[it.simpleName] = fileStatics
-        }
         task.templateHelper = codeProject.templateEngine
         task.templateHelper!!.putAll(scope)
         paths = task.run(codeProject, scope)

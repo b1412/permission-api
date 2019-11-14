@@ -9,6 +9,11 @@ import com.github.b1412.generator.task.processor.ITaskProcessor
 
 typealias FilenameProcessor = (CodeProject, CodeEntity?) -> String
 
+typealias ProjectExtProcessor = (Task, CodeProject) -> Map<String, Any?>
+
+typealias EntityExtProcessor = (Task, CodeEntity) -> Map<String, Any?>
+
+
 open class Task(
         var taskType: ITaskProcessor,
 
@@ -24,7 +29,10 @@ open class Task(
 
         var replaceFile: Boolean = true,
 
-        var templateHelper: TemplateHelper? = null
+        var templateHelper: TemplateHelper? = null,
+
+        var entityExtProcessors: List<EntityExtProcessor> = listOf()
+
 ) {
     fun run(codeProject: CodeProject, root: MutableMap<String, Any>): List<String> {
         return this.taskType.run(codeProject, this, root)
