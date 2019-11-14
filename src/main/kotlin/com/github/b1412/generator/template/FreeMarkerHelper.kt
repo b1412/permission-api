@@ -10,7 +10,10 @@ import java.io.*
 
 class FreeMarkerHelper(templatesBaseDir: String? = null) : TemplateHelper() {
     protected var configuration: Configuration = Configuration(Configuration.VERSION_2_3_29)
-    protected var context: SimpleHash = SimpleHash()
+
+    val context = object : ThreadLocal<SimpleHash>() {
+        override fun initialValue(): SimpleHash = SimpleHash()
+    }
 
     init {
         if (templatesBaseDir != null) {
@@ -26,7 +29,7 @@ class FreeMarkerHelper(templatesBaseDir: String? = null) : TemplateHelper() {
         if (value is Map<*, *>) {
             value = SimpleHash(value)
         }
-        context.put(key, value)
+        context.get().put(key, value)
     }
 
     override fun putAll(map: MutableMap<String, Any?>) {
@@ -40,7 +43,7 @@ class FreeMarkerHelper(templatesBaseDir: String? = null) : TemplateHelper() {
         try {
             out = BufferedWriter(OutputStreamWriter(FileOutputStream(targetFilename), "UTF-8"))
             val template = configuration.getTemplate(templateFilename, "UTF-8")
-            template.process(context, out)
+            template.process(context.get(), out)
         } catch (e: Exception) {
             throw RuntimeException("parse template file [$templateFilename] error", e)
         } finally {

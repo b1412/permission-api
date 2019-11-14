@@ -15,14 +15,10 @@ data class CodeProject(
 
         var tasks: List<Task> = listOf()
 ) {
-    fun generate(): List<Pair<Task, List<String>>> {
-
-        return tasks
-                //   .parallelStream()
-                .map {
-                    TaskService.processTask(this, it)
-                }
-
+    fun generate() {
+        tasks.parallelStream().map {
+            TaskService.processTask(this, it)
+        }
     }
 }
 
