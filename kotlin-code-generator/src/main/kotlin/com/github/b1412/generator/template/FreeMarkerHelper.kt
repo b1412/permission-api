@@ -9,7 +9,7 @@ import java.io.*
 
 
 class FreeMarkerHelper(templatesBaseDir: String? = null) : TemplateHelper() {
-    protected var configuration: Configuration = Configuration(Configuration.VERSION_2_3_29)
+    private var configuration: Configuration = Configuration(Configuration.VERSION_2_3_29)
 
     val context = object : ThreadLocal<SimpleHash>() {
         override fun initialValue(): SimpleHash = SimpleHash()
