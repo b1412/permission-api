@@ -17,7 +17,7 @@ data class CodeProject(
         var tasks: List<Task> = listOf()
 ) {
     fun generate() {
-        tasks.parallelStream().map {
+        tasks.parallelStream().forEach {
             TaskService.processTask(this, it)
         }
     }
