@@ -1,10 +1,14 @@
 package com.github.b1412.cannon.dao.base
 
+import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.jpa.JpaUtil
+import com.github.b1412.cannon.service.rule.SecurityFilter
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
+import org.springframework.security.core.context.SecurityContextHolder
 import java.io.Serializable
 import javax.persistence.EntityManager
 
@@ -13,6 +17,7 @@ class BaseDaoImpl<T, ID : Serializable>(
         entityInformation: JpaEntityInformation<T, ID>,
         val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation.javaType, entityManager), BaseDao<T, ID> {
+
 
     override fun searchByKeyword(keyword: String, fields: String): List<T> {
         val cb = entityManager.criteriaBuilder
@@ -43,5 +48,11 @@ class BaseDaoImpl<T, ID : Serializable>(
 
     companion object {
         private val log = LoggerFactory.getLogger(BaseDaoImpl::class.java)
+    }
+
+    override fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>): List<T> {
+        val user = SecurityContextHolder.getContext().authentication.principal as User
+        println(user.grantedAuthorities)
+        return searchByFilter(params)
     }
 }
