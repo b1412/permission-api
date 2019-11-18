@@ -6,9 +6,9 @@ import com.github.b1412.cannon.dao.UserDao
 import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.entity.RolePermission
 import com.github.b1412.cannon.entity.User
+import com.github.b1412.cannon.service.base.BaseService
 import com.github.b1412.security.ApplicationProperties
 import com.github.b1412.security.TokenBasedAuthentication
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -28,8 +28,6 @@ import javax.persistence.EntityManager
 class UserService(
         @Autowired
         val userDao: UserDao,
-        @Autowired
-        val applicationProperties: ApplicationProperties,
         @Value("\${spring.application.name}")
         val application: String,
 
@@ -37,9 +35,7 @@ class UserService(
         val cacheClient: CacheClient,
         @Autowired
         val entityManager: EntityManager
-)  {
-
-    val log = LoggerFactory.getLogger(UserService::class.java)!!
+) : BaseService<User, Long>(dao = userDao) {
 
     @Transactional
     fun getUserWithPermissions(username: String, clientId: String): User {
@@ -64,14 +60,6 @@ class UserService(
         user.grantedAuthorities = grantedAuthorities
         return user
     }
-
-    fun getEmails(user: User): List<String> {
-        return user.toOption()
-                .flatMap { it.email.toOption() }
-                .map { it.split(",") }
-                .getOrElse { (emptyList()) }
-    }
-
 
     @Transactional
     fun loadAuthenticationByClientId(clientId: String): Option<Authentication> {

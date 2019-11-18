@@ -9,21 +9,18 @@ import org.springframework.stereotype.Component
 import java.io.Serializable
 
 @Component
-abstract class BaseService<T, ID : Serializable> {
-    @Autowired
-    lateinit var baseDao: BaseDao<T, ID>
+abstract class BaseService<T, ID : Serializable>(
+        @Autowired
+        private val dao: BaseDao<T, ID>
+) : BaseDao<T, ID> by dao {
 
     @Autowired
     lateinit var securityFilter: SecurityFilter
 
 
-    fun findByFilter(filter: Map<String, String>): List<T> {
-        return baseDao.searchByFilter(filter)
-    }
-
     fun findBySecurity(method: String, requestURI: String, params: Map<String, String>, pageable: Pageable): List<T> {
         val securityFilters = securityFilter.query(method, requestURI)
-        return baseDao.searchByFilter(params + securityFilters)
+        return dao.searchByFilter(params + securityFilters)
     }
 
 

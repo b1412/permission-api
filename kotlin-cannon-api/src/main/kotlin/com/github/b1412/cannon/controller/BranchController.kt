@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest
 class BranchController(
         val branchDao: BranchDao
 ) {
-    @GetMapping
-    fun list(@RequestParam filter: Map<String, String>, request: HttpServletRequest) =
-            branchDao.searchBySecurity(request.method, request.requestURI, filter)
+//    @GetMapping
+//    fun list(@RequestParam filter: Map<String, String>, request: HttpServletRequest) =
+//            branchDao.searchBySecurity(request.method, request.requestURI, filter)
 }

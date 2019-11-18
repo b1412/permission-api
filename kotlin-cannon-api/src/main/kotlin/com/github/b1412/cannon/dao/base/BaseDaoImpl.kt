@@ -7,12 +7,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
-import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Component
 import java.io.Serializable
 import javax.persistence.EntityManager
 
-@NoRepositoryBean
+@Component
 class BaseDaoImpl<T, ID : Serializable>(
         entityInformation: JpaEntityInformation<T, ID>,
         val entityManager: EntityManager
@@ -48,11 +48,5 @@ class BaseDaoImpl<T, ID : Serializable>(
 
     companion object {
         private val log = LoggerFactory.getLogger(BaseDaoImpl::class.java)
-    }
-
-    override fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>): List<T> {
-        val user = SecurityContextHolder.getContext().authentication.principal as User
-        println(user.grantedAuthorities)
-        return searchByFilter(params)
     }
 }

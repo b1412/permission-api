@@ -5,6 +5,7 @@ import arrow.core.toOption
 import com.github.b1412.cannon.dao.UserDao
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.exceptions.ResultNotFoundException
+import com.github.b1412.cannon.service.UserService
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.ResponseEntity
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/user")
 class UserController(
-        val userDao: UserDao
+        val userDao: UserDao,
+        val userService: UserService
 ) {
 
     @GetMapping
-    fun list(@RequestParam filter: Map<String, String>) = userDao.searchByFilter(filter)
+    fun list(@RequestParam filter: Map<String, String>) = userService.searchByFilter(filter)
 
 
     @GetMapping("{id}")
