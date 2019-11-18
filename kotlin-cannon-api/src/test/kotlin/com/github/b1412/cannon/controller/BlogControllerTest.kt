@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [BlogController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
+@ContextConfiguration(classes = [BranchController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
 @WebMvcTest
 class BlogControllerTest {
 

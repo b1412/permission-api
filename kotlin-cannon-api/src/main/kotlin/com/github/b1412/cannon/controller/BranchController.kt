@@ -1,18 +1,57 @@
 package com.github.b1412.cannon.controller
 
+import arrow.core.Try
+import arrow.core.toOption
+import com.github.b1412.cannon.entity.Blog
+import com.github.b1412.cannon.entity.Branch
+import com.github.b1412.cannon.exceptions.ResultNotFoundException
 import com.github.b1412.cannon.service.BranchService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/branch")
+@RequestMapping("/v1/branch")
 class BranchController(
-        val branchDao: BranchService
+        val branchService: BranchService
 ) {
+
     @GetMapping
-    fun list(@RequestParam filter: Map<String, String>, request: HttpServletRequest) =
-            branchDao.searchBySecurity(request.method, request.requestURI, filter)
+    fun list(): List<Branch> = branchService.findAll()
+
+    @GetMapping("{id}")
+    fun findOne(@PathVariable id: Long, req: HttpServletRequest): Branch {
+        return branchService.findByIdOrNull(id)
+                .toOption()
+                .fold(
+                        { throw ResultNotFoundException() },
+                        { it }
+                )
+    }
+
+    @PostMapping
+    fun saveOne(@RequestBody input: Branch) = branchService.save(input)
+
+    @PutMapping("{id}")
+    fun updateOne(@PathVariable id: Long, @RequestBody input: Blog): Branch {
+        val persisted = branchService.findByIdOrNull(id)
+        persisted.toOption()
+                .fold(
+                        { throw ResultNotFoundException() },
+                        {
+                            branchService.save(it)
+                            return it
+                        }
+                )
+    }
+
+    @DeleteMapping("{id}")
+    fun deleteOne(@PathVariable id: Long): ResponseEntity<Branch> {
+        return Try { branchService.deleteById(id) }
+                .fold(
+                        { throw ResultNotFoundException() },
+                        { ResponseEntity.noContent().build<Branch>() }
+                )
+    }
 }

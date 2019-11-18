@@ -39,9 +39,13 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         val response = webRequest.getNativeResponse(HttpServletResponse::class.java)!!
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
 
-        val root = request.requestURI
+        var root = request.requestURI
         val embedded = request.getParameter("embedded")
-        val clazzName = BaseEntity::class.java.`package`.name + "." + root.substring(1).substringBefore("/").capitalize()
+        if(root.startsWith("/v1")){
+            root = root.substringAfter("/v1")
+        }
+        val endpoint = root.substring(1).substringBefore("/")
+        val clazzName = BaseEntity::class.java.`package`.name + "." + endpoint.capitalize()
         try {
             Class.forName(clazzName)
         } catch (ex: Exception) {
