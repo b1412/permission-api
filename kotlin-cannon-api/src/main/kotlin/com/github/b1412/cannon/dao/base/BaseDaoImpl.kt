@@ -1,13 +1,9 @@
 package com.github.b1412.cannon.dao.base
 
-import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.jpa.JpaUtil
-import com.github.b1412.cannon.service.rule.SecurityFilter
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.repository.support.JpaEntityInformation
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import java.io.Serializable
 import javax.persistence.EntityManager

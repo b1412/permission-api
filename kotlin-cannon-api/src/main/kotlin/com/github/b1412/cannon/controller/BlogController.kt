@@ -5,12 +5,9 @@ import arrow.core.toOption
 import com.github.b1412.cannon.dao.BlogDao
 import com.github.b1412.cannon.entity.Blog
 import com.github.b1412.cannon.exceptions.ResultNotFoundException
-
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import javax.servlet.http.HttpServletRequest
 
 @RestController

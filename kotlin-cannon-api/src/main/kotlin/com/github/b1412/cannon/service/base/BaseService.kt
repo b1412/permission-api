@@ -10,7 +10,6 @@ import java.io.Serializable
 
 @Component
 abstract class BaseService<T, ID : Serializable>(
-        @Autowired
         private val dao: BaseDao<T, ID>
 ) : BaseDao<T, ID> by dao {
 
@@ -18,7 +17,7 @@ abstract class BaseService<T, ID : Serializable>(
     lateinit var securityFilter: SecurityFilter
 
 
-    fun findBySecurity(method: String, requestURI: String, params: Map<String, String>, pageable: Pageable): List<T> {
+    fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>): List<T> {
         val securityFilters = securityFilter.query(method, requestURI)
         return dao.searchByFilter(params + securityFilters)
     }

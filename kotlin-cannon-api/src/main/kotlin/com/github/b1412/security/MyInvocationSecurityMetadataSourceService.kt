@@ -3,13 +3,11 @@ package com.github.b1412.security
 import arrow.core.None
 import arrow.core.Some
 import arrow.core.extensions.list.foldable.firstOption
-import arrow.core.extensions.option.foldable.get
 import com.github.b1412.cache.CacheClient
 import com.github.b1412.cannon.dao.PermissionDao
 import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.entity.RolePermission
 import com.github.b1412.cannon.entity.User
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.ConfigAttribute
 import org.springframework.security.access.SecurityConfig
@@ -19,6 +17,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 import java.util.regex.Pattern
 import javax.persistence.EntityManager
+import kotlin.collections.Collection
+import kotlin.collections.List
+import kotlin.collections.any
+import kotlin.collections.set
 
 @Service
 class MyInvocationSecurityMetadataSourceService(
@@ -54,8 +56,8 @@ class MyInvocationSecurityMetadataSourceService(
             val all = permissionDao.findAll()
             all
         }!!.firstOption { (_, _, _, authUris) ->
-                    authUris.split(";").any { uriPatten -> Pattern.matches(uriPatten, request.requestURI) }
-                }
+            authUris.split(";").any { uriPatten -> Pattern.matches(uriPatten, request.requestURI) }
+        }
 
         return when (permissionOpt) {
             is Some -> {
