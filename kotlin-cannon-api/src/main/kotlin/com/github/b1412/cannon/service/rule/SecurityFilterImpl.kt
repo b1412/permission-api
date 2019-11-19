@@ -4,7 +4,9 @@ import arrow.core.*
 import arrow.core.extensions.list.foldable.firstOption
 import com.github.b1412.cannon.entity.Rule
 import com.github.b1412.cannon.entity.User
+import com.github.b1412.cannon.service.SecurityFilter
 import com.github.b1412.cannon.service.rule.access.AccessRule
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.context.SecurityContextHolder
@@ -42,14 +44,23 @@ class SecurityFilterImpl : SecurityFilter {
             is None -> throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
             is Some -> {
                 val permission = permissionOpt.t!!
-                role.rolePermissions
+                val rules = role.rolePermissions
                         .firstOption { it.permission!!.id == permission.id }
                         .map { it.rules }
                         .getOrElse { listOf<Rule>() }
-                        .map {
-                            findAccessRules(it.name).map { it.exec(permission) }.getOrElse { mapOf() }
-                        }.reduce { acc, map -> acc + map }
+                if (rules.isEmpty()) {
+                    logger.warn("no rule found")
+                    throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
+                }
+                rules.map {
+                    findAccessRules(it.name).map { it.exec(permission) }.getOrElse { mapOf() }
+                }.reduce { acc, map -> acc + map }
             }
         }
     }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(SecurityFilterImpl::class.java)
+    }
+
 }

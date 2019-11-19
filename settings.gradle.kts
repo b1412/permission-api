@@ -16,7 +16,7 @@ rootProject.name = "kotlin-cannon"
 include(
         "kotlin-code-generator",
         "kotlin-cannon-base",
+        "kotlin-cannon-api",
         "kotlin-cannon-generated",
-        "kotlin-cannon-generator",
-        "kotlin-cannon-api"
+        "kotlin-cannon-generator"
 )

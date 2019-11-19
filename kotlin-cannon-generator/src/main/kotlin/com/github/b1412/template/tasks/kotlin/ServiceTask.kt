@@ -1,6 +1,6 @@
 package com.github.b1412.template.tasks.kotlin
 
-import com.github.b1412.template.MultipleTask
+import com.github.b1412.generator.task.MultipleTask
 import com.github.b1412.template.TaskConstants
 
 

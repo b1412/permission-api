@@ -18,7 +18,8 @@ class BranchController(
 ) {
 
     @GetMapping
-    fun list(): List<Branch> = branchService.findAll()
+    fun list(@RequestParam filter: Map<String, String>, req: HttpServletRequest): List<Branch> =
+            branchService.searchBySecurity(req.method, req.requestURI, filter)
 
     @GetMapping("{id}")
     fun findOne(@PathVariable id: Long, req: HttpServletRequest): Branch {

@@ -6,5 +6,3 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface BranchDao : BaseDao<Branch, Long>
-
-

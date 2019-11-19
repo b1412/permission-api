@@ -19,8 +19,6 @@ fun main() {
     TaskConstants.init()
     val tasks = listOf(
             BaseControllerTask(),
-            BaseDaoTask(),
-            BaseServiceTask(),
             ControllerTask(),
             DaoTask(),
             ServiceTask()
