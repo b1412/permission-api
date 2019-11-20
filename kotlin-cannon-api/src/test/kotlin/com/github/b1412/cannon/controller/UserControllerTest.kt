@@ -1,18 +1,17 @@
 package com.github.b1412.cannon.controller
 
 
+import com.github.b1412.cannon.config.TestSecurityConfig
 import com.github.b1412.cannon.config.WebConfig
-import com.github.b1412.cannon.dao.UserDao
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.exceptions.GlobalExceptionHandler
 import com.github.b1412.cannon.json.JsonReturnHandler
+import com.github.b1412.cannon.service.UserService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import org.hamcrest.Matchers
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -27,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [UserController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
+@ContextConfiguration(classes = [TestSecurityConfig::class, UserController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
 @WebMvcTest
 class UserControllerTest {
 
@@ -35,7 +34,7 @@ class UserControllerTest {
     lateinit var mockMvc: MockMvc
 
     @MockkBean
-    lateinit var userDao: UserDao
+    lateinit var userService: UserService
 
 
     @Test
@@ -54,9 +53,9 @@ class UserControllerTest {
                 notes = "notes of user B"
         ).apply { this.id = 2 }
         val mockedUsers = listOf(userA, userB)
-        every { userDao.searchByFilter(any()) } returns mockedUsers
+        every { userService.searchBySecurity(any(), any(), any()) } returns mockedUsers
         // when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/user"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/user"))
         // then
         resultActions
                 .andExpect(status().isOk)
@@ -81,9 +80,9 @@ class UserControllerTest {
                 email = "email of user",
                 notes = "notes of user"
         ).apply { this.id = 1 }
-        every { userDao.findByIdOrNull(1) } returns user
+        every { userService.findByIdOrNull(1) } returns user
         // when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/user/1"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/1"))
         // then
         resultActions
                 .andExpect(status().isOk)
@@ -97,9 +96,9 @@ class UserControllerTest {
     @Test
     fun `get user return empty body with 404 when id doesn't exist`() {
         //given
-        every { userDao.findByIdOrNull(1) } returns null
+        every { userService.findByIdOrNull(1) } returns null
         //when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/user/1"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/1"))
         //then
         resultActions.andExpect(status().isNotFound)
     }
@@ -113,7 +112,7 @@ class UserControllerTest {
                 email = "email of user",
                 notes = "notes of user"
         ).apply { this.id = 1 }
-        every { userDao.save(any<User>()) } returns user
+        every { userService.save(any<User>()) } returns user
         val body = """
   {
     "login": "login of user",
@@ -142,7 +141,7 @@ class UserControllerTest {
     @Test
     fun `update user return empty body with 404 when id doesn't exist`() {
         //given
-        every { userDao.findByIdOrNull(1) } returns null
+        every { userService.findByIdOrNull(1) } returns null
         val body = """
   {
     "login": "login of user",
@@ -178,8 +177,8 @@ class UserControllerTest {
                 notes = "new notes of user"
         ).apply { this.id = 1 }
 
-        every { userDao.findByIdOrNull(1) } returns persistedUser
-        every { userDao.save(any<User>()) } returns updatedUser
+        every { userService.findByIdOrNull(1) } returns persistedUser
+        every { userService.save(any<User>()) } returns updatedUser
         val body = """
   {
     "login": "new login of user",
@@ -190,7 +189,7 @@ class UserControllerTest {
         """
         // when
         val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.put("/user/1")
+                MockMvcRequestBuilders.put("/v1/user/1")
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON)
         )
@@ -207,10 +206,10 @@ class UserControllerTest {
     @Test
     fun `return 204 when delete an existing user`() {
         // given
-        every { userDao.deleteById(1) } just Runs
+        every { userService.deleteById(1) } just Runs
         //when
         val resultActions =
-                mockMvc.perform(MockMvcRequestBuilders.delete("/user/1"))
+                mockMvc.perform(MockMvcRequestBuilders.delete("/v1/user/1"))
         // then
         resultActions.andExpect(status().isNoContent)
     }
@@ -219,9 +218,9 @@ class UserControllerTest {
     @Test
     fun `return 404 when delete an non-existing user`() {
         //given
-        every { userDao.deleteById(1) } throws EmptyResultDataAccessException(1)
+        every { userService.deleteById(1) } throws EmptyResultDataAccessException(1)
         //when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/user/1"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/v1/user/1"))
         //then
         resultActions.andExpect(status().isNotFound)
     }

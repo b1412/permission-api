@@ -1,6 +1,7 @@
 package com.github.b1412.cannon.service.rule
 
 import arrow.core.*
+import arrow.core.extensions.list.foldable.find
 import arrow.core.extensions.list.foldable.firstOption
 import com.github.b1412.cannon.entity.Rule
 import com.github.b1412.cannon.entity.User
@@ -33,12 +34,15 @@ class SecurityFilterImpl : SecurityFilter {
 
     override fun query(method: String, requestURI: String): Map<String, String> {
         val role = currentUser().role!!
-        val permissionOpt = role
+        val permissions = role
                 .rolePermissions
                 .map { it.permission }
-                .firstOption {
-                    it!!.authUris.split(";").any { uriPatten -> Pattern.matches(uriPatten, requestURI) }
-                }
+        val permissionOpt = permissions
+                .find {
+                    it!!.authUris.split(";").any { uriPatten ->
+                        Pattern.matches(uriPatten, requestURI)
+                    }
+                }.filter { it!!.httpMethod == method }
 
         return when (permissionOpt) {
             is None -> throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))

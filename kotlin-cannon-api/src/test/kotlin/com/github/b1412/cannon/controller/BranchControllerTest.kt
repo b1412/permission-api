@@ -1,6 +1,7 @@
 package com.github.b1412.cannon.controller
 
 
+import com.github.b1412.cannon.config.TestSecurityConfig
 import com.github.b1412.cannon.config.WebConfig
 import com.github.b1412.cannon.dao.BranchDao
 import com.github.b1412.cannon.entity.Branch
@@ -8,6 +9,7 @@ import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.exceptions.GlobalExceptionHandler
 import com.github.b1412.cannon.json.JsonReturnHandler
+import com.github.b1412.cannon.service.BranchService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.hamcrest.Matchers.`is`
@@ -24,14 +26,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [BranchController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
+@ContextConfiguration(classes = [TestSecurityConfig::class,BranchController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
 class BranchControllerTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
 
     @MockkBean
-    lateinit var branchDao: BranchDao
+    lateinit var branchDao: BranchService
 
     @BeforeEach
     fun setup() {
@@ -45,13 +47,13 @@ class BranchControllerTest {
         user1.branch = branchA
         user2.branch = branchB
         val mockedBranches = listOf(branchA, branchB)
-        every { branchDao.searchByFilter(any()) } returns mockedBranches
+        every { branchDao.searchBySecurity(any(),any(),any()) } returns mockedBranches
     }
 
     @Test
     fun `will not return embedded fields by default`() {
         // when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/branch"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/branch"))
         // then
         resultActions
                 .andExpect(status().isOk)
@@ -63,7 +65,7 @@ class BranchControllerTest {
     @Test
     fun `will return embedded`() {
         // when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/branch?embedded=users"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/branch?embedded=users"))
         // then
         resultActions
                 .andExpect(status().isOk)
@@ -75,7 +77,7 @@ class BranchControllerTest {
     @Test
     fun `will return 2 embedded`() {
         // when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/branch?embedded=users,users.role"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/branch?embedded=users,users.role"))
         // then
         resultActions
                 .andExpect(status().isOk)
@@ -88,7 +90,7 @@ class BranchControllerTest {
     @Test
     fun `will return 3 embedded`() {
         // when
-        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/branch?embedded=users,users.role,users.role.rolePermissions"))
+        val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/branch?embedded=users,users.role,users.role.rolePermissions"))
         // then
         println(resultActions.andReturn().response.contentAsString)
         resultActions

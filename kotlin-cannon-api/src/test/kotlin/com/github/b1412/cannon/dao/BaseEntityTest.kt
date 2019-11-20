@@ -1,6 +1,6 @@
 package com.github.b1412.cannon.dao
 
-import com.github.b1412.cannon.entity.Blog
+import com.github.b1412.cannon.entity.User
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,7 +12,7 @@ import javax.persistence.EntityManager
 class BaseEntityTest : AbstractJpaTest() {
 
     @Autowired
-    lateinit var blogDao: BlogDao
+    lateinit var blogDao: UserDao
     @Autowired
     lateinit var entityManager: EntityManager
 
@@ -21,7 +21,7 @@ class BaseEntityTest : AbstractJpaTest() {
     fun setup() {
         println(">> Before each")
         //given
-        val blog = Blog(title = "Spring Framework 4.0 goes GA")
+        val blog = User(login = "Spring Framework 4.0 goes GA",address = "",email = "",notes = "")
         blogDao.save(blog)
     }
 
@@ -46,7 +46,7 @@ class BaseEntityTest : AbstractJpaTest() {
         val beforeCreateAt = found.createdAt
         val beforeUpdatedAt = found.updatedAt
         val beforeVersion = found.version
-        found.title = "updated title"
+        found.login = "updated title"
         blogDao.save(found)
         entityManager.flush()
         // then
