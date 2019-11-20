@@ -61,7 +61,7 @@ dependencies {
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("org.codehaus.groovy:groovy-jsr223:2.4.3")
 
-    
+
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")

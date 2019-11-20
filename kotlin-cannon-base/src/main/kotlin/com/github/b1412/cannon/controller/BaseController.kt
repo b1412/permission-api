@@ -16,13 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import java.io.Serializable
-import javax.persistence.EntityManager
 import javax.servlet.http.HttpServletRequest
 
 abstract class BaseController<T, ID : Serializable> {
 
-    @Autowired
-    lateinit var entityManager: EntityManager
+
     @Autowired
     lateinit var baseService: BaseService<T, ID>
 

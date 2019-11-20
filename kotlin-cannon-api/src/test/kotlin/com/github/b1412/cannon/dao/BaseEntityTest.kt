@@ -21,7 +21,7 @@ class BaseEntityTest : AbstractJpaTest() {
     fun setup() {
         println(">> Before each")
         //given
-        val blog = User(login = "Spring Framework 4.0 goes GA",address = "",email = "",notes = "")
+        val blog = User(login = "Spring Framework 4.0 goes GA", address = "", email = "", notes = "")
         blogDao.save(blog)
     }
 

@@ -3,7 +3,6 @@ package com.github.b1412.cannon.controller
 
 import com.github.b1412.cannon.config.TestSecurityConfig
 import com.github.b1412.cannon.config.WebConfig
-import com.github.b1412.cannon.dao.BranchDao
 import com.github.b1412.cannon.entity.Branch
 import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.entity.User
@@ -26,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [TestSecurityConfig::class,BranchController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
+@ContextConfiguration(classes = [TestSecurityConfig::class, BranchController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
 class BranchControllerTest {
 
     @Autowired
@@ -47,7 +46,7 @@ class BranchControllerTest {
         user1.branch = branchA
         user2.branch = branchB
         val mockedBranches = listOf(branchA, branchB)
-        every { branchDao.searchBySecurity(any(),any(),any()) } returns mockedBranches
+        every { branchDao.searchBySecurity(any(), any(), any()) } returns mockedBranches
     }
 
     @Test

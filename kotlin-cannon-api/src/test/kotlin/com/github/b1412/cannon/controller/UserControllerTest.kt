@@ -124,7 +124,7 @@ class UserControllerTest {
         // when
         val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/user")
+                        .post("/v1/user")
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON)
         )

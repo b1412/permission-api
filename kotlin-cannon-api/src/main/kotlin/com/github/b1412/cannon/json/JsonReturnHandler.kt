@@ -41,7 +41,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
 
         var root = request.requestURI
         val embedded = request.getParameter("embedded")
-        if(root.startsWith("/v1")){
+        if (root.startsWith("/v1")) {
             root = root.substringAfter("/v1")
         }
         val endpoint = root.substring(1).substringBefore("/")
