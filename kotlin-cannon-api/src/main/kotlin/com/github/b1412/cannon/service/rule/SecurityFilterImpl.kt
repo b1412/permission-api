@@ -1,8 +1,10 @@
 package com.github.b1412.cannon.service.rule
 
-import arrow.core.*
+import arrow.core.Option
 import arrow.core.extensions.list.foldable.find
 import arrow.core.extensions.list.foldable.firstOption
+import arrow.core.getOrElse
+import arrow.core.mapOf
 import com.github.b1412.cannon.entity.Rule
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.service.SecurityFilter
@@ -24,7 +26,7 @@ class SecurityFilterImpl : SecurityFilter {
 
     fun findAccessRules(ruleName: String): Option<AccessRule> {
 
-        return accessRules.firstOption { it.ruleName == ruleName }
+        return accessRules.find { it.ruleName == ruleName }
     }
 
     override fun currentUser(): User {
@@ -33,21 +35,22 @@ class SecurityFilterImpl : SecurityFilter {
     }
 
     override fun query(method: String, requestURI: String): Map<String, String> {
+        logger.debug(method)
+        logger.debug(requestURI)
         val role = currentUser().role!!
         val permissions = role
                 .rolePermissions
                 .map { it.permission }
-        val permissionOpt = permissions
-                .find {
+                .filter {
                     it!!.authUris.split(";").any { uriPatten ->
                         Pattern.matches(uriPatten, requestURI)
                     }
                 }.filter { it!!.httpMethod == method }
 
-        return when (permissionOpt) {
-            is None -> throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
-            is Some -> {
-                val permission = permissionOpt.t!!
+        return when (permissions.size) {
+            0 -> throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
+            1 -> {
+                val permission = permissions.first()!!
                 val rules = role.rolePermissions
                         .firstOption { it.permission!!.id == permission.id }
                         .map { it.rules }
@@ -56,11 +59,17 @@ class SecurityFilterImpl : SecurityFilter {
                     logger.warn("no rule found")
                     throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
                 }
-                rules.map {
-                    findAccessRules(it.name).map { it.exec(permission) }.getOrElse { mapOf() }
+                rules.map { rule ->
+                    val accessRule = findAccessRules(rule.name)
+                    logger.debug("access rule {0}", accessRule)
+                    accessRule.map { it.exec(permission) }.getOrElse { mapOf() }
                 }.reduce { acc, map -> acc + map }
             }
+            else -> {
+                throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
+            }
         }
+
     }
 
     companion object {

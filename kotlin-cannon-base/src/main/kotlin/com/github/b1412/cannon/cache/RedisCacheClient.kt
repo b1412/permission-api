@@ -1,4 +1,4 @@
-package com.github.b1412.cache
+package com.github.b1412.cannon.cache
 
 import arrow.core.Option
 import arrow.core.Try

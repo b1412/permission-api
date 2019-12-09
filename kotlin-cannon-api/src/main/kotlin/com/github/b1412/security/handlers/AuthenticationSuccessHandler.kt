@@ -2,7 +2,7 @@ package com.github.b1412.security.handlers
 
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.b1412.cache.CacheClient
+import com.github.b1412.cannon.cache.CacheClient
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.service.UserService
 import com.github.b1412.security.ApplicationProperties

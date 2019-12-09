@@ -37,9 +37,7 @@ class TokenAuthenticationFilter(
 
 ) : OncePerRequestFilter() {
 
-    val log = LoggerFactory.getLogger(TokenAuthenticationFilter::class.java)!!
     public override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        val start = Instant.now().epochSecond
         val wrapRequest = AuthenticationRequestWrapper(request)
         var pathsToSkip = applicationProperties.jwt.anonymousUrls.toOption()
                 .map { it.split(",") }

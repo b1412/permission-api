@@ -3,7 +3,7 @@ package com.github.b1412.security
 import arrow.core.None
 import arrow.core.Some
 import arrow.core.extensions.list.foldable.firstOption
-import com.github.b1412.cache.CacheClient
+import com.github.b1412.cannon.cache.CacheClient
 import com.github.b1412.cannon.dao.PermissionDao
 import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.entity.RolePermission

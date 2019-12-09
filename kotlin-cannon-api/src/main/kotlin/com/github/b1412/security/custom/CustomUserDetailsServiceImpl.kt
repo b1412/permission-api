@@ -1,7 +1,7 @@
 package com.github.b1412.security.custom
 
 
-import com.github.b1412.cache.CacheClient
+import com.github.b1412.cannon.cache.CacheClient
 import com.github.b1412.cannon.service.UserService
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
@@ -29,6 +29,7 @@ class CustomUserDetailsServiceImpl(
             throw UsernameNotFoundException("Username and clientId must be provided")
         }
         log.info("clientId {},username {}", clientId, username)
-        return cacheClient.get("$application-$username-$clientId".toLowerCase()) { userService.getUserWithPermissions(username, clientId) }!!
+      //  return cacheClient.get("$application-$username-$clientId".toLowerCase()) { userService.getUserWithPermissions(username, clientId) }!!
+        return userService.getUserWithPermissions(username, clientId)
     }
 }

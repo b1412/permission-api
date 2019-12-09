@@ -31,21 +31,17 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
 
 
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
-        return returnType.annotatedElement.declaredAnnotations.any { it is GetMapping }
+        return returnType.annotatedElement.declaredAnnotations.any { it is GraphRender }
     }
 
     override fun handleReturnValue(returnValue: Any?, returnType: MethodParameter, mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
         mavContainer.isRequestHandled = true
         val response = webRequest.getNativeResponse(HttpServletResponse::class.java)!!
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
-
-        var root = request.requestURI
         val embedded = request.getParameter("embedded")
-        if (root.startsWith("/v1")) {
-            root = root.substringAfter("/v1")
-        }
-        val endpoint = root.substring(1).substringBefore("/")
-        val clazzName = BaseEntity::class.java.`package`.name + "." + endpoint.capitalize()
+        val endpoint = returnType.annotatedElement.declaredAnnotations.first { it is GraphRender }!! as GraphRender
+
+        val clazzName = BaseEntity::class.java.`package`.name + "." + endpoint.entity.capitalize()
         try {
             Class.forName(clazzName)
         } catch (ex: Exception) {

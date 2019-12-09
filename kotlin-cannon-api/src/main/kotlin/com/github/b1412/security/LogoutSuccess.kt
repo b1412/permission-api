@@ -1,7 +1,7 @@
 package com.github.b1412.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.b1412.cache.CacheClient
+import com.github.b1412.cannon.cache.CacheClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
