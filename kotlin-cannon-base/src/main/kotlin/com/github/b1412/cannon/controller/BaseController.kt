@@ -2,6 +2,7 @@ package com.github.b1412.cannon.controller
 
 import arrow.core.Try
 import arrow.core.toOption
+import com.github.b1412.cannon.entity.BaseEntity
 import com.github.b1412.cannon.entity.Branch
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.exceptions.ResultNotFoundException
@@ -45,6 +46,7 @@ abstract class BaseController<T, ID : Serializable> {
 
 
     open fun saveOne(@Validated @RequestBody input: T, request: HttpServletRequest): ResponseEntity<*> {
+        baseService.syncSeleceOneFromDb(input as BaseEntity)
         return ResponseEntity.ok(baseService.save(input))
     }
 

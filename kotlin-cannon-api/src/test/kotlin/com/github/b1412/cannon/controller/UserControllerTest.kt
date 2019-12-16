@@ -11,6 +11,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
+import io.mockk.runs
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -26,7 +28,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = [TestSecurityConfig::class, UserController::class, WebConfig::class, JsonReturnHandler::class, GlobalExceptionHandler::class])
+@ContextConfiguration(classes = [
+    TestSecurityConfig::class,
+    UserController::class,
+    WebConfig::class,
+    JsonReturnHandler::class,
+    GlobalExceptionHandler::class,
+    BCryptPasswordEncoder::class
+])
 @WebMvcTest
 class UserControllerTest {
 
@@ -113,8 +122,11 @@ class UserControllerTest {
                 notes = "notes of user"
         ).apply { this.id = 1 }
         every { userService.save(any<User>()) } returns user
+        every { userService.syncSeleceOneFromDb(any<User>()) } just runs
         val body = """
   {
+    "password":"password",
+    "confirmPassword":"password",
     "login": "login of user",
     "address": "address of user",
     "email": "email of user",

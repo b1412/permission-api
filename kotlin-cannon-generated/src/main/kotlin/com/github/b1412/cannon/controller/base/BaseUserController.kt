@@ -1,26 +1,18 @@
 package com.github.b1412.cannon.controller.base
 
 import com.github.b1412.cannon.controller.BaseController
-import com.github.b1412.cannon.controller.base.BaseUserController
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import com.github.b1412.cannon.entity.User
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import com.github.b1412.cannon.json.GraphRender
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.RequestParam
 
 
-abstract class BaseUserController(
+abstract class BaseUserController : BaseController<User, Long>() {
 
-) : BaseController<User, Long>() {
-
+    @GraphRender("user")
     @GetMapping
     override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<User> {
         return super.page(request, filter)
@@ -33,12 +25,14 @@ abstract class BaseUserController(
     }
 
     @Transactional
+    @GraphRender("user")
     @PostMapping
     override fun saveOne(@Validated @RequestBody input: User, request: HttpServletRequest): ResponseEntity<*> {
         return super.saveOne(input, request)
 
     }
 
+    @GraphRender("user")
     @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: User, request: HttpServletRequest): ResponseEntity<*> {
@@ -47,7 +41,7 @@ abstract class BaseUserController(
 
     @DeleteMapping("{id}")
     override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
-        return super.deleteOne(id,request)
-
+        return super.deleteOne(id, request)
     }
+
 }

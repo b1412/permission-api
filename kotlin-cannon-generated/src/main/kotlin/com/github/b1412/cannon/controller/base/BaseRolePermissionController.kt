@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
 
-abstract class BaseRolePermissionController(
-
-) : BaseController<RolePermission, Long>() {
+abstract class BaseRolePermissionController : BaseController<RolePermission, Long>() {
 
     @GetMapping
     override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<RolePermission> {

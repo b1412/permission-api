@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
 
-abstract class BaseRuleController(
-
-) : BaseController<Rule, Long>() {
+abstract class BaseRuleController : BaseController<Rule, Long>() {
 
     @GetMapping
     override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<Rule> {

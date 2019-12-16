@@ -78,7 +78,7 @@ class CustomUserDetailsAuthenticationProvider(private val passwordEncoder: Passw
          * PasswordEncoder#matches(CharSequence, String)}  on when the user is
          * not found to avoid SEC-2056.
          */
-        private val USER_NOT_FOUND_PASSWORD = "userNotFoundPassword"
+        private const val USER_NOT_FOUND_PASSWORD = "userNotFoundPassword"
     }
 
 }

@@ -32,9 +32,7 @@ class UserService(
         val application: String,
 
         @Autowired
-        val cacheClient: CacheClient,
-        @Autowired
-        val entityManager: EntityManager
+        val cacheClient: CacheClient
 ) : BaseService<User, Long>(dao = userDao) {
 
     @Transactional
@@ -50,7 +48,7 @@ class UserService(
 
         val hints = HashMap<String, Any>()
         hints["javax.persistence.fetchgraph"] = graph
-        val userOpt = this.entityManager.find(User::class.java, id, hints).toOption();
+        val userOpt = this.entityManager.find(User::class.java, id, hints).toOption()
         val user = when (userOpt) {
             is Some -> userOpt.t
             None -> throw AccessDeniedException("invalid user information or user is not verified: $username")
@@ -65,7 +63,7 @@ class UserService(
     fun loadAuthenticationByClientId(clientId: String): Option<Authentication> {
         return userDao.findByIdOrNull(clientId.toLong()).toOption()
                 .map {
-                    val user = cacheClient.get("$application-${it.username}-$clientId".toLowerCase()) { getUserWithPermissions(it.username, clientId) }!!
+                    val user = cacheClient.get("$application-${it.username}-$clientId".toLowerCase()) { getUserWithPermissions(it.username!!, clientId) }!!
                     TokenBasedAuthentication(user as UserDetails)
                 }
 

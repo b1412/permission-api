@@ -52,7 +52,7 @@ class SecurityFilterImpl : SecurityFilter {
             1 -> {
                 val permission = permissions.first()!!
                 val rules = role.rolePermissions
-                        .firstOption { it.permission!!.id == permission.id }
+                        .find { it.permission!!.id == permission.id }
                         .map { it.rules }
                         .getOrElse { listOf<Rule>() }
                 if (rules.isEmpty()) {

@@ -32,7 +32,7 @@ class BranchControllerTest {
     lateinit var mockMvc: MockMvc
 
     @MockkBean
-    lateinit var branchDao: BranchService
+    lateinit var branchService: BranchService
 
     @BeforeEach
     fun setup() {
@@ -41,12 +41,12 @@ class BranchControllerTest {
         val role2 = Role(name = "manager").apply { this.id = 2 }
         val user1 = User(login = "login1", address = "address1", email = "email1", notes = "notes1", active = true, role = role1).apply { this.id = 1 }
         val user2 = User(login = "login2", address = "address2", email = "email2", notes = "notes2", active = false, role = role2).apply { this.id = 2 }
-        val branchA = Branch(name = "branchA", number = "1", active = true, users = mutableListOf(user1)).apply { this.id = 1 }
-        val branchB = Branch(name = "branchB", number = "2", active = false, users = mutableListOf(user2)).apply { this.id = 2 }
+        val branchA = Branch(name = "branchA", active = true, users = mutableListOf(user1)).apply { this.id = 1 }
+        val branchB = Branch(name = "branchB", active = false, users = mutableListOf(user2)).apply { this.id = 2 }
         user1.branch = branchA
         user2.branch = branchB
         val mockedBranches = listOf(branchA, branchB)
-        every { branchDao.searchBySecurity(any(), any(), any()) } returns mockedBranches
+        every { branchService.searchBySecurity(any(), any(), any()) } returns mockedBranches
     }
 
     @Test

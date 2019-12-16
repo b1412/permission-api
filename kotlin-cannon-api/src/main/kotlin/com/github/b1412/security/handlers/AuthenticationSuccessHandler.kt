@@ -48,8 +48,8 @@ class AuthenticationSuccessHandler(
         clearAuthenticationAttributes(request)
         val user = authentication.principal as User
 
-        cacheClient.set("$application-${user.username}-${user.clientId}".toLowerCase(), userService.getUserWithPermissions(user.username, user.clientId!!))
-        val jws = tokenHelper.generateToken(user.username, user.clientId!!)
+        cacheClient.set("$application-${user.username}-${user.clientId}".toLowerCase(), userService.getUserWithPermissions(user.username!!, user.clientId!!))
+        val jws = tokenHelper.generateToken(user.username!!, user.clientId!!)
         val jwt = applicationProperties.jwt
         val userTokenState = UserTokenState(
                 access_token = jws,

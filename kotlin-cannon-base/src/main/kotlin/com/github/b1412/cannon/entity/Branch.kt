@@ -6,9 +6,7 @@ import javax.persistence.*
 
 @Entity
 data class Branch(
-        var name: String,
-
-        var number: String,
+        var name: String? = null,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "parent_id")

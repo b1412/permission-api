@@ -8,31 +8,40 @@ import javax.persistence.*
 
 @Entity
 data class User(
-        var login: String,
-        var address: String,
-        var email: String,
-        var notes: String,
-        @OneToOne(fetch = FetchType.LAZY)
+        var login: String? = null,
+        var address: String? = null,
+        var email: String? = null,
+        var notes: String? = null,
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "branch_id")
         var branch: Branch? = null,
+
         @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
         var docs: MutableList<Doc> = mutableListOf(),
+
         @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "role_id")
         var role: Role? = null,
+
         var clientId: String? = null,
         var expiresIn: Long? = null,
 
         @Type(type = "yes_no")
         var active: Boolean? = null,
 
-        private var username: String = "",
+        private var username: String? = null,
 
         private var password: String? = null,
+
+        @Transient
+        var confirmPassword: String? = null,
 
         @Transient
         var grantedAuthorities: MutableList<GrantedAuthority> = mutableListOf()
 
 ) : BaseEntity(), UserDetails, Serializable {
-    override fun getUsername(): String {
+    override fun getUsername(): String? {
         return username
     }
 

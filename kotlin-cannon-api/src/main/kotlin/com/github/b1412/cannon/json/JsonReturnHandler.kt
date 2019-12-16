@@ -8,11 +8,12 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.github.b1412.cannon.entity.BaseEntity
+import org.joor.Reflect
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
@@ -81,9 +82,22 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
                     }
                 }
 
-        val json = objectMapper.writeValueAsString(returnValue)
         response.contentType = MediaType.APPLICATION_JSON_VALUE
-        response.writer.write(json)
+
+
+        when {
+            returnValue is ByteArray -> {
+                println("byte array result")
+            }
+            returnValue!!.javaClass == ResponseEntity::class.java -> {
+                val json: String = objectMapper.writeValueAsString(Reflect.on(returnValue).get<Any>("body"))
+                response.writer.write(json)
+            }
+            else -> {
+                val json: String = objectMapper.writeValueAsString(returnValue)
+                response.writer.write(json)
+            }
+        }
     }
 
     private fun addEmbedded(objectMapper: ObjectMapper, entityClassMap: MutableMap<String, Class<*>>, jsonFilter: JacksonJsonFilter, entityClass: Class<*>, embeddedNode: String) {

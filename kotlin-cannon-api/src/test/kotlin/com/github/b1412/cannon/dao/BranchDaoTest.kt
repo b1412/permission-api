@@ -29,8 +29,8 @@ class BranchDaoTest : AbstractJpaTest() {
         val user2 = User(login = "login2", address = "address2", email = "email2", notes = "notes2", active = false, role = role2)
         userDao.save(user1)
         userDao.save(user2)
-        val branchA = Branch(name = "branchA", number = "1", active = true, users = mutableListOf(user1))
-        val branchB = Branch(name = "branchB", number = "2", active = false, users = mutableListOf(user2))
+        val branchA = Branch(name = "branchA",  active = true, users = mutableListOf(user1))
+        val branchB = Branch(name = "branchB",  active = false, users = mutableListOf(user2))
         user1.branch = branchA
         user2.branch = branchB
         branchDao.save(branchA)

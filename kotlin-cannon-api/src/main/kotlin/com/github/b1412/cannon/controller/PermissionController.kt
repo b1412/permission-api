@@ -1,7 +1,6 @@
 package com.github.b1412.cannon.controller
 
 import com.github.b1412.cannon.controller.base.BasePermissionController
-import com.github.b1412.cannon.json.GraphRender
 import com.github.b1412.cannon.service.SecurityFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
