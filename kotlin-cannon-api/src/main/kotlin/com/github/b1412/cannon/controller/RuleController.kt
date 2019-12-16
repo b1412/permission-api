@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/rule")
-class RuleController(
-
-) : BaseRuleController() {
+class RuleController : BaseRuleController() {
 
 
 }

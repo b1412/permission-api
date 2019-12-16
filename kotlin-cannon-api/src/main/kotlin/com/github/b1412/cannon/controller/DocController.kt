@@ -7,9 +7,4 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/doc")
-class DocController(
-
-) : BaseDocController() {
-
-
-}
+class DocController : BaseDocController()

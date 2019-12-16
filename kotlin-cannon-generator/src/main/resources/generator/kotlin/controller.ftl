@@ -14,10 +14,4 @@ import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/v1/${entity.lowerHyphenName}")
-class ${entity.name}Controller(
-
-) : Base${entity.name}Controller() {
-
-
-
-}
+class ${entity.name}Controller : Base${entity.name}Controller()
