@@ -38,8 +38,7 @@ abstract class BaseService<T, ID : Serializable>(
     }
 
 
-
-     fun syncSeleceOneFromDb(baseEntity: BaseEntity) {
+    fun syncSeleceOneFromDb(baseEntity: BaseEntity) {
         var fields = baseEntity.javaClass.declaredFields.toList()
         if (baseEntity.javaClass.superclass == User::class.java) {
             fields += listOf(*User::class.java.declaredFields)
@@ -53,7 +52,7 @@ abstract class BaseService<T, ID : Serializable>(
                     Reflect.on(any).set(baseEntity::class.java.simpleName.toLowerCase(), baseEntity)
                 } else {
                     val option = getObject(baseEntity, field, type)
-                    when(option){
+                    when (option) {
                         is Some -> Reflect.on(baseEntity).set(field.name, option.t)
                     }
                 }
@@ -100,11 +99,7 @@ abstract class BaseService<T, ID : Serializable>(
                     if (!list.isEmpty()) {
                         Reflect.on(baseEntity).set(field.name, list)
                     }
-                } else {
-
                 }
-
-
             }
         }
     }
