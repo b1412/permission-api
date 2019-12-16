@@ -15,7 +15,7 @@ import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 
-@EnableConfigurationProperties(value = [(ApplicationProperties::class)])
+@EnableConfigurationProperties(value = [ApplicationProperties::class])
 @Component
 class TokenHelper(
         @Autowired

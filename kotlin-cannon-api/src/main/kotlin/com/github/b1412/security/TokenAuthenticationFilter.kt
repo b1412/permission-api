@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
-@EnableConfigurationProperties(value = [(ApplicationProperties::class)])
+@EnableConfigurationProperties(value = [ApplicationProperties::class])
 @Component
 class TokenAuthenticationFilter(
         @Autowired

@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-@EnableConfigurationProperties(value = [(ApplicationProperties::class)])
+@EnableConfigurationProperties(value = [ApplicationProperties::class])
 @Component
 class AuthenticationSuccessHandler(
         @Value("\${spring.application.name}")

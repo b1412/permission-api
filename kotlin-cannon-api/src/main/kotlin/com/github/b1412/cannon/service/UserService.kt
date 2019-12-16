@@ -24,7 +24,7 @@ import javax.persistence.EntityManager
 
 
 @Service
-@EnableConfigurationProperties(value = [(ApplicationProperties::class)])
+@EnableConfigurationProperties(value = [ApplicationProperties::class])
 class UserService(
         @Autowired
         val userDao: UserDao,
