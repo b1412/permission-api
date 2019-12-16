@@ -44,7 +44,6 @@ repositories {
 
 dependencies {
     val arrowVersion = "0.10.0-SNAPSHOT"
-
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     springboot()
@@ -52,22 +51,18 @@ dependencies {
     implementation("mysql:mysql-connector-java:6.0.5")
     arrow(arrowVersion)
     graphql()
-
     implementation("org.jooq:joor-java-8:0.9.12")
     implementation("io.github.microutils:kotlin-logging:1.7.6")
     implementation("io.jsonwebtoken:jjwt:0.7.0")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("org.codehaus.groovy:groovy-jsr223:2.4.3")
-    
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
         exclude(module = "mockito-core")
     }
     testImplementation("com.ninja-squad:springmockk:1.1.2")
-
     runtimeOnly("com.h2database:h2")
-
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
