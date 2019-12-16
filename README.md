@@ -24,7 +24,27 @@ write your first GraphQL query
 
 ```graphql
 {
-  User(where: {email_like: "foo", login_like: "f"}, pageRequest: {size: 5, page: 1}) {
+  Branch {
+    totalPages
+    totalElements
+    content {
+      id
+      name
+      users {
+        id
+        email
+        role {
+          name
+        }
+      }
+      active
+    }
+  }
+}
+
+
+{
+  User(where: {email_like: "e", username_like: "l"}, pageRequest: {size: 5, page: 1}) {
     totalPages
     totalElements
     content {
