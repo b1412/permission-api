@@ -32,15 +32,14 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven(url = "https://jitpack.io")
     maven(url = "https://repo.spring.io/milestone")
     maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
-    maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/")
 }
 
 dependencies {
-    compile(project(":kotlin-code-generator"))
-    compile(project(":kotlin-cannon-base"))
-
+    implementation(project(":kotlin-cannon-base"))
+    implementation("com.github.b1412:kotlin-code-generator:3835d87bb4")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }

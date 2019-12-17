@@ -9,13 +9,13 @@ import javax.persistence.OneToMany
 @Entity
 data class Permission(
 
-        var entity: String = "",
+        var entity: String? = null,
 
-        var authKey: String = "",
+        var authKey: String? = null,
 
-        var httpMethod: String = "",
+        var httpMethod: String? = null,
 
-        var authUris: String = "",
+        var authUris: String? = null,
 
         @OneToMany(fetch = FetchType.LAZY, mappedBy = "permission")
         var rolePermission: MutableList<RolePermission> = mutableListOf()
