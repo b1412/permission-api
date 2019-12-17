@@ -1,8 +1,6 @@
 package com.github.b1412.cannon.controller.base
 
 import com.github.b1412.cannon.controller.BaseController
-import com.github.b1412.cannon.controller.base.BaseRoleController
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.json.GraphRender
@@ -18,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
 
-abstract class BaseRoleController(
-
-) : BaseController<Role, Long>() {
+abstract class BaseRoleController : BaseController<Role, Long>() {
 
     @GraphRender("role")
     @GetMapping

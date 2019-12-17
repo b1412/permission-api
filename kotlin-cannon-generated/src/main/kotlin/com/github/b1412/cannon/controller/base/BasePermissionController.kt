@@ -1,8 +1,6 @@
 package com.github.b1412.cannon.controller.base
 
 import com.github.b1412.cannon.controller.BaseController
-import com.github.b1412.cannon.controller.base.BasePermissionController
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import com.github.b1412.cannon.entity.Permission
 import com.github.b1412.cannon.json.GraphRender

@@ -39,9 +39,17 @@ repositories {
 
 dependencies {
     implementation(project(":kotlin-cannon-base"))
-    implementation("com.github.b1412:kotlin-code-generator:3835d87bb4")
+    implementation("com.github.b1412:kotlin-code-generator:83b09e4093")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    val arrowVersion = "0.10.3"
+    arrow(arrowVersion)
+}
+
+fun DependencyHandlerScope.arrow(arrowVersion: String) {
+    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
+    implementation("io.arrow-kt:arrow-optics:$arrowVersion")
+    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
 }
 
 tasks.withType<KotlinCompile> {
