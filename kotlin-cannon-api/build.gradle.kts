@@ -13,12 +13,6 @@ plugins {
     kotlin("plugin.noarg") version kotlinVersion
 }
 
-val jar: Jar by tasks
-val bootJar: BootJar by tasks
-
-bootJar.enabled = false
-jar.enabled = true
-
 allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.Embeddable")
