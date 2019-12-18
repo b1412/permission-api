@@ -223,7 +223,7 @@ class UserControllerTest {
         val resultActions =
                 mockMvc.perform(MockMvcRequestBuilders.delete("/v1/user/1"))
         // then
-        resultActions.andExpect(status().isNoContent)
+        resultActions.andExpect(status().isOk)
     }
 
 

@@ -4,8 +4,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: root
-    url: jdbc:mysql://127.0.0.1:3305/cannon?characterEncoding=utf8&useSSL=false
+    password: cannon
+    url: jdbc:mysql://127.0.0.1:3306/cannon?characterEncoding=utf8&useSSL=false
   jpa:
     hibernate:
       ddl-auto: update

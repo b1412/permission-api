@@ -17,9 +17,6 @@ data class User(
         @JoinColumn(name = "branch_id")
         var branch: Branch? = null,
 
-        @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
-        var docs: MutableList<Doc> = mutableListOf(),
-
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "role_id")
         var role: Role? = null,

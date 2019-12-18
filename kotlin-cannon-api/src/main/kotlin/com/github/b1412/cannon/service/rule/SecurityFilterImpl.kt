@@ -42,7 +42,7 @@ class SecurityFilterImpl : SecurityFilter {
                 .rolePermissions
                 .map { it.permission }
                 .filter {
-                    it!!.authUris.split(";").any { uriPatten ->
+                    it!!.authUris!!.split(";").any { uriPatten ->
                         Pattern.matches(uriPatten, requestURI)
                     }
                 }.filter { it!!.httpMethod == method }
