@@ -1,13 +1,19 @@
 package com.github.b1412.cannon.controller.base
 
 import com.github.b1412.cannon.controller.BaseController
+import org.springframework.web.bind.annotation.RestController
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.json.GraphRender
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.RequestParam
 
 
 abstract class BaseUserController : BaseController<User, Long>() {
@@ -19,13 +25,14 @@ abstract class BaseUserController : BaseController<User, Long>() {
 
     }
 
+    @GraphRender("user")
     @GetMapping("{id}")
     override fun findOne(@PathVariable id: Long, request: HttpServletRequest): User {
         return super.findOne(id, request)
     }
 
-    @Transactional
     @GraphRender("user")
+    @Transactional
     @PostMapping
     override fun saveOne(@Validated @RequestBody input: User, request: HttpServletRequest): ResponseEntity<*> {
         return super.saveOne(input, request)
@@ -39,9 +46,10 @@ abstract class BaseUserController : BaseController<User, Long>() {
         return super.updateOne(id, input, request)
     }
 
+    @GraphRender("user")
     @DeleteMapping("{id}")
     override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
-        return super.deleteOne(id, request)
-    }
+        return super.deleteOne(id,request)
 
+    }
 }
