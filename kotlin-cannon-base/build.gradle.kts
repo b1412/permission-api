@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    val arrowVersion = "0.10.0-SNAPSHOT"
+    val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     springboot()

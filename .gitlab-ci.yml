@@ -1,5 +1,0 @@
-image: gradle:alpine
-build:
-  script:
-    - ./gradlew build
-    - ./gradlew jacocoTestReport

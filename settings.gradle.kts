@@ -14,7 +14,6 @@ pluginManagement {
 rootProject.name = "kotlin-cannon"
 
 include(
-        "kotlin-code-generator",
         "kotlin-cannon-base",
         "kotlin-cannon-api",
         "kotlin-cannon-generated",

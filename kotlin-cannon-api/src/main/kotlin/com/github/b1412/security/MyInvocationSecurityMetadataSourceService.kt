@@ -53,7 +53,7 @@ class MyInvocationSecurityMetadataSourceService(
             val all = permissionDao.findAll()
             all
         }!!.firstOption { (_, _, _, authUris) ->
-            authUris.split(";").any { uriPatten -> Pattern.matches(uriPatten, request.requestURI) }
+            authUris!!.split(";").any { uriPatten -> Pattern.matches(uriPatten, request.requestURI) }
         }
 
         return when (permissionOpt) {
