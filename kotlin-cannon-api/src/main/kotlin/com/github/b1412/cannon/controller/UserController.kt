@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 
@@ -33,5 +30,17 @@ class UserController(
         input.setUsername(input.email!!)
         input.setPassword(passwordEncoder.encode(input.password))
         return super.saveOne(input, request)
+    }
+
+    @GraphRender("user")
+    @Transactional
+    @PutMapping("{id}")
+    override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: User, request: HttpServletRequest): ResponseEntity<*> {
+        if (input.password != input.confirmPassword) {
+            throw  IllegalArgumentException("password not equal")
+        }
+        input.setUsername(input.email!!)
+        input.setPassword(passwordEncoder.encode(input.password))
+        return super.updateOne(id, input, request)
     }
 }

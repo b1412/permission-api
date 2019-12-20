@@ -15,19 +15,18 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
-
 abstract class BaseUserController : BaseController<User, Long>() {
 
     @GraphRender("user")
     @GetMapping
-    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<User> {
-        return super.page(request, filter)
+    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
+        return super.page(request, filter,pageable)
 
     }
 
     @GraphRender("user")
     @GetMapping("{id}")
-    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): User {
+    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.findOne(id, request)
     }
 

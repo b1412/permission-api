@@ -15,19 +15,18 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
-
 abstract class BaseRolePermissionController : BaseController<RolePermission, Long>() {
 
     @GraphRender("rolepermission")
     @GetMapping
-    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<RolePermission> {
-        return super.page(request, filter)
+    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
+        return super.page(request, filter,pageable)
 
     }
 
     @GraphRender("rolepermission")
     @GetMapping("{id}")
-    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): RolePermission {
+    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.findOne(id, request)
     }
 

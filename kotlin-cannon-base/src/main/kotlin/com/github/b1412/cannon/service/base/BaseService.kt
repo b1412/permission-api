@@ -12,6 +12,8 @@ import com.github.b1412.cannon.extenstions.copyFrom
 import com.github.b1412.cannon.service.SecurityFilter
 import org.joor.Reflect
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import java.io.Serializable
 import java.lang.reflect.Field
@@ -32,9 +34,9 @@ abstract class BaseService<T, ID : Serializable>(
     lateinit var entityManager: EntityManager
 
 
-    fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>): List<T> {
+    fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>,pageable: Pageable): Page<T> {
         val securityFilters = securityFilter.query(method, requestURI)
-        return dao.searchByFilter(params + securityFilters)
+        return dao.searchByFilter(params + securityFilters,pageable)
     }
 
 
