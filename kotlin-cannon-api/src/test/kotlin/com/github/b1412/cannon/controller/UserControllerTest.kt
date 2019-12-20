@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -61,8 +62,8 @@ class UserControllerTest {
                 email = "email of user B",
                 notes = "notes of user B"
         ).apply { this.id = 2 }
-        val mockedUsers = listOf(userA, userB)
-        every { userService.searchBySecurity(any(), any(), any()) } returns mockedUsers
+        val mockedUsers = PageImpl(listOf(userA, userB))
+        every { userService.searchBySecurity(any(), any(), any(),any()) } returns mockedUsers
         // when
         val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/user"))
         // then

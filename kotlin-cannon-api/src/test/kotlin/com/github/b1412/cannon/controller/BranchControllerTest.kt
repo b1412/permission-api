@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.data.domain.PageImpl
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -45,8 +46,8 @@ class BranchControllerTest {
         val branchB = Branch(name = "branchB", active = false, users = mutableListOf(user2)).apply { this.id = 2 }
         user1.branch = branchA
         user2.branch = branchB
-        val mockedBranches = listOf(branchA, branchB)
-        every { branchService.searchBySecurity(any(), any(), any()) } returns mockedBranches
+        val mockedBranches = PageImpl(listOf(branchA, branchB))
+        every { branchService.searchBySecurity(any(), any(), any(),any()) } returns mockedBranches
     }
 
     @Test

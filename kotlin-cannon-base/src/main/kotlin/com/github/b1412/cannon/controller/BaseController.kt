@@ -7,8 +7,10 @@ import com.github.b1412.cannon.entity.Branch
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.exceptions.ResultNotFoundException
 import com.github.b1412.cannon.extenstions.copyFrom
+import com.github.b1412.cannon.extenstions.responseEntityOk
 import com.github.b1412.cannon.service.base.BaseService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,18 +32,18 @@ abstract class BaseController<T, ID : Serializable> {
         get() = SecurityContextHolder.getContext().authentication.principal as User
 
 
-    open fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<T> {
-        val page = baseService.searchBySecurity(request.method, request.requestURI, filter)
-        return page
+    open fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>,pageable:Pageable): ResponseEntity<*> {
+        val page = baseService.searchBySecurity(request.method, request.requestURI, filter,pageable)
+        return page.responseEntityOk()
     }
 
 
-    open fun findOne(@PathVariable id: ID, request: HttpServletRequest): T {
+    open fun findOne(@PathVariable id: ID, request: HttpServletRequest): ResponseEntity<*> {
         return baseService.findByIdOrNull(id).toOption()
                 .fold(
                         { throw ResultNotFoundException() },
                         { it }
-                )
+                ).responseEntityOk()
     }
 
 

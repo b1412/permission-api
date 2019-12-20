@@ -15,19 +15,18 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
-
 abstract class Base${entity.name}Controller : BaseController<${entity.name}, Long>() {
 
     @GraphRender("${entity.name?lower_case}")
     @GetMapping
-    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<${entity.name}> {
-        return super.page(request, filter)
+    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
+        return super.page(request, filter,pageable)
 
     }
 
     @GraphRender("${entity.name?lower_case}")
     @GetMapping("{id}")
-    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ${entity.name} {
+    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.findOne(id, request)
     }
 

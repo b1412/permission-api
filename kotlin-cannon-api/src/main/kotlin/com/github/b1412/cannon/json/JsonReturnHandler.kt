@@ -20,6 +20,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import java.lang.reflect.ParameterizedType
+import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.OneToOne
@@ -120,7 +121,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
     private fun fieldsOfClass(entityClass: Class<*>): MutableList<String> {
         return (entityClass.declaredFields + entityClass.superclass.declaredFields).filter { field ->
             field.annotations.isEmpty() || field.annotations.all { annotation ->
-                (annotation is OneToMany || annotation is OneToOne || annotation is ManyToOne).not()
+                (annotation is OneToMany || annotation is OneToOne || annotation is ManyToOne||annotation is ManyToMany).not()
             }
         }.map { it.name }.toMutableList()
     }
