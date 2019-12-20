@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Pageable
 
 
 class UserDaoTests : AbstractJpaTest() {
@@ -76,7 +77,7 @@ class UserDaoTests : AbstractJpaTest() {
     @Test
     fun `search By filter`() {
         // when
-        val users = userDao.searchByFilter(mapOf("f_email" to "emai", "f_email_op" to "like"))
+        val users = userDao.searchByFilter(mapOf("f_email" to "emai", "f_email_op" to "like"), Pageable.unpaged())
         // then
         assertThat(users.size).isEqualTo(2)
     }
@@ -84,7 +85,7 @@ class UserDaoTests : AbstractJpaTest() {
     @Test
     fun `search By filter 2`() {
         // when
-        val users = userDao.searchByFilter(mapOf("f_email" to "email"))
+        val users = userDao.searchByFilter(mapOf("f_email" to "email"),Pageable.unpaged())
         // then
         assertThat(users.size).isEqualTo(1)
     }

@@ -15,19 +15,18 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
-
 abstract class BaseRoleController : BaseController<Role, Long>() {
 
     @GraphRender("role")
     @GetMapping
-    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>): List<Role> {
-        return super.page(request, filter)
+    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
+        return super.page(request, filter,pageable)
 
     }
 
     @GraphRender("role")
     @GetMapping("{id}")
-    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): Role {
+    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.findOne(id, request)
     }
 
