@@ -19,13 +19,14 @@ abstract class BaseUserController : BaseController<User, Long>() {
 
     @GraphRender("user")
     @GetMapping
+    @Transactional
     override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
         return super.page(request, filter,pageable)
-
     }
 
     @GraphRender("user")
     @GetMapping("{id}")
+    @Transactional
     override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.findOne(id, request)
     }

@@ -13,33 +13,29 @@ import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
 
+fun powers(role: Role): List<MutableMap<String, Any?>> {
+    val groupBy = role.rolePermissions.groupBy { it.permission!!.entity }
+    val menuIds = groupBy.keys.mapIndexed { index, s -> Pair(s!!, index.inc()) }.toMap()
+    return groupBy
+            .map { entry ->
+                val menus = mutableMapOf(
+                        "menuId" to menuIds[entry.key],
+                        "powers" to entry.value.map { it.permission!!.authKey }
+                )
 
+                menus
+            }
+}
 @RestController
 @RequestMapping("/v1/role")
 class RoleController : BaseRoleController() {
 
     private val roleConvert: (Role) -> MutableMap<String, Any> = { role ->
         val m = mutableMapOf<String, Any>()
-        m["id"] = role.id.toString()
+        m["id"] = role.id!!
         m["name"] = role.name
-        val groupBy = role.rolePermissions.groupBy { it.permission!!.entity }
-        val menuIds = groupBy.keys.mapIndexed { index, s -> Pair(s!!, index.inc()) }.toMap()
-        m["powers"] = groupBy
-                .map { entry ->
-                    val tempList = when (menuIds[entry.key]) {
-                        3 -> listOf(1, 2, 3, 4, 5)
-                        4 -> listOf(6, 7, 8, 9, 18)
-                        5 -> listOf(10, 11, 12, 13)
-                        6 -> listOf(14, 15, 16, 17)
-                        else -> listOf()
-                    }
-                    val menus = mutableMapOf(
-                            "menuId" to menuIds[entry.key],
-                            "powers" to entry.value.map { it.permission!!.id } + tempList
-                    )
-
-                    menus
-                }
+        val powers = powers(role)
+        m["powers"] = powers
         m
     }
 

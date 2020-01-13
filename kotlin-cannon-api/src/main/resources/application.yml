@@ -14,7 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    open-in-view: false
+    open-in-view: true
   profiles:
     active: local
   main:
@@ -25,4 +25,4 @@ server:
   port: 8080
 cannon:
   jwt:
-    anonymousUrls: /v1/login,/graphiql,/graphql,/vendor/**
+    anonymousUrls: /v1/login,/graphiql,/graphql,/vendor/**,/v1/menu/**

@@ -54,8 +54,9 @@ abstract class BaseController<T, ID : Serializable> {
 
 
     open fun updateOne(@PathVariable id: ID, @Validated @RequestBody input: T, request: HttpServletRequest): ResponseEntity<*> {
+        baseService.syncSeleceOneFromDb(input as BaseEntity)
         val persisted = baseService.findByIdOrNull(id)
-        val merged = (persisted as Any).copyFrom(input)
+        val merged = (persisted as Any).copyFrom(input) as T
         baseService.save(merged)
         return ResponseEntity.ok(merged)
     }
