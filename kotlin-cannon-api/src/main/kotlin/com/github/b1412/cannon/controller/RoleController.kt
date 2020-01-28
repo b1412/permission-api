@@ -13,19 +13,6 @@ import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
 
-fun powers(role: Role): List<MutableMap<String, Any?>> {
-    val groupBy = role.rolePermissions.groupBy { it.permission!!.entity }
-    val menuIds = groupBy.keys.mapIndexed { index, s -> Pair(s!!, index.inc()) }.toMap()
-    return groupBy
-            .map { entry ->
-                val menus = mutableMapOf(
-                        "menuId" to menuIds[entry.key],
-                        "powers" to entry.value.map { it.permission!!.authKey }
-                )
-
-                menus
-            }
-}
 @RestController
 @RequestMapping("/v1/role")
 class RoleController : BaseRoleController() {
@@ -34,7 +21,17 @@ class RoleController : BaseRoleController() {
         val m = mutableMapOf<String, Any>()
         m["id"] = role.id!!
         m["name"] = role.name
-        val powers = powers(role)
+        val groupBy = role.rolePermissions.groupBy { it.permission!!.entity }
+        val menuIds = groupBy.keys.mapIndexed { index, s -> Pair(s!!, index.inc()) }.toMap()
+        val powers = groupBy
+                .map { entry ->
+                    val menus = mutableMapOf(
+                           // "menuId" to menuIds[entry.key],
+                            "powers" to entry.value.map { it.permission!!.authKey }
+                    )
+
+                    menus
+                }
         m["powers"] = powers
         m
     }

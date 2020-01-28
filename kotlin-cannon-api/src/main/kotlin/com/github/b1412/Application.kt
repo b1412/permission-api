@@ -9,5 +9,7 @@ import org.springframework.boot.runApplication
 class Application
 
 fun main(args: Array<String>) {
+    "1".toCharArray
     runApplication<Application>(*args)
+
 }
