@@ -9,9 +9,10 @@ services:
 - docker
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-- docker build -t $IMAGE_NAME .
+- docker build -t $REPO/$IMAGE_NAME .
 - echo "$TOKEN" | docker login  docker.pkg.github.com --username b1412 --password-stdin
-- docker tag $IMAGE_NAME:latest $REPO/$IMAGE_NAME:$TRAVIS_BUILD_NUMBER
+- docker tag $REPO/$IMAGE_NAME:latest $REPO/$IMAGE_NAME:$TRAVIS_BUILD_NUMBER
+- docker push $REPO/$IMAGE_NAME:latest
 - docker push $REPO/$IMAGE_NAME:$TRAVIS_BUILD_NUMBER
 env:
   global:
