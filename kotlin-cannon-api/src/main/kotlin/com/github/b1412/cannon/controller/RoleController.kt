@@ -39,11 +39,11 @@ class RoleController : BaseRoleController() {
 
     @GraphRender("role")
     @GetMapping
+    @Transactional
     override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
         val page = baseService.searchBySecurity(request.method, request.requestURI, filter, pageable)
-        return page.map { roleConvert }.responseEntityOk()
+        return page.map(roleConvert).responseEntityOk()
     }
-
 
 
     @GraphRender("role")

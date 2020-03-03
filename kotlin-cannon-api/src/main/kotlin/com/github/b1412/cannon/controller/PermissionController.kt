@@ -32,7 +32,6 @@ class PermissionController(
         return groupBy
                 .map { entry ->
                     val menu = entry.value.first()
-                    println(menu.entity)
                     mapOf(
                             "id" to menu.id,
                             "title" to menu.entity,
