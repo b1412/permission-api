@@ -15,6 +15,7 @@ import javax.transaction.Transactional
 
 @RestController
 @RequestMapping("/v1/role")
+@Transactional
 class RoleController : BaseRoleController() {
 
     private val roleConvert: (Role) -> MutableMap<String, Any> = { role ->
@@ -22,11 +23,10 @@ class RoleController : BaseRoleController() {
         m["id"] = role.id!!
         m["name"] = role.name
         val groupBy = role.rolePermissions.groupBy { it.permission!!.entity }
-        val menuIds = groupBy.keys.mapIndexed { index, s -> Pair(s!!, index.inc()) }.toMap()
         val powers = groupBy
                 .map { entry ->
                     val menus = mutableMapOf(
-                           // "menuId" to menuIds[entry.key],
+                            // "menuId" to menuIds[entry.key],
                             "powers" to entry.value.map { it.permission!!.authKey }
                     )
 
@@ -36,17 +36,18 @@ class RoleController : BaseRoleController() {
         m
     }
 
+
     @GraphRender("role")
     @GetMapping
-    @Transactional
-    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>,pageable: Pageable): ResponseEntity<*> {
-        val page = baseService.searchBySecurity(request.method, request.requestURI, filter,pageable)
-        return page.map(roleConvert).responseEntityOk()
+    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
+        val page = baseService.searchBySecurity(request.method, request.requestURI, filter, pageable)
+        return page.map { roleConvert }.responseEntityOk()
     }
+
+
 
     @GraphRender("role")
     @GetMapping("{id}")
-    @Transactional
     override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return baseService.findByIdOrNull(id).toOption().map(roleConvert)
                 .fold(
