@@ -42,7 +42,8 @@ abstract class Base${entity.name}Controller : BaseController<${entity.name}, Lon
     @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: ${entity.name}, request: HttpServletRequest): ResponseEntity<*> {
-        return super.updateOne(id, input, request)
+        super.updateOne(id, input, request)
+        return ResponseEntity.noContent().build<${entity.name}>()
     }
 
     @GraphRender("${entity.name?lower_case}")

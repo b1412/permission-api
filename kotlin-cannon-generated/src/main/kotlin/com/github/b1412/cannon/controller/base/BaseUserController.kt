@@ -19,14 +19,13 @@ abstract class BaseUserController : BaseController<User, Long>() {
 
     @GraphRender("user")
     @GetMapping
-    @Transactional
     override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
         return super.page(request, filter,pageable)
+
     }
 
     @GraphRender("user")
     @GetMapping("{id}")
-    @Transactional
     override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.findOne(id, request)
     }
@@ -43,7 +42,8 @@ abstract class BaseUserController : BaseController<User, Long>() {
     @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: User, request: HttpServletRequest): ResponseEntity<*> {
-        return super.updateOne(id, input, request)
+        super.updateOne(id, input, request)
+        return ResponseEntity.noContent().build<User>()
     }
 
     @GraphRender("user")

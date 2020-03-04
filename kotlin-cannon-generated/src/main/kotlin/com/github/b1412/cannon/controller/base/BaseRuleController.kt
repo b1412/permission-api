@@ -42,7 +42,8 @@ abstract class BaseRuleController : BaseController<Rule, Long>() {
     @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: Rule, request: HttpServletRequest): ResponseEntity<*> {
-        return super.updateOne(id, input, request)
+        super.updateOne(id, input, request)
+        return ResponseEntity.noContent().build<Rule>()
     }
 
     @GraphRender("rule")

@@ -5,10 +5,12 @@ import com.github.b1412.cannon.controller.base.BaseRoleController
 import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.exceptions.ResultNotFoundException
 import com.github.b1412.cannon.extenstions.responseEntityOk
+import com.github.b1412.cannon.jpa.JpaBeanUtil
 import com.github.b1412.cannon.json.GraphRender
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
@@ -54,6 +56,22 @@ class RoleController : BaseRoleController() {
                         { throw ResultNotFoundException() },
                         { it }
                 ).responseEntityOk()
+    }
+
+    //TODO pass rolePermission.id from FE
+    @PutMapping("{id}")
+    override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: Role, request: HttpServletRequest): ResponseEntity<*> {
+        val oldRole = baseService.findByIdOrNull(id)!!
+        input.rolePermissions.forEach {
+            it.role = oldRole
+            baseService.syncSeleceOneFromDb(it)
+        }
+        JpaBeanUtil.copyNonNullProperties(input, oldRole)
+
+        oldRole.rolePermissions.clear()
+        oldRole.rolePermissions.addAll(input.rolePermissions)
+        baseService.save(oldRole)
+        return ResponseEntity.noContent().build<Role>()
     }
 
 }

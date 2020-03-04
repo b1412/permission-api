@@ -42,7 +42,8 @@ abstract class BaseRolePermissionController : BaseController<RolePermission, Lon
     @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: RolePermission, request: HttpServletRequest): ResponseEntity<*> {
-        return super.updateOne(id, input, request)
+        super.updateOne(id, input, request)
+        return ResponseEntity.noContent().build<RolePermission>()
     }
 
     @GraphRender("rolepermission")
