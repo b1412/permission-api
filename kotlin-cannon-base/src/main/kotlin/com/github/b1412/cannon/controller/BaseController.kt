@@ -4,6 +4,7 @@ import arrow.core.Try
 import arrow.core.toOption
 import com.github.b1412.cannon.entity.BaseEntity
 import com.github.b1412.cannon.entity.Branch
+import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.exceptions.ResultNotFoundException
 import com.github.b1412.cannon.extenstions.copyFrom
@@ -54,10 +55,11 @@ abstract class BaseController<T, ID : Serializable> {
 
 
     open fun updateOne(@PathVariable id: ID, @Validated @RequestBody input: T, request: HttpServletRequest): ResponseEntity<*> {
+        baseService.syncSeleceOneFromDb(input as BaseEntity)
         val persisted = baseService.findByIdOrNull(id)
-        val merged = (persisted as Any).copyFrom(input)
+        val merged = (persisted as Any).copyFrom(input) as T
         baseService.save(merged)
-        return ResponseEntity.ok(merged)
+        return ResponseEntity.noContent().build<T>()
     }
 
 

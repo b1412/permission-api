@@ -79,7 +79,7 @@ class UserDaoTests : AbstractJpaTest() {
         // when
         val users = userDao.searchByFilter(mapOf("f_email" to "emai", "f_email_op" to "like"), Pageable.unpaged())
         // then
-        assertThat(users.size).isEqualTo(2)
+        assertThat(users.totalElements).isEqualTo(2)
     }
 
     @Test
@@ -87,7 +87,7 @@ class UserDaoTests : AbstractJpaTest() {
         // when
         val users = userDao.searchByFilter(mapOf("f_email" to "email"),Pageable.unpaged())
         // then
-        assertThat(users.size).isEqualTo(1)
+        assertThat(users.totalElements).isEqualTo(1)
     }
 
 }

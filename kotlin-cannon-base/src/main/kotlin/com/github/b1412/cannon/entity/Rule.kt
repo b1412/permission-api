@@ -5,6 +5,6 @@ import javax.persistence.Entity
 
 @Entity
 data class Rule(
-        val name: String
+        var name: String?
 
 ) : BaseEntity(), Serializable

@@ -44,7 +44,7 @@ class BranchDaoTest : AbstractJpaTest() {
         //when
         val branches = branchDao.searchByFilter(mapOf(), Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(2)
+        Assertions.assertThat(branches.totalElements).isEqualTo(2)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }
@@ -56,7 +56,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_id" to "1")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(1)
+        Assertions.assertThat(branches.totalElements).isEqualTo(1)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
     }
 
@@ -67,7 +67,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_name" to "branch", "f_name_op" to "like")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(2)
+        Assertions.assertThat(branches.totalElements).isEqualTo(2)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }
@@ -79,7 +79,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_name" to "branchA")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(1)
+        Assertions.assertThat(branches.totalElements).isEqualTo(1)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[0].name).isEqualTo("branchA")
     }
@@ -91,7 +91,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_users.notes" to "notes1")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(1)
+        Assertions.assertThat(branches.totalElements).isEqualTo(1)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[0].users[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[0].users[0].notes).isEqualTo("notes1")
@@ -104,7 +104,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_users.role.id" to "1")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(1)
+        Assertions.assertThat(branches.totalElements).isEqualTo(1)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[0].users[0].id).isEqualTo(1)
     }
@@ -116,7 +116,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_name" to "branchA,branchB", "f_name_op" to "in")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(2)
+        Assertions.assertThat(branches.totalElements).isEqualTo(2)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }
@@ -127,7 +127,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_id" to "1,2", "f_id_op" to "between")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(2)
+        Assertions.assertThat(branches.totalElements).isEqualTo(2)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }
@@ -139,7 +139,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_active" to "false")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(1)
+        Assertions.assertThat(branches.totalElements).isEqualTo(1)
         Assertions.assertThat(branches.content[0].id).isEqualTo(2)
     }
 
@@ -149,7 +149,7 @@ class BranchDaoTest : AbstractJpaTest() {
         val queryMap = mapOf("f_active" to "false,true", "f_active_op" to "in")
         val branches = branchDao.searchByFilter(queryMap,Pageable.unpaged())
         //then
-        Assertions.assertThat(branches.size).isEqualTo(2)
+        Assertions.assertThat(branches.totalElements).isEqualTo(2)
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }

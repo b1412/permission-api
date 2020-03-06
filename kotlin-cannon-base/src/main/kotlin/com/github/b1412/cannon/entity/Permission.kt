@@ -13,6 +13,8 @@ data class Permission(
 
         var authKey: String? = null,
 
+        var display: String? = null,
+
         var httpMethod: String? = null,
 
         var authUris: String? = null,
