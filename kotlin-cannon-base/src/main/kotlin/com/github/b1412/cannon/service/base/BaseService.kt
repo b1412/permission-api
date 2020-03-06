@@ -34,11 +34,42 @@ abstract class BaseService<T, ID : Serializable>(
     lateinit var entityManager: EntityManager
 
 
-    fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>,pageable: Pageable): Page<T> {
+    fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>, pageable: Pageable): Page<T> {
         val securityFilters = securityFilter.query(method, requestURI)
-        return dao.searchByFilter(params + securityFilters,pageable)
+        return dao.searchByFilter(params + securityFilters, pageable)
     }
 
+    fun syncFromDb(baseEntity: BaseEntity) {
+        var fields = baseEntity.javaClass.declaredFields.toList()
+        if (baseEntity.javaClass.superclass == User::class.java) {
+            fields += listOf(*User::class.java.declaredFields)
+        }
+        fields.forEach { field ->
+            val type = field.type
+            if (BaseEntity::class.java.isAssignableFrom(field.type)) {
+                val option = getObject(baseEntity, field, type)
+                when (option) {
+                    is Some -> Reflect.on(baseEntity).set(field.name, option.t)
+                }
+            } else if (field.type.isAssignableFrom(MutableList::class.java)) {
+                val list = baseEntity.toOption()
+                        .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
+                        .map { e -> e as MutableList<out BaseEntity> }
+                        .getOrElse { listOf<BaseEntity>() }
+                        .map { obj ->
+                            val id = Reflect.on(obj).get<Any>("id")
+                            when (id) {
+                                null -> obj
+                                else -> entityManager.find(obj::class.java, id)
+                            }
+                        }
+                if (!list.isEmpty()) {
+                    Reflect.on(baseEntity).set(field.name, list)
+                }
+
+            }
+        }
+    }
 
     fun syncSeleceOneFromDb(baseEntity: BaseEntity) {
         var fields = baseEntity.javaClass.declaredFields.toList()

@@ -7,7 +7,7 @@ import javax.persistence.*
 data class RolePermission(
 
         @ManyToOne(fetch = FetchType.LAZY)
-        val role: Role? = null,
+        var role: Role? = null,
 
         @ManyToOne(fetch = FetchType.LAZY)
         val permission: Permission? = null,

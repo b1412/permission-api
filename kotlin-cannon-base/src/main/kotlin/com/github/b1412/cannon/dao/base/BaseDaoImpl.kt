@@ -46,7 +46,7 @@ class BaseDaoImpl<T, ID : Serializable>(
         val root = query.from(domainClass)
         query.select(root)
        // JpaUtil.createPredicate(filter, root, cb).fold({}, { query.where(it) })
-        val graph = JpaUtil.createEntityGraphFromURL(entityManager, domainClass, filter)
+        //val graph = JpaUtil.createEntityGraphFromURL(entityManager, domainClass, filter)
         val spec = Specification { root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder ->
             val predicates = JpaUtil.createPredicate(filter, root, cb).map { listOf(it) }.getOrElse { listOf() }
             query.where(*predicates.toTypedArray())

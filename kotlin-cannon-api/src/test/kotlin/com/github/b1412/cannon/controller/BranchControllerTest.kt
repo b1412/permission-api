@@ -57,9 +57,9 @@ class BranchControllerTest {
         // then
         resultActions
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].id", `is`(1)))
-                .andExpect(jsonPath("$[1].id", `is`(2)))
-                .andExpect(jsonPath("$[*].users").doesNotExist())
+                .andExpect(jsonPath("$.content[0].id", `is`(1)))
+                .andExpect(jsonPath("$.content[1].id", `is`(2)))
+                .andExpect(jsonPath("$.content[*].users").doesNotExist())
     }
 
     @Test
@@ -69,9 +69,9 @@ class BranchControllerTest {
         // then
         resultActions
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].id", `is`(1)))
-                .andExpect(jsonPath("$[1].id", `is`(2)))
-                .andExpect(jsonPath("$[*].users").exists())
+                .andExpect(jsonPath("$.content[0].id", `is`(1)))
+                .andExpect(jsonPath("$.content[1].id", `is`(2)))
+                .andExpect(jsonPath("$.content[*].users").exists())
     }
 
     @Test
@@ -81,10 +81,10 @@ class BranchControllerTest {
         // then
         resultActions
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].id", `is`(1)))
-                .andExpect(jsonPath("$[1].id", `is`(2)))
-                .andExpect(jsonPath("$[*].users").exists())
-                .andExpect(jsonPath("$[*].users[*].role").exists())
+                .andExpect(jsonPath("$.content[0].id", `is`(1)))
+                .andExpect(jsonPath("$.content[1].id", `is`(2)))
+                .andExpect(jsonPath("$.content[*].users").exists())
+                .andExpect(jsonPath("$.content[*].users[*].role").exists())
     }
 
     @Test
@@ -95,9 +95,9 @@ class BranchControllerTest {
         println(resultActions.andReturn().response.contentAsString)
         resultActions
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].id", `is`(1)))
-                .andExpect(jsonPath("$[1].id", `is`(2)))
-                .andExpect(jsonPath("$[*].users").exists())
-                .andExpect(jsonPath("$[*].users[*].role").exists())
+                .andExpect(jsonPath("$.content[0].id", `is`(1)))
+                .andExpect(jsonPath("$.content[1].id", `is`(2)))
+                .andExpect(jsonPath("$.content[*].users").exists())
+                .andExpect(jsonPath("$.content[*].users[*].role").exists())
     }
 }
