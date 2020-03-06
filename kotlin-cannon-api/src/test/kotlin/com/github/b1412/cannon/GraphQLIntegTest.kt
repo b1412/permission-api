@@ -1,15 +1,28 @@
 package com.github.b1412.cannon
 
 
+import com.github.b1412.cannon.config.CustomDateTimeProvider
+import com.github.b1412.cannon.config.JpaConfig
 import com.github.b1412.cannon.controller.GraphQlController
 import com.github.b1412.cannon.entity.Role
 import com.github.b1412.cannon.entity.User
+import com.github.b1412.cannon.extenstions.print
+import com.github.b1412.cannon.graphql.GraphQLExecutor
+import com.github.b1412.cannon.graphql.GraphQLSchemaBuilder
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.FilterType
+import org.springframework.data.auditing.config.AuditingConfiguration
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -20,8 +33,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetu
 import javax.persistence.EntityManager
 
 
-//@SpringBootTest
-//@Transactional
+@AutoConfigureWebMvc
+@AutoConfigureMockMvc
+@DataJpaTest(
+        includeFilters = [ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = [AuditingConfiguration::class, JpaConfig::class,
+                    CustomDateTimeProvider::class, DatabaseCleanupService::class,
+                    JpaRepositoriesAutoConfiguration::class,
+                    GraphQlController::class, GraphQLExecutor::class, GraphQLSchemaBuilder::class]
+        )]
+)
+
+@ActiveProfiles("test")
 class GraphQLIntegTest {
 
     private var mockMvc: MockMvc? = null
@@ -45,7 +69,7 @@ class GraphQLIntegTest {
         entityManager!!.flush()
     }
 
-   // @Test
+    @Test
     fun `users query`() {
         // Given
         val query = """
@@ -73,9 +97,11 @@ class GraphQLIntegTest {
                 .andExpect(jsonPath("$.data.User.content.size()").value(10))
                 .andExpect(jsonPath("$.data.User.content[0].id").value(1))
                 .andExpect(jsonPath("$.data.User.content[0].email").value("foo0"))
+                .andExpect(jsonPath("$.data.User.content[0].createdAt").exists())
+                .andExpect(jsonPath("$.data.User.content[0].updatedAt").exists())
     }
 
-   // @Test
+    @Test
     fun `users query embedded`() {
         // Given
         val query = """
@@ -109,7 +135,7 @@ class GraphQLIntegTest {
                 .andExpect(jsonPath("$.data.User.content[0].role.id").value(1))
     }
 
-  //  @Test
+    @Test
     fun `users query where`() {
         // Given
         val query = """
@@ -140,7 +166,7 @@ class GraphQLIntegTest {
     }
 
 
-  //  @Test
+    @Test
     fun `users query where 2`() {
         // Given
         val query = """
@@ -171,7 +197,7 @@ class GraphQLIntegTest {
     }
 
 
-  //  @Test
+    @Test
     fun `users query page`() {
         // Given
         val query = """
@@ -193,6 +219,7 @@ class GraphQLIntegTest {
         val postResult = performGraphQlPost(query)
         // Then
         postResult.andExpect(status().isOk)
+                .andDo { print() }
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(jsonPath("$.errors").isEmpty)
                 .andExpect(jsonPath("$.data.User.totalPages").value(5))

@@ -42,7 +42,7 @@ dependencies {
     implementation("com.github.b1412:kotlin-code-generator:83b09e4093")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    val arrowVersion = "0.10.3"
+    val arrowVersion = "0.10.4"
     arrow(arrowVersion)
 }
 
