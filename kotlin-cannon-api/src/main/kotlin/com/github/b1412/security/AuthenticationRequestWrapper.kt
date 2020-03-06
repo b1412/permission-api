@@ -13,13 +13,12 @@ import javax.servlet.http.HttpServletRequestWrapper
 
 class AuthenticationRequestWrapper(request: HttpServletRequest) : HttpServletRequestWrapper(request) {
 
-    val payload: String
+    private val payload: String
 
 
     init {
         val stringBuilder = StringBuilder()
-        var bufferedReader: BufferedReader?
-
+        val bufferedReader: BufferedReader?
         val inputStream = request.inputStream
         if (inputStream != null) {
             bufferedReader = BufferedReader(InputStreamReader(inputStream))

@@ -1,3 +1,2 @@
-
-* mysql init data image
+* embedded json render
 * aci APIs

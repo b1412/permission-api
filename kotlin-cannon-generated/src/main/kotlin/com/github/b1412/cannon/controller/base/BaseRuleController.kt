@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
+@Transactional
 abstract class BaseRuleController : BaseController<Rule, Long>() {
 
     @GraphRender("rule")
@@ -30,22 +31,18 @@ abstract class BaseRuleController : BaseController<Rule, Long>() {
         return super.findOne(id, request)
     }
 
-    @GraphRender("rule")
-    @Transactional
     @PostMapping
     override fun saveOne(@Validated @RequestBody input: Rule, request: HttpServletRequest): ResponseEntity<*> {
         return super.saveOne(input, request)
 
     }
 
-    @GraphRender("rule")
-    @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: Rule, request: HttpServletRequest): ResponseEntity<*> {
-        return super.updateOne(id, input, request)
+        super.updateOne(id, input, request)
+        return ResponseEntity.noContent().build<Rule>()
     }
 
-    @GraphRender("rule")
     @DeleteMapping("{id}")
     override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.deleteOne(id,request)

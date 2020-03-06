@@ -11,6 +11,6 @@ import java.io.Serializable
 interface BaseDao<T, ID : Serializable> : JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
     fun searchByKeyword(keyword: String, fields: String): List<T>
 
-    fun searchByFilter(filter: Map<String, String>,pageable: Pageable): Page<T>
+    fun searchByFilter(filter: Map<String, String>, pageable: Pageable): Page<T>
 }
 

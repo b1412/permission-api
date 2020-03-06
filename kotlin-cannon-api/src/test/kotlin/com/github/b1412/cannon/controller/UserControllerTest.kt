@@ -63,22 +63,22 @@ class UserControllerTest {
                 notes = "notes of user B"
         ).apply { this.id = 2 }
         val mockedUsers = PageImpl(listOf(userA, userB))
-        every { userService.searchBySecurity(any(), any(), any(),any()) } returns mockedUsers
+        every { userService.searchBySecurity(any(), any(), any(), any()) } returns mockedUsers
         // when
         val resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/v1/user"))
         // then
         resultActions
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].id", Matchers.`is`(1)))
-                .andExpect(jsonPath("$[0].login", Matchers.`is`("login of user A")))
-                .andExpect(jsonPath("$[0].address", Matchers.`is`("address of user A")))
-                .andExpect(jsonPath("$[0].email", Matchers.`is`("email of user A")))
-                .andExpect(jsonPath("$[0].notes", Matchers.`is`("notes of user A")))
-                .andExpect(jsonPath("$[1].id", Matchers.`is`(2)))
-                .andExpect(jsonPath("$[1].login", Matchers.`is`("login of user B")))
-                .andExpect(jsonPath("$[1].address", Matchers.`is`("address of user B")))
-                .andExpect(jsonPath("$[1].email", Matchers.`is`("email of user B")))
-                .andExpect(jsonPath("$[1].notes", Matchers.`is`("notes of user B")))
+                .andExpect(jsonPath("$.content[0].id", Matchers.`is`(1)))
+                .andExpect(jsonPath("$.content[0].login", Matchers.`is`("login of user A")))
+                .andExpect(jsonPath("$.content[0].address", Matchers.`is`("address of user A")))
+                .andExpect(jsonPath("$.content[0].email", Matchers.`is`("email of user A")))
+                .andExpect(jsonPath("$.content[0].notes", Matchers.`is`("notes of user A")))
+                .andExpect(jsonPath("$.content[1].id", Matchers.`is`(2)))
+                .andExpect(jsonPath("$.content[1].login", Matchers.`is`("login of user B")))
+                .andExpect(jsonPath("$.content[1].address", Matchers.`is`("address of user B")))
+                .andExpect(jsonPath("$.content[1].email", Matchers.`is`("email of user B")))
+                .andExpect(jsonPath("$.content[1].notes", Matchers.`is`("notes of user B")))
     }
 
     @Test
@@ -123,7 +123,7 @@ class UserControllerTest {
                 notes = "notes of user"
         ).apply { this.id = 1 }
         every { userService.save(any<User>()) } returns user
-        every { userService.syncSeleceOneFromDb(any<User>()) } just runs
+        every { userService.syncSeleceOneFromDb(any<User>()) } just Runs
         val body = """
   {
     "password":"password",
@@ -175,7 +175,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun `update user return updated blog with 200 when id exists`() {
+    fun `update user return 204 when id exists`() {
         // given
         val persistedUser = User(
                 login = "login of user",
@@ -191,11 +191,14 @@ class UserControllerTest {
         ).apply { this.id = 1 }
 
         every { userService.findByIdOrNull(1) } returns persistedUser
+        every { userService.syncSeleceOneFromDb(any()) } just runs
         every { userService.save(any<User>()) } returns updatedUser
         val body = """
   {
     "login": "new login of user",
     "address": "new address of user",
+    "password": "new password",
+    "confirmPassword": "new password",
     "email": "new email of user",
     "notes": "new notes of user"
   }
@@ -208,12 +211,7 @@ class UserControllerTest {
         )
         // then
         resultActions
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", Matchers.`is`(1)))
-                .andExpect(jsonPath("$.login", Matchers.`is`("new login of user")))
-                .andExpect(jsonPath("$.address", Matchers.`is`("new address of user")))
-                .andExpect(jsonPath("$.email", Matchers.`is`("new email of user")))
-                .andExpect(jsonPath("$.notes", Matchers.`is`("new notes of user")))
+                .andExpect(status().isNoContent)
     }
 
     @Test
@@ -224,7 +222,7 @@ class UserControllerTest {
         val resultActions =
                 mockMvc.perform(MockMvcRequestBuilders.delete("/v1/user/1"))
         // then
-        resultActions.andExpect(status().isOk)
+        resultActions.andExpect(status().isNoContent)
     }
 
 

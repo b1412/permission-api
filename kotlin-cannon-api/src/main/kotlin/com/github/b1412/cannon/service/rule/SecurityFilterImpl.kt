@@ -60,7 +60,7 @@ class SecurityFilterImpl : SecurityFilter {
                     throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
                 }
                 rules.map { rule ->
-                    val accessRule = findAccessRules(rule.name)
+                    val accessRule = findAccessRules(rule.name!!)
                     logger.debug("access rule {0}", accessRule)
                     accessRule.map { it.exec(permission) }.getOrElse { mapOf() }
                 }.reduce { acc, map -> acc + map }
