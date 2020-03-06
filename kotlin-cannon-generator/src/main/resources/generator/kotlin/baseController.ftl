@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
+@Transactional
 abstract class Base${entity.name}Controller : BaseController<${entity.name}, Long>() {
 
     @GraphRender("${entity.name?lower_case}")
@@ -30,23 +31,18 @@ abstract class Base${entity.name}Controller : BaseController<${entity.name}, Lon
         return super.findOne(id, request)
     }
 
-    @GraphRender("${entity.name?lower_case}")
-    @Transactional
     @PostMapping
     override fun saveOne(@Validated @RequestBody input: ${entity.name}, request: HttpServletRequest): ResponseEntity<*> {
         return super.saveOne(input, request)
 
     }
 
-    @GraphRender("${entity.name?lower_case}")
-    @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: ${entity.name}, request: HttpServletRequest): ResponseEntity<*> {
         super.updateOne(id, input, request)
         return ResponseEntity.noContent().build<${entity.name}>()
     }
 
-    @GraphRender("${entity.name?lower_case}")
     @DeleteMapping("{id}")
     override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.deleteOne(id,request)

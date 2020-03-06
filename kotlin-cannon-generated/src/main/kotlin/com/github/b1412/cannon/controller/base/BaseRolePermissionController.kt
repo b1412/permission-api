@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
+@Transactional
 abstract class BaseRolePermissionController : BaseController<RolePermission, Long>() {
 
     @GraphRender("rolepermission")
@@ -30,23 +31,18 @@ abstract class BaseRolePermissionController : BaseController<RolePermission, Lon
         return super.findOne(id, request)
     }
 
-    @GraphRender("rolepermission")
-    @Transactional
     @PostMapping
     override fun saveOne(@Validated @RequestBody input: RolePermission, request: HttpServletRequest): ResponseEntity<*> {
         return super.saveOne(input, request)
 
     }
 
-    @GraphRender("rolepermission")
-    @Transactional
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: RolePermission, request: HttpServletRequest): ResponseEntity<*> {
         super.updateOne(id, input, request)
         return ResponseEntity.noContent().build<RolePermission>()
     }
 
-    @GraphRender("rolepermission")
     @DeleteMapping("{id}")
     override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
         return super.deleteOne(id,request)

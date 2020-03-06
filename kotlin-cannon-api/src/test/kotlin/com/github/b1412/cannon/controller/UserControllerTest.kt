@@ -175,7 +175,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun `update user return updated blog with 200 when id exists`() {
+    fun `update user return 204 when id exists`() {
         // given
         val persistedUser = User(
                 login = "login of user",
@@ -211,12 +211,7 @@ class UserControllerTest {
         )
         // then
         resultActions
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", Matchers.`is`(1)))
-                .andExpect(jsonPath("$.login", Matchers.`is`("new login of user")))
-                .andExpect(jsonPath("$.address", Matchers.`is`("new address of user")))
-                .andExpect(jsonPath("$.email", Matchers.`is`("new email of user")))
-                .andExpect(jsonPath("$.notes", Matchers.`is`("new notes of user")))
+                .andExpect(status().isNoContent)
     }
 
     @Test
@@ -227,7 +222,7 @@ class UserControllerTest {
         val resultActions =
                 mockMvc.perform(MockMvcRequestBuilders.delete("/v1/user/1"))
         // then
-        resultActions.andExpect(status().isOk)
+        resultActions.andExpect(status().isNoContent)
     }
 
 

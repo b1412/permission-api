@@ -21,7 +21,6 @@ class UserController(
 
 ) : BaseUserController() {
 
-    @GraphRender("user")
     @PostMapping
     override fun saveOne(@Validated @RequestBody input: User, request: HttpServletRequest): ResponseEntity<*> {
         if (input.password != input.confirmPassword) {
@@ -32,7 +31,6 @@ class UserController(
         return super.saveOne(input, request)
     }
 
-    @GraphRender("user")
     @PutMapping("{id}")
     override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: User, request: HttpServletRequest): ResponseEntity<*> {
         if (input.password != input.confirmPassword) {
@@ -45,7 +43,6 @@ class UserController(
 
     @GraphRender("user")
     @GetMapping("me")
-    @Transactional
     fun me(request: HttpServletRequest): ResponseEntity<*> {
         val user = SecurityContextHolder.getContext().authentication.principal as User
         return super.findOne(user.id!!, request)
