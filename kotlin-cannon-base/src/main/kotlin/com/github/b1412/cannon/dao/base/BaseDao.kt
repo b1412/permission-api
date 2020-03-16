@@ -1,5 +1,7 @@
 package com.github.b1412.cannon.dao.base
 
+import com.github.b1412.cannon.jpa.UrlMapper
+import com.github.b1412.cannon.jpa.V1UrlMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -9,8 +11,6 @@ import java.io.Serializable
 
 @NoRepositoryBean
 interface BaseDao<T, ID : Serializable> : JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
-    fun searchByKeyword(keyword: String, fields: String): List<T>
-
-    fun searchByFilter(filter: Map<String, String>, pageable: Pageable): Page<T>
+    fun searchByFilter(filter: Map<String, String>, pageable: Pageable, urlMapper: UrlMapper = V1UrlMapper()): Page<T>
 }
 

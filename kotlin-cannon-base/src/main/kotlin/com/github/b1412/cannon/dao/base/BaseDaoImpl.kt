@@ -2,6 +2,8 @@ package com.github.b1412.cannon.dao.base
 
 import arrow.core.getOrElse
 import com.github.b1412.cannon.jpa.JpaUtil
+import com.github.b1412.cannon.jpa.UrlMapper
+import com.github.b1412.cannon.jpa.V1UrlMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,24 +24,7 @@ class BaseDaoImpl<T, ID : Serializable>(
         val entityManager: EntityManager
 ) : SimpleJpaRepository<T, ID>(entityInformation.javaType, entityManager), BaseDao<T, ID> {
 
-
-    override fun searchByKeyword(keyword: String, fields: String): List<T> {
-        val cb = entityManager.criteriaBuilder
-        var query = cb.createQuery(domainClass)
-        val root = query.from(domainClass)
-
-        val predicate = fields.split(",")
-                .map {
-                    cb.like(root.get<String>(it), "%$keyword%")
-                }.reduce { a, b ->
-                    cb.or(a, b)
-                }
-
-        query = query.select(root).where(predicate)
-        return entityManager.createQuery(query).resultList
-    }
-
-    override fun searchByFilter(filter: Map<String, String>, pageable: Pageable): Page<T> {
+    override fun searchByFilter(filter: Map<String, String>, pageable: Pageable,urlMapper: UrlMapper): Page<T> {
         log.debug("filter $filter")
         val cb = entityManager.criteriaBuilder
         val query = cb.createQuery(domainClass)

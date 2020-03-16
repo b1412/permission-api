@@ -40,41 +40,6 @@ class UserDaoTests : AbstractJpaTest() {
     }
 
     @Test
-    fun `return users when searching keyword matching address field`() {
-        // when
-        val users = userDao.searchByKeyword("addre", "address,email,notes")
-
-        // then
-        assertThat(users.size).isEqualTo(2)
-    }
-
-    @Test
-    fun `return users when searching keyword matching email field`() {
-        // when
-        val users = userDao.searchByKeyword("emai", "address,email,notes")
-
-        // then
-        assertThat(users.size).isEqualTo(2)
-    }
-
-    @Test
-    fun `return users when searching keyword matching notes field`() {
-        // when
-        val users = userDao.searchByKeyword("note", "address,email,notes")
-        // then
-        assertThat(users.size).isEqualTo(2)
-    }
-
-
-    @Test
-    fun `return null user when searching keyword not matching any field`() {
-        // when
-        val users = userDao.searchByKeyword("null", "address,email,notes")
-        // then
-        assertThat(users.size).isEqualTo(0)
-    }
-
-    @Test
     fun `search By filter`() {
         // when
         val users = userDao.searchByFilter(mapOf("f_email" to "emai", "f_email_op" to "like"), Pageable.unpaged())
