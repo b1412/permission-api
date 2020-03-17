@@ -38,26 +38,27 @@ class V1UrlMapper : UrlMapper {
 
 class V2UrlMapper : UrlMapper {
     override fun paramsToFilter(params: Map<String, String>): Map<String, String> {
-        TODO("Not yet implemented")
+        return params.filter {
+            it.key.contains("_")
+        }
     }
 
     override fun extract(item: Map.Entry<String, String>, params: Map<String, String>): Pair<String, String> {
-        TODO("Not yet implemented")
+        val list = item.key.split("_")
+        return Pair(list[0], list[1])
     }
 }
 
 object JpaUtil {
-    fun <T> createPredicate(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder): Option<Predicate> {
-        val mapper = V1UrlMapper()
-        val filterFields = mapper.paramsToFilter(filter)
+    fun <T> createPredicate(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder, urlMapper: UrlMapper = V1UrlMapper()): Option<Predicate> {
+        val filterFields = urlMapper.paramsToFilter(filter)
         if (filterFields.isEmpty()) {
             return Option.empty()
         }
-
         var entityType = root.model
         val predicates = filterFields.map {
             val value = it.value
-            val (field, operator) = mapper.extract(it, filter)
+            val (field, operator) = urlMapper.extract(it, filter)
             val searchPath: Path<Any>
             val fields = field.split(".")
             var javaType: Class<*>? = null
