@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -38,6 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     BCryptPasswordEncoder::class
 ])
 @WebMvcTest
+@ActiveProfiles("test")
 class UserControllerTest {
 
     @Autowired

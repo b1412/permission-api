@@ -1,6 +1,8 @@
 package com.github.b1412.cannon.graphql
 
 
+import arrow.core.extensions.list.foldable.firstOption
+import arrow.core.getOrElse
 import com.github.b1412.cannon.jpa.JpaUtil
 import com.github.b1412.cannon.jpa.QueryBuilder
 import graphql.language.*
@@ -98,15 +100,17 @@ open class JpaDataFetcher(
     }
 
     private fun extractPageInformation(environment: DataFetchingEnvironment, field: Field): PageInformation {
-        val paginationRequest = field.arguments.stream().filter { "pageRequest".equals(it.name) }.findFirst()
-        if (paginationRequest.isPresent) {
-            field.arguments.remove(paginationRequest.get())
-            val paginationValues = paginationRequest.get().value as ObjectValue
-            val page = paginationValues.objectFields.first { "page" == it.name }.value as IntValue
-            val size = paginationValues.objectFields.first { "size" == it.name }.value as IntValue
-            return PageInformation(page.value.toInt(), size.value.toInt())
-        }
-        return PageInformation(1, Integer.MAX_VALUE)
+        return field.arguments.firstOption { "pageRequest" == it.name }.fold(
+                { PageInformation(1, Integer.MAX_VALUE) },
+                { argument ->
+                    field.arguments.remove(argument)
+                    val paginationValues = argument.value as ObjectValue
+                    val converter: (ObjectField) -> Int = { (it.value as IntValue).value.toInt() }
+                    val page = paginationValues.objectFields.filter { "page" == it.name }.firstOption().map(converter).getOrElse { 1 }
+                    val size = paginationValues.objectFields.filter { "size" == it.name }.firstOption().map(converter).getOrElse { 20 }
+                    return PageInformation(page, size)
+                })
+
     }
 
     private fun getAttribute(environment: DataFetchingEnvironment, argument: Argument): Attribute<*, *> {

@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     val kotlinVersion = "1.3.50"
@@ -37,8 +36,10 @@ repositories {
     maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/")
 }
 
+extra["springCloudVersion"] = "Hoxton.SR3"
+
 dependencies {
-    compile(project(":kotlin-cannon-generated"))
+    implementation(project(":kotlin-cannon-generated"))
     val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -53,6 +54,12 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt:0.7.0")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("org.codehaus.groovy:groovy-jsr223:2.4.3")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-config")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
@@ -63,6 +70,11 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+    }
+}
 
 fun DependencyHandlerScope.springboot() {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

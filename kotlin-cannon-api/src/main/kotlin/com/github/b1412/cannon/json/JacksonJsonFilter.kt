@@ -21,17 +21,15 @@ class JacksonJsonFilter(
     override fun findPropertyFilter(filterId: Any, valueToFilter: Any?): PropertyFilter {
         return object : SimpleBeanPropertyFilter() {
             override fun serializeAsField(pojo: Any, jgen: JsonGenerator, prov: SerializerProvider, writer: PropertyWriter) {
-                val name = writer.name
-                if (apply(pojo, name)) {
-                    writer.serializeAsField(pojo, jgen, prov)
-                } else if (!jgen.canOmitFields()) {
-                    writer.serializeAsOmittedField(pojo, jgen, prov)
+                if (canSerialize(pojo, writer.name).not()) {
+                    return
                 }
+                writer.serializeAsField(pojo, jgen, prov)
             }
         }
     }
 
-    fun apply(pojo: Any, name: String): Boolean {
+    fun canSerialize(pojo: Any, name: String): Boolean {
         return fields[pojo::class.java]!!.contains(name)
     }
 }
