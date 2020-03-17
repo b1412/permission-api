@@ -1,0 +1,11 @@
+server:
+    port: 8080
+spring:
+    application:
+        name: api
+    cloud:
+        config:
+            name: api
+            password: configpassword
+            uri: http://config:7777
+            username: leonzhou

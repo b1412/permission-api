@@ -39,7 +39,6 @@ class BranchDaoTest : AbstractJpaTest() {
         branchDao.save(branchB)
     }
 
-    // http://localhost:8080/branch
     @Test
     fun `return branches without embedded when search by filter without parameters`() {
         //when
@@ -50,7 +49,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }
 
-    // http://localhost:8080/branch?f_id=1
     @Test
     fun `return branches when search by filter with parameter f_id=1`() {
         //when
@@ -61,7 +59,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
     }
 
-    // http://localhost:8080/branch?f_id=1
     @Test
     fun `return branches when search by filter with parameter id_==1`() {
         //when
@@ -72,7 +69,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[0].id).isEqualTo(1)
     }
 
-    // http://localhost:8080/branch?f_name=1&f_name_op=like
     @Test
     fun `return branches when search by filter with parameters f_name=1 and f_name_op=like`() {
         //when
@@ -84,7 +80,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }
 
-    //http://localhost:8080/branch?f_name=b1
     @Test
     fun `return branches when search by filter with parameter f_name=b1`() {
         //when
@@ -96,7 +91,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[0].name).isEqualTo("branchA")
     }
 
-    //http://localhost:8080/branch?f_users.notes=4
     @Test
     fun `return branches when search by filter with parameter f_users*notes=4`() {
         //when
@@ -109,7 +103,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[0].users[0].notes).isEqualTo("notes1")
     }
 
-    //http://localhost:8080/branch?f_users.role.id=1
     @Test
     fun `return branches when search by filter with parameter f_users*role*id=1`() {
         //when
@@ -121,7 +114,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[0].users[0].id).isEqualTo(1)
     }
 
-    // http://localhost:8080/branch?f_name=branchA,branchB&f_name_op=in
     @Test
     fun `return branches when search by filter with parameter f_name=branchA,branchB&f_name_op=in`() {
         //when
@@ -144,7 +136,6 @@ class BranchDaoTest : AbstractJpaTest() {
         Assertions.assertThat(branches.content[1].id).isEqualTo(2)
     }
 
-    //http://localhost:8080/branch?f_users.notes=4
     @Test
     fun `return branches when search by filter with parameter f_active=false`() {
         //when
