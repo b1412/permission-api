@@ -7,5 +7,5 @@ spring:
         config:
             name: api
             password: configpassword
-            uri: http://config:7777
+            uri: http://config
             username: leonzhou
