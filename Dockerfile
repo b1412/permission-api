@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine
 MAINTAINER zhouleib1412@gmail.com
-
+ENV DOCKERIZE_VERSION v0.6.1
 ENV APP_ROOT /opt/cannon
 ENV APP_VERSION 0.0.1
 ARG BUILD_NUMBER=SNAPSHOT
