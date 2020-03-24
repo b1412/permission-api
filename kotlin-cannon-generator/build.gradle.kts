@@ -39,7 +39,7 @@ repositories {
 
 dependencies {
     implementation(project(":kotlin-cannon-base"))
-    implementation("com.github.b1412:kotlin-common:53c31a7282")
+    implementation("com.github.b1412:kotlin-common:ae0dc5abfb")
     implementation("com.github.b1412:kotlin-code-generator:83b09e4093")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

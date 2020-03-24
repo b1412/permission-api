@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.b1412:kotlin-common:53c31a7282")
+    implementation("com.github.b1412:kotlin-common:ae0dc5abfb")
     val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
