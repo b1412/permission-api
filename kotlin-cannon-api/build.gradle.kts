@@ -34,12 +34,14 @@ repositories {
     maven(url = "https://repo.spring.io/milestone")
     maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
     maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/")
+    maven(url = "https://jitpack.io")
 }
 
 extra["springCloudVersion"] = "Hoxton.SR3"
 
 dependencies {
     implementation(project(":kotlin-cannon-generated"))
+    implementation("com.github.b1412:kotlin-common:53c31a7282")
     val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
