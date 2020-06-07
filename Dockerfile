@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-alpine
+FROM openjdk:8-jre-alpine
 MAINTAINER zhouleib1412@gmail.com
 
 ENV APP_ROOT /opt/cannon
