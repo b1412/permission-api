@@ -92,7 +92,7 @@ fun DependencyHandlerScope.graphql() {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "1。8"
+        jvmTarget = "1.8"
     }
 }
 
