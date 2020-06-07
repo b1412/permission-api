@@ -11,8 +11,6 @@ pluginManagement {
         }
     }
 }
-rootProject.name = "kotlin-cannon"
-
 include(
         "kotlin-cannon-base",
         "kotlin-cannon-api",
