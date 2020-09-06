@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
     implementation(project(":kotlin-cannon-base"))
-    implementation("com.github.b1412:kotlin-code-generator:83b09e4093")
+    implementation("com.github.b1412:kotlin-code-generator:8cea9482ed")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     val arrowVersion = "0.10.3"

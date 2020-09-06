@@ -1,6 +1,6 @@
 package com.github.b1412.template
 
-import java.util.*
+import java.util.Properties
 
 object TaskConstants {
     lateinit var generatedPath: String

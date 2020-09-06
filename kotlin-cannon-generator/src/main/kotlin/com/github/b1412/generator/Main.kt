@@ -5,8 +5,11 @@ import com.github.b1412.generator.entity.CodeProject
 import com.github.b1412.generator.entity.scanForCodeEntities
 import com.github.b1412.generator.template.FreeMarkerHelper
 import com.github.b1412.template.TaskConstants
-import com.github.b1412.template.tasks.kotlin.*
-import java.util.*
+import com.github.b1412.template.tasks.kotlin.BaseControllerTask
+import com.github.b1412.template.tasks.kotlin.ControllerTask
+import com.github.b1412.template.tasks.kotlin.DaoTask
+import com.github.b1412.template.tasks.kotlin.ServiceTask
+import java.util.Properties
 
 
 fun main() {
@@ -18,21 +21,19 @@ fun main() {
     val entities = scanForCodeEntities(entityPackageName, BaseEntity::class.java)
     TaskConstants.init()
     val tasks = listOf(
-            BaseControllerTask(),
-            ControllerTask(),
-            DaoTask(),
-            ServiceTask()
+        BaseControllerTask(),
+        ControllerTask(),
+        DaoTask(),
+        ServiceTask()
     )
     tasks.forEach {
         it.targetPath = System.getProperty("user.dir")
     }
     CodeProject(
-            name = projectName,
-            entities = entities,
-            packageName = packageName,
-            tasks = tasks,
-            templateEngine = FreeMarkerHelper()
+        name = projectName,
+        entities = entities,
+        packageName = packageName,
+        tasks = tasks,
+        templateEngine = FreeMarkerHelper()
     ).generate()
-
-
 }
