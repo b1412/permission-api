@@ -18,34 +18,35 @@ import org.springframework.web.bind.annotation.RequestParam
 @Transactional
 abstract class BaseRolePermissionController : BaseController<RolePermission, Long>() {
 
-    @GraphRender("rolepermission")
-    @GetMapping
-    override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
-        return super.page(request, filter,pageable)
+@GraphRender("rolepermission")
+@GetMapping
+override fun page(request: HttpServletRequest, @RequestParam filter: Map
+<String, String>, pageable: Pageable): ResponseEntity<*> {
+return super.page(request, filter,pageable)
 
-    }
+}
 
-    @GraphRender("rolepermission")
-    @GetMapping("{id}")
-    override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
-        return super.findOne(id, request)
-    }
+@GraphRender("rolepermission")
+@GetMapping("{id}")
+override fun findOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
+return super.findOne(id, request)
+}
 
-    @PostMapping
-    override fun saveOne(@Validated @RequestBody input: RolePermission, request: HttpServletRequest): ResponseEntity<*> {
-        return super.saveOne(input, request)
+@PostMapping
+override fun saveOne(@Validated @RequestBody input: RolePermission, request: HttpServletRequest): ResponseEntity<*> {
+return super.saveOne(input, request)
 
-    }
+}
 
-    @PutMapping("{id}")
-    override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: RolePermission, request: HttpServletRequest): ResponseEntity<*> {
-        super.updateOne(id, input, request)
-        return ResponseEntity.noContent().build<RolePermission>()
-    }
+@PutMapping("{id}")
+override fun updateOne(@PathVariable id: Long, @Validated @RequestBody input: RolePermission, request: HttpServletRequest): ResponseEntity<*> {
+super.updateOne(id, input, request)
+return ResponseEntity.noContent().build<RolePermission>()
+}
 
-    @DeleteMapping("{id}")
-    override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
-        return super.deleteOne(id,request)
+@DeleteMapping("{id}")
+override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
+return super.deleteOne(id,request)
 
-    }
+}
 }
