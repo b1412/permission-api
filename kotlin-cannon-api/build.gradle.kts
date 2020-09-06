@@ -18,20 +18,17 @@ allOpen {
     annotation("javax.persistence.MappedSuperclass")
 }
 
-group = "cannon"
-version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
-    maven(url = "https://repo.spring.io/milestone")
-    maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
-    maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/")
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
-    compile(project(":kotlin-cannon-generated"))
-    val arrowVersion = "0.10.3"
+    api(project(":kotlin-cannon-generated"))
+    implementation("com.github.b1412:api-common:540b36da63")
+    val arrowVersion = "0.10.5"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     springboot()

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestParam
 
+
 @Transactional
 abstract class Base${entity.name}Controller : BaseController<${entity.name}, Long>() {
 

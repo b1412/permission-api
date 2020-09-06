@@ -3,7 +3,7 @@ package com.github.b1412.cannon.extenstions
 import arrow.core.getOrElse
 import arrow.core.toOption
 import arrow.syntax.collections.tail
-import com.github.b1412.cannon.entity.BaseEntity
+import com.github.b1412.api.entity.BaseEntity
 import org.joor.Reflect
 import org.springframework.http.ResponseEntity
 import java.math.BigDecimal
