@@ -20,7 +20,6 @@ bootJar.enabled = false
 jar.enabled = true
 
 
-group = "cannon"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
@@ -34,9 +33,10 @@ repositories {
 dependencies {
     implementation(project(":kotlin-cannon-base"))
     implementation("com.github.b1412:kotlin-code-generator:8cea9482ed")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    val arrowVersion = "0.10.3"
+    val arrowVersion = "0.10.5"
     arrow(arrowVersion)
 }
 
