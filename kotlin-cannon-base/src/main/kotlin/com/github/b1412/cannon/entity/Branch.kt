@@ -3,7 +3,7 @@ package com.github.b1412.cannon.entity
 import org.hibernate.annotations.Type
 import java.io.Serializable
 import javax.persistence.*
-
+import com.github.b1412.api.entity.BaseEntity
 @Entity
 data class Branch(
         var name: String? = null,

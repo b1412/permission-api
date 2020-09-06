@@ -1,10 +1,15 @@
 package com.github.b1412.cannon.entity
 
+import com.github.b1412.api.entity.BaseEntity
 import org.hibernate.annotations.Type
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.io.Serializable
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.Transient
 
 @Entity
 data class User(
