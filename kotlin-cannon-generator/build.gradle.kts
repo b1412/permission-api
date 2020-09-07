@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     implementation(project(":kotlin-cannon-base"))
+    implementation("com.github.b1412:api-common:540b36da63")
     implementation("com.github.b1412:kotlin-code-generator:8cea9482ed")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

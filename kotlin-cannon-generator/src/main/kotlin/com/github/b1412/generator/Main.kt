@@ -1,6 +1,6 @@
 package com.github.b1412.generator
 
-import com.github.b1412.cannon.entity.BaseEntity
+import com.github.b1412.api.entity.BaseEntity
 import com.github.b1412.generator.entity.CodeProject
 import com.github.b1412.generator.entity.scanForCodeEntities
 import com.github.b1412.generator.template.FreeMarkerHelper
