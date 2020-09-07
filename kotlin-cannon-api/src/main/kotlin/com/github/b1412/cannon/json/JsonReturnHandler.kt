@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.github.b1412.cannon.entity.BaseEntity
+import com.github.b1412.api.entity.BaseEntity
+import com.github.b1412.cannon.util.findClasses
 import org.joor.Reflect
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.core.MethodParameter
@@ -43,14 +44,8 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
         val embedded = request.getParameter("embedded")
         val endpoint = returnType.annotatedElement.declaredAnnotations.first { it is GraphRender }!! as GraphRender
-
-        val clazzName = BaseEntity::class.java.`package`.name + "." + endpoint.entity.capitalize()
-        try {
-            Class.forName(clazzName)
-        } catch (ex: Exception) {
-            return
-        }
-        val rootEntityClass = Class.forName(clazzName)
+        val result = findClasses(BaseEntity::class.java, "classpath*:com/github/b1412/**/*.class")
+        val rootEntityClass = result.first { it.simpleName.equals(endpoint.entity.capitalize()) }
         val firstLevelFields = fieldsOfClass(rootEntityClass)
         val objectMapper = ObjectMapper()
         objectMapper.registerModule(Jdk8Module())
@@ -59,7 +54,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonFilter = JacksonJsonFilter(
-                fields = mutableMapOf(rootEntityClass to firstLevelFields)
+            fields = mutableMapOf(rootEntityClass to firstLevelFields)
         )
         val entityClassMap = mutableMapOf<String, Class<*>>()
 
@@ -67,23 +62,23 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
 
         embedded.toOption()
-                .map { it.split(",").toList() }
-                .getOrElse { emptyList() }
-                .filter { it.isNotBlank() }
-                .map { e -> e.split(".").toList() }
-                .filter { it.isNotEmpty() }
-                .sortedBy { it.size }
-                .forEach {
-                    if (it.size == 1) { //root node
-                        val embeddedNode = it.first()
-                        addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
-                    } else {
-                        val embeddedNode = it.last()
-                        val lastParentNode = it.dropLast(1).last()
-                        val parentEntityClass = entityClassMap[lastParentNode]!!
-                        addEmbedded(objectMapper, entityClassMap, jsonFilter, parentEntityClass, embeddedNode)
-                    }
+            .map { it.split(",").toList() }
+            .getOrElse { emptyList() }
+            .filter { it.isNotBlank() }
+            .map { e -> e.split(".").toList() }
+            .filter { it.isNotEmpty() }
+            .sortedBy { it.size }
+            .forEach {
+                if (it.size == 1) { //root node
+                    val embeddedNode = it.first()
+                    addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
+                } else {
+                    val embeddedNode = it.last()
+                    val lastParentNode = it.dropLast(1).last()
+                    val parentEntityClass = entityClassMap[lastParentNode]!!
+                    addEmbedded(objectMapper, entityClassMap, jsonFilter, parentEntityClass, embeddedNode)
                 }
+            }
 
         response.contentType = MediaType.APPLICATION_JSON_VALUE
 
@@ -123,7 +118,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
     private fun fieldsOfClass(entityClass: Class<*>): MutableList<String> {
         return (entityClass.declaredFields + entityClass.superclass.declaredFields).filter { field ->
             field.annotations.isEmpty() || field.annotations.all { annotation ->
-                (annotation is OneToMany || annotation is OneToOne || annotation is ManyToOne||annotation is ManyToMany).not()
+                (annotation is OneToMany || annotation is OneToOne || annotation is ManyToOne || annotation is ManyToMany).not()
             }
         }.map { it.name }.toMutableList()
     }

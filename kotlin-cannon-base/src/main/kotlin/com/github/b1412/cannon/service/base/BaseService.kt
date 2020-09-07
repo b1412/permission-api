@@ -5,8 +5,8 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.toOption
+import com.github.b1412.api.entity.BaseEntity
 import com.github.b1412.cannon.dao.base.BaseDao
-import com.github.b1412.cannon.entity.BaseEntity
 import com.github.b1412.cannon.entity.User
 import com.github.b1412.cannon.extenstions.copyFrom
 import com.github.b1412.cannon.service.SecurityFilter
@@ -24,7 +24,7 @@ import javax.persistence.OneToOne
 
 @Component
 abstract class BaseService<T, ID : Serializable>(
-        private val dao: BaseDao<T, ID>
+    private val dao: BaseDao<T, ID>
 ) : BaseDao<T, ID> by dao {
 
     @Autowired
@@ -53,16 +53,16 @@ abstract class BaseService<T, ID : Serializable>(
                 }
             } else if (field.type.isAssignableFrom(MutableList::class.java)) {
                 val list = baseEntity.toOption()
-                        .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
-                        .map { e -> e as MutableList<out BaseEntity> }
-                        .getOrElse { listOf<BaseEntity>() }
-                        .map { obj ->
-                            val id = Reflect.on(obj).get<Any>("id")
-                            when (id) {
-                                null -> obj
-                                else -> entityManager.find(obj::class.java, id)
-                            }
+                    .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
+                    .map { e -> e as MutableList<out BaseEntity> }
+                    .getOrElse { listOf<BaseEntity>() }
+                    .map { obj ->
+                        val id = Reflect.on(obj).get<Any>("id")
+                        when (id) {
+                            null -> obj
+                            else -> entityManager.find(obj::class.java, id)
                         }
+                    }
                 if (!list.isEmpty()) {
                     Reflect.on(baseEntity).set(field.name, list)
                 }
@@ -94,41 +94,41 @@ abstract class BaseService<T, ID : Serializable>(
                 val manyToManyAnno = field.getAnnotation(ManyToMany::class.java)
                 if (oneToManyAnno != null && oneToManyAnno.orphanRemoval) {
                     val list = baseEntity.toOption()
-                            .flatMap { it -> Reflect.on(it).get<Any>(field.name).toOption() }
-                            .map { it as MutableList<out BaseEntity> }
-                            .getOrElse { listOf<BaseEntity>() }
-                            .map { obj ->
-                                val id = Reflect.on(obj).get<Any>("id")
-                                when (id) {
-                                    null -> {
-                                        // assign user,获取父entity 的user
-                                        Reflect.on(obj).set(oneToManyAnno.mappedBy, baseEntity)
-                                        //   entityManager.persist(obj)
-                                        obj
-                                    }
-                                    else -> {
-                                        val oldNestedObj = entityManager.find(obj::class.java, id)
-                                        val mergedObj = oldNestedObj.copyFrom(obj)
-                                        Reflect.on(mergedObj).set(oneToManyAnno.mappedBy, baseEntity)
-                                        //  entityManager.merge(mergedObj)
-                                        mergedObj
-                                    }
+                        .flatMap { it -> Reflect.on(it).get<Any>(field.name).toOption() }
+                        .map { it as MutableList<out BaseEntity> }
+                        .getOrElse { listOf<BaseEntity>() }
+                        .map { obj ->
+                            val id = Reflect.on(obj).get<Any>("id")
+                            when (id) {
+                                null -> {
+                                    // assign user,获取父entity 的user
+                                    Reflect.on(obj).set(oneToManyAnno.mappedBy, baseEntity)
+                                    //   entityManager.persist(obj)
+                                    obj
+                                }
+                                else -> {
+                                    val oldNestedObj = entityManager.find(obj::class.java, id)
+                                    val mergedObj = oldNestedObj.copyFrom(obj)
+                                    Reflect.on(mergedObj).set(oneToManyAnno.mappedBy, baseEntity)
+                                    //  entityManager.merge(mergedObj)
+                                    mergedObj
                                 }
                             }
+                        }
                     Reflect.on(any).call("clear")
                     Reflect.on(any).call("addAll", list)
                 } else if (manyToManyAnno != null) {
                     val list = baseEntity.toOption()
-                            .flatMap { it -> Reflect.on(it).get<Any>(field.name).toOption() }
-                            .map { it as MutableList<out BaseEntity> }
-                            .getOrElse { listOf<BaseEntity>() }
-                            .map { obj ->
-                                val id = Reflect.on(obj).get<Any>("id")
-                                when (id) {
-                                    null -> obj
-                                    else -> entityManager.find(obj::class.java, id)
-                                }
+                        .flatMap { it -> Reflect.on(it).get<Any>(field.name).toOption() }
+                        .map { it as MutableList<out BaseEntity> }
+                        .getOrElse { listOf<BaseEntity>() }
+                        .map { obj ->
+                            val id = Reflect.on(obj).get<Any>("id")
+                            when (id) {
+                                null -> obj
+                                else -> entityManager.find(obj::class.java, id)
                             }
+                        }
                     if (!list.isEmpty()) {
                         Reflect.on(baseEntity).set(field.name, list)
                     }
@@ -139,9 +139,9 @@ abstract class BaseService<T, ID : Serializable>(
 
     private fun getObject(baseEntity: BaseEntity, field: Field, type: Class<*>): Option<*> {
         return baseEntity.toOption()
-                .flatMap { Reflect.on(baseEntity).get<Any>(field.name).toOption() }
-                .flatMap { Reflect.on(it).get<Any>("id").toOption() }
-                .map { entityManager.find(type, it) }
+            .flatMap { Reflect.on(baseEntity).get<Any>(field.name).toOption() }
+            .flatMap { Reflect.on(it).get<Any>("id").toOption() }
+            .map { entityManager.find(type, it) }
     }
 
 }

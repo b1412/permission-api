@@ -3,7 +3,6 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     val kotlinVersion = "1.3.72"
-    jacoco
     id("org.springframework.boot") version "2.3.0.RELEASE"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     kotlin("jvm") version kotlinVersion
@@ -25,26 +24,23 @@ allOpen {
     annotation("javax.persistence.MappedSuperclass")
 }
 
-group = "cannon"
-version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
-    maven(url = "https://repo.spring.io/milestone")
-    maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
-    maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/")
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
-    val arrowVersion = "0.10.3"
+    val arrowVersion = "0.10.5"
+    implementation("com.github.b1412:api-common:540b36da63")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     springboot()
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("mysql:mysql-connector-java:6.0.5")
-    arrow(arrowVersion)
     graphql()
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.h2database:h2")
+    arrow(arrowVersion)
     implementation("org.jooq:joor-java-8:0.9.12")
     implementation("io.github.microutils:kotlin-logging:1.7.6")
     implementation("io.jsonwebtoken:jjwt:0.7.0")

@@ -38,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    compile(project(":kotlin-cannon-base"))
+    api(project(":kotlin-cannon-base"))
     val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

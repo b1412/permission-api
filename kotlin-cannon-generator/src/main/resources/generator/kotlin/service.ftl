@@ -9,9 +9,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class ${entity.name}Service(
-    @Autowired
-    val dao: ${entity.name}Dao
+@Autowired
+val dao: ${entity.name}Dao
 ) : BaseService<${entity.name}, Long>(dao = dao)
-
-
-
