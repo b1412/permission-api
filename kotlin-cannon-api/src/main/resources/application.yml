@@ -25,4 +25,4 @@ server:
   port: 8080
 cannon:
   jwt:
-    anonymousUrls: /v1/login,/graphiql,/graphql,/vendor/**,/v1/menu/**
+    anonymousUrls: /v1/login,/graphiql,/graphql,/vendor/**,/v1/menu/**,/actuator/health
