@@ -3,5 +3,5 @@
 build
 out
 classes
-logs
+*.iml
 
