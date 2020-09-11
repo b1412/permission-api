@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk13
+FROM adoptopenjdk/openjdk11
 MAINTAINER zhouleib1412@gmail.com
 
 ENV APP_ROOT /opt/cannon
