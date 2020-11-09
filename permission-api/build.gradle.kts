@@ -116,8 +116,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/b1412/permission-api")
             credentials {
-                username = "b1412"
-                password = "6f09d3821f916ce1e25f913626e437f52a6fe99d"
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
