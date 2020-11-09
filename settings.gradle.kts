@@ -12,8 +12,9 @@ pluginManagement {
     }
 }
 include(
-        "kotlin-cannon-base",
-        "kotlin-cannon-api",
-        "kotlin-cannon-generated",
-        "kotlin-cannon-generator"
+        "permission-main",
+        "permission-api",
+        "permission-base",
+        "permission-generated",
+        "permission-generator"
 )
