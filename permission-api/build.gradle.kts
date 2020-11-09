@@ -22,8 +22,8 @@ noArg{
     annotation("javax.persistence.MappedSuperclass")
 }
 
-group = "nz.co.zran"
-version = "1.0.1-snapshot"
+group = "com.github.b1412"
+version = "0.1.0"
 
 val jar: Jar by tasks
 val bootJar: org.springframework.boot.gradle.tasks.bundling.BootJar by tasks
