@@ -26,8 +26,8 @@ allOpen {
     annotation("javax.persistence.MappedSuperclass")
 }
 
-group = "nz.co.zran"
-version = "1.0.1-snapshot"
+group = "com.github.b1412"
+version = "0.1.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
