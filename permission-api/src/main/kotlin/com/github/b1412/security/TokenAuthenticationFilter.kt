@@ -36,7 +36,6 @@ class TokenAuthenticationFilter(
 ) : OncePerRequestFilter() {
 
     public override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        val wrapRequest = AuthenticationRequestWrapper(request)
         val pathsToSkip = applicationProperties.jwt.anonymousUrls.toOption()
                 .map { it.split(",") }
                 .map { it.toList() }
@@ -45,7 +44,7 @@ class TokenAuthenticationFilter(
         when {
             skipPathRequest(request, pathsToSkip) -> {
                 SecurityContextHolder.getContext().authentication = AnonAuthentication()
-                chain.doFilter(wrapRequest, response)
+                chain.doFilter(request, response)
             }
             else -> {
                 val authToken = tokenHelper.getToken(request)
@@ -56,7 +55,7 @@ class TokenAuthenticationFilter(
                     val authentication = TokenBasedAuthentication(userDetails)
                     authentication.token = authToken
                     SecurityContextHolder.getContext().authentication = authentication
-                    chain.doFilter(wrapRequest, response)
+                    chain.doFilter(request, response)
                 } else {
                     val clientId = request.getParameter("clientId")
                     // val header = request.getHeader("X-Forwarded-Host")
@@ -68,7 +67,7 @@ class TokenAuthenticationFilter(
                         when (val option = userService.loadAuthenticationByClientId(clientId)) {
                             is Some -> {
                                 SecurityContextHolder.getContext().authentication = option.t
-                                chain.doFilter(wrapRequest, response)
+                                chain.doFilter(request, response)
                             }
                             None -> {
                                 loginExpired(request, response, usernameTry.exceptionOrNull()!!.message!!)
