@@ -14,6 +14,8 @@ import javax.persistence.Transient
 @Entity
 data class User(
         var login: String? = null,
+        val firstname:String? = null,
+        val lastname:String? = null,
         var address: String? = null,
         var email: String? = null,
         var notes: String? = null,
