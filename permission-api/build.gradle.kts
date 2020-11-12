@@ -23,7 +23,7 @@ noArg{
 }
 
 group = "com.github.b1412"
-version = "0.1.3"
+version = "0.1.4"
 
 val jar: Jar by tasks
 val bootJar: org.springframework.boot.gradle.tasks.bundling.BootJar by tasks
