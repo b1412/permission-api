@@ -40,7 +40,7 @@ repositories {
 
 dependencies {
     api(project(":permission-base"))
-    implementation("com.github.b1412:api-common:cd9d9a21c3")
+    implementation("com.github.b1412:api-common:df7a724fb6")
     val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

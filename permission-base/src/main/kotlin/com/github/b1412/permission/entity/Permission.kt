@@ -2,23 +2,20 @@ package com.github.b1412.permission.entity
 
 import com.github.b1412.api.entity.BaseEntity
 import java.io.Serializable
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.OneToMany
+import javax.persistence.*
 
 @Entity
 data class Permission(
-    var entity: String? = null,
+        var entity: String? = null,
 
-    var authKey: String? = null,
+        var authKey: String? = null,
 
-    var display: String? = null,
+        var authUris: String? = null,
 
-    var httpMethod: String? = null,
+        var httpMethod: String? = null,
 
-    var authUris: String? = null,
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "permission")
-    var rolePermission: MutableList<RolePermission> = mutableListOf()
+        @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+        @JoinColumn(name = "permission_id")
+        var rolePermissions: MutableList<RolePermission> = mutableListOf()
 
 ) : BaseEntity(), Serializable

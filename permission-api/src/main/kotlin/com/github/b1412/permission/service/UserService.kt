@@ -7,6 +7,8 @@ import com.github.b1412.permission.entity.Role
 import com.github.b1412.permission.entity.RolePermission
 import com.github.b1412.permission.entity.User
 import com.github.b1412.api.service.BaseService
+import com.github.b1412.extenstions.print
+import com.github.b1412.extenstions.println
 import com.github.b1412.security.ApplicationProperties
 import com.github.b1412.security.TokenBasedAuthentication
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,7 +45,6 @@ class UserService(
         val graph = this.entityManager.createEntityGraph(User::class.java)
 
         val roleSubGraph = graph.addSubgraph<Role>("role")
-        val branchSubGraph = graph.addSubgraph<Role>("branch")
         val rolePermissionSubGraph = roleSubGraph.addSubgraph<List<RolePermission>>("rolePermissions")
         rolePermissionSubGraph.addAttributeNodes("permission")
         rolePermissionSubGraph.addAttributeNodes("rules")
@@ -56,7 +57,7 @@ class UserService(
             None -> throw AccessDeniedException("invalid user information or user is not verified: $username")
         }
         val permissions = user.role!!.rolePermissions.map { it.permission }
-        val grantedAuthorities = permissions.map { SimpleGrantedAuthority(it!!.authKey) as GrantedAuthority }.toMutableList()
+        val grantedAuthorities = permissions.map { SimpleGrantedAuthority(it?.authKey) as GrantedAuthority }.toMutableList()
         user.grantedAuthorities = grantedAuthorities
         return user
     }
