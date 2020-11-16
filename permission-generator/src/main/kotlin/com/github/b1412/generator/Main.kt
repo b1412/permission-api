@@ -24,10 +24,11 @@ fun main() {
             ServiceTask(),
             AllPermissionTask(),
             PermissionTask(),
-            RolePermissionRuleTask()
+            RolePermissionRuleTask(),
+            ExcelExportTask()
     )
     tasks.forEach {
-        it.targetPath = "/Users/guest2/workspaces/permission"
+        it.targetPath = System.getProperty("user.dir")
     }
     CodeProject(
             name = projectName,

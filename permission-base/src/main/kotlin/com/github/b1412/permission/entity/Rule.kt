@@ -7,5 +7,4 @@ import javax.persistence.Entity
 @Entity
 data class Rule(
         var name: String?
-
 ) : BaseEntity(), Serializable

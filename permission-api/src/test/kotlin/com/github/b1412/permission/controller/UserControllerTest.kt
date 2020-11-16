@@ -128,7 +128,7 @@ class UserControllerTest {
                 notes = "notes of user"
         ).apply { this.id = 1 }
         every { userService.save(any<User>()) } returns user
-        every { userService.syncSeleceOneFromDb(any<User>()) } just Runs
+        every { userService.syncFromDb(any<User>()) } just Runs
         val body = """
   {
     "password":"password",
@@ -196,7 +196,7 @@ class UserControllerTest {
         ).apply { this.id = 1 }
 
         every { userService.findByIdOrNull(1) } returns persistedUser
-        every { userService.syncSeleceOneFromDb(any()) } just runs
+        every { userService.syncFromDb(any()) } just runs
         every { userService.save(any<User>()) } returns updatedUser
         val body = """
   {
