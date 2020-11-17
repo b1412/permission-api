@@ -1,5 +1,5 @@
 # Kotlin Cannon
-[![Build Status](https://travis-ci.org/b1412/kotlin-cannon.svg?branch=master)](https://travis-ci.org/b1412/kotlin-cannon)[![codecov](https://codecov.io/gh/b1412/kotlin-cannon/branch/master/graph/badge.svg)](https://codecov.io/gh/b1412/kotlin-cannon)
+![Permission API CI](https://github.com/b1412/permission-api/workflows/Permission%20API%20CI/badge.svg)
 
 ## Start from DockerHub
 
