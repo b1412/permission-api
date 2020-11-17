@@ -9,7 +9,6 @@ class ApplicationProperties {
 
     var user: User = User()
 
-
     class Jwt {
         var header = "Authorization"
         var expiresIn: Long? = 864000L

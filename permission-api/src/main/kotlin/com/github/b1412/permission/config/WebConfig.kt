@@ -15,5 +15,4 @@ class WebConfig(
     override fun addReturnValueHandlers(returnValueHandlers: MutableList<HandlerMethodReturnValueHandler>) {
         returnValueHandlers.add(jsonReturnHandler)
     }
-
 }

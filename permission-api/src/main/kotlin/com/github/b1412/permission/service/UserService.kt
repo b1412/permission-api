@@ -31,6 +31,8 @@ class UserService(
         @Value("\${spring.application.name}")
         val application: String,
         @Autowired
+        val applicationProperties: ApplicationProperties,
+        @Autowired
         val cacheClient: CacheClient,
         @Autowired
         val roleDao: RoleService,
@@ -51,7 +53,12 @@ class UserService(
 
         val hints = HashMap<String, Any>()
         hints["javax.persistence.fetchgraph"] = graph
-        val userOpt = this.entityManager.find(User::class.java, id, hints).toOption()
+        val userOpt = this.entityManager.find(User::class.java, id, hints).toOption().filter {
+            when (applicationProperties.user.needVerify) {
+                true -> it.active!!
+                false -> true
+            }
+        }
         val user = when (userOpt) {
             is Some -> userOpt.t
             None -> throw AccessDeniedException("invalid user information or user is not verified: $username")

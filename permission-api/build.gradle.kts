@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     val kotlinVersion = "1.4.10"
     jacoco
-    id("org.springframework.boot") version "2.4.0-RC1"
+    id("org.springframework.boot") version "2.4.0"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -23,7 +23,7 @@ noArg{
 }
 
 group = "com.github.b1412"
-version = "0.1.6"
+version = "0.1.7"
 
 val jar: Jar by tasks
 val bootJar: org.springframework.boot.gradle.tasks.bundling.BootJar by tasks
@@ -41,7 +41,7 @@ repositories {
 
 dependencies {
     api(project(":permission-generated"))
-    implementation("com.github.b1412:api-common:df7a724fb6")
+    implementation("com.github.b1412:api-common:2cbab0a995")
 
     val arrowVersion = "0.11.0"
     implementation("org.jetbrains.kotlin:kotlin-reflect")

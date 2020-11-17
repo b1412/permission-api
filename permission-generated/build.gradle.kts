@@ -27,7 +27,7 @@ allOpen {
 }
 
 group = "com.github.b1412"
-version = "0.1.6"
+version = "0.1.7"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
@@ -40,7 +40,7 @@ repositories {
 
 dependencies {
     api(project(":permission-base"))
-    implementation("com.github.b1412:api-common:df7a724fb6")
+    implementation("com.github.b1412:api-common:2cbab0a995")
     val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
