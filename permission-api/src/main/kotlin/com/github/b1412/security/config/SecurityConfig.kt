@@ -25,10 +25,6 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import org.springframework.web.filter.CorsFilter
-
 
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -43,12 +39,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
     private val logoutSuccess: LogoutSuccess? = null
+
     @Autowired
     private val authenticationSuccessHandler: AuthenticationSuccessHandler? = null
+
     @Autowired
     private val authenticationFailureHandler: AuthenticationFailureHandler? = null
-    @Autowired
-    private val passwordEncoder: PasswordEncoder? = null
 
     @Autowired
     lateinit var tokenAuthenticationFilter: TokenAuthenticationFilter
@@ -87,25 +83,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         web!!.ignoring().antMatchers("/js/**", "/css/**", "/images/**", "/**/favicon.ico")
     }
 
-
-    /* @Throws(Exception::class)
-     override fun configure(auth: AuthenticationManagerBuilder?) {
-         auth!!.userDetailsService<UserDetailsService>(userDetailsService)
-                 .passwordEncoder(passwordEncoder)
-
-     }*/
-
-    @Bean
-    fun corsFilter(): CorsFilter {
-        val source = UrlBasedCorsConfigurationSource()
-        val config = CorsConfiguration()
-        config.allowCredentials = true
-        config.addAllowedOrigin("*")
-        config.addAllowedHeader("*")
-        config.addAllowedMethod("*")
-        source.registerCorsConfiguration("/**", config)
-        return CorsFilter(source)
-    }
 
     override fun configure(http: HttpSecurity) {
         http.exceptionHandling().accessDeniedHandler(myAccessDeniedHandler)
