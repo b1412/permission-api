@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.github.b1412"
-version = "0.1.7"
+version = "0.1.8"
 
 val jar: Jar by tasks
 val bootJar: BootJar by tasks
