@@ -5,6 +5,7 @@ import com.github.b1412.api.entity.BaseEntity
 import com.github.b1412.api.service.BaseService
 import com.github.b1412.extenstions.copyFrom
 import com.github.b1412.extenstions.responseEntityOk
+import com.google.common.base.CaseFormat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -38,7 +39,8 @@ abstract class BaseController<T, ID : Serializable> {
     open fun saveOne(@Validated @RequestBody input: T, request: HttpServletRequest, uriComponent: UriComponentsBuilder): ResponseEntity<*> {
         baseService.syncFromDb(input as BaseEntity)
         baseService.save(input)
-        val uriComponents = uriComponent.path("/v1/user/{id}").buildAndExpand(input.id)
+        val endpoint = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_HYPHEN).convert(input!!::class.java.simpleName)
+        val uriComponents = uriComponent.path("/v1/${endpoint}/{id}").buildAndExpand(input.id)
         val headers = HttpHeaders()
         headers.location = uriComponents.toUri()
         return ResponseEntity.created(uriComponents.toUri()).build<Void>()
@@ -49,13 +51,13 @@ abstract class BaseController<T, ID : Serializable> {
         val persisted = baseService.findByIdOrNull(id)
         val merged = (persisted as Any).copyFrom(input) as T
         baseService.save(merged)
-        return ResponseEntity.noContent().build<T>()
+        return ResponseEntity.ok().build<T>()
     }
 
     open fun deleteOne(@PathVariable id: ID, request: HttpServletRequest): ResponseEntity<*> {
         return runCatching { baseService.deleteById(id) }
                 .fold(
-                        { ResponseEntity.noContent().build<Void>() },
+                        { ResponseEntity.noContent().build<T>() },
                         { ResponseEntity.notFound().build() }
                 )
     }

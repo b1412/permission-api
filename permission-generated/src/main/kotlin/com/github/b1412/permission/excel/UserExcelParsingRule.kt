@@ -46,6 +46,14 @@ class UserExcelParsingRule(
     fileParser.addCell(18, "createdAt")
     fileParser.addCell(19, "updatedAt")
     fileParser.addCell(20, "deletedAt")
+        fileParser.addCell(2, "category", EntityConvertor().apply {
+                name = "Creator"
+                em = entityManager
+        })
+        fileParser.addCell(2, "category", EntityConvertor().apply {
+                name = "Modifier"
+                em = entityManager
+        })
         return fileParser
     }
 

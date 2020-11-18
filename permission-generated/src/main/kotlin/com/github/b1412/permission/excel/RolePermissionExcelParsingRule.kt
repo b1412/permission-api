@@ -21,19 +21,23 @@ class RolePermissionExcelParsingRule(
         val fileParser = FileParser()
         fileParser.start = 1
         fileParser.addCell(2, "category", EntityConvertor().apply {
-                name = "Role"
-                em = entityManager
-        })
-        fileParser.addCell(2, "category", EntityConvertor().apply {
                 name = "Permission"
                 em = entityManager
         })
-    fileParser.addCell(3, "rules")
-    fileParser.addCell(4, "id", LongConvertor())
-    fileParser.addCell(5, "version", LongConvertor())
-    fileParser.addCell(6, "createdAt")
-    fileParser.addCell(7, "updatedAt")
-    fileParser.addCell(8, "deletedAt")
+    fileParser.addCell(2, "rules")
+    fileParser.addCell(3, "id", LongConvertor())
+    fileParser.addCell(4, "version", LongConvertor())
+    fileParser.addCell(5, "createdAt")
+    fileParser.addCell(6, "updatedAt")
+    fileParser.addCell(7, "deletedAt")
+        fileParser.addCell(2, "category", EntityConvertor().apply {
+                name = "Creator"
+                em = entityManager
+        })
+        fileParser.addCell(2, "category", EntityConvertor().apply {
+                name = "Modifier"
+                em = entityManager
+        })
         return fileParser
     }
 
