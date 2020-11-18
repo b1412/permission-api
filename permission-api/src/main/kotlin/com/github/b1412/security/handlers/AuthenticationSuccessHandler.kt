@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.b1412.cache.CacheClient
 import com.github.b1412.permission.entity.User
 import com.github.b1412.permission.service.UserService
-import com.github.b1412.security.ApplicationProperties
+import com.github.b1412.security.PermissionProperties
 import com.github.b1412.security.TokenHelper
 
 import com.github.b1412.security.UserTokenState
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-@EnableConfigurationProperties(value = [ApplicationProperties::class])
+@EnableConfigurationProperties(value = [PermissionProperties::class])
 @Component
 class AuthenticationSuccessHandler(
         @Value("\${spring.application.name}")
@@ -31,7 +31,7 @@ class AuthenticationSuccessHandler(
         var objectMapper: ObjectMapper,
 
         @Autowired
-        var applicationProperties: ApplicationProperties,
+        var permissionProperties: PermissionProperties,
 
         @Autowired
         var userService: UserService,
@@ -51,7 +51,7 @@ class AuthenticationSuccessHandler(
 
         cacheClient.set("$application-${user.username}-${user.clientId}".toLowerCase(), userService.getUserWithPermissions(user.username!!, user.clientId!!))
         val jws = tokenHelper.generateToken(user.username!!, user.clientId!!)
-        val jwt = applicationProperties.jwt
+        val jwt = permissionProperties.jwt
         val userTokenState = UserTokenState(
                 access_token = jws,
                 //expires_in = user.expiresIn.orElse(jwt.expiresIn),

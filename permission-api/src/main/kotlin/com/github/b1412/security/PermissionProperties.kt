@@ -3,7 +3,7 @@ package com.github.b1412.security
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("permission")
-class ApplicationProperties {
+class PermissionProperties {
 
     var jwt: Jwt = Jwt()
 
@@ -20,5 +20,9 @@ class ApplicationProperties {
 
     class User {
         var needVerify = false
+    }
+
+    class Jpa {
+        var entityPackages: String? = null
     }
 }

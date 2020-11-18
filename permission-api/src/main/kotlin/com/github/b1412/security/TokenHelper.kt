@@ -13,11 +13,11 @@ import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 
-@EnableConfigurationProperties(value = [ApplicationProperties::class])
+@EnableConfigurationProperties(value = [PermissionProperties::class])
 @Component
 class TokenHelper(
         @Autowired
-        val applicationProperties: ApplicationProperties,
+        val permissionProperties: PermissionProperties,
         @Autowired
         var userDetailsService: CustomUserDetailsService,
         @Value("\${spring.application.name}")
@@ -27,7 +27,7 @@ class TokenHelper(
     fun getUsernameFromToken(token: String?): Result<String> {
         return runCatching {
             Jwts.parser()
-                    .setSigningKey(applicationProperties.jwt.secret)
+                    .setSigningKey(permissionProperties.jwt.secret)
                     .parseClaimsJws(token)
                     .body
         }.map { it.subject }
@@ -38,13 +38,13 @@ class TokenHelper(
         val currentTimeMillis = System.currentTimeMillis()
         val currentDate = Date(currentTimeMillis)
         //val expirationDate = Date(currentTimeMillis + user.expiresIn.orElse(applicationProperties.jwt.expiresIn!!) * 1000)
-        val expirationDate = Date(currentTimeMillis + applicationProperties.jwt.expiresIn!! * 1000)
+        val expirationDate = Date(currentTimeMillis + permissionProperties.jwt.expiresIn!! * 1000)
         return Jwts.builder()
                 .setIssuer(application)
                 .setSubject("$username@@$clientId")
                 .setIssuedAt(currentDate)
                 .setExpiration(expirationDate)
-                .signWith(HS512, applicationProperties.jwt.secret)
+                .signWith(HS512, permissionProperties.jwt.secret)
                 //  .claim("user", userDetails)
                 .compact()
     }
@@ -54,7 +54,7 @@ class TokenHelper(
         /**
          * Getting the token from Cookie store
          */
-        val authCookie = getCookieValueByName(request, applicationProperties.jwt.cookie)
+        val authCookie = getCookieValueByName(request, permissionProperties.jwt.cookie)
         if (authCookie != null) {
             return authCookie.value
         }
@@ -62,10 +62,10 @@ class TokenHelper(
          * Getting the token from Authentication header
          * e.g Bearer your_token
          */
-        val authHeader = request.getHeader(applicationProperties.jwt.header)
+        val authHeader = request.getHeader(permissionProperties.jwt.header)
         return if (authHeader != null && authHeader.startsWith("Bearer ")) {
             authHeader.substring(7)
-        } else request.getParameter(applicationProperties.jwt.param)
+        } else request.getParameter(permissionProperties.jwt.param)
 
     }
 

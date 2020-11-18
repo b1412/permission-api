@@ -23,7 +23,7 @@ noArg{
 }
 
 group = "com.github.b1412"
-version = "0.1.8"
+version = "0.1.9"
 
 val jar: Jar by tasks
 val bootJar: org.springframework.boot.gradle.tasks.bundling.BootJar by tasks
@@ -41,7 +41,7 @@ repositories {
 
 dependencies {
     api(project(":permission-generated"))
-    implementation("com.github.b1412:api-common:2cbab0a995")
+    implementation("com.github.b1412:api-common:5ba35feadd")
 
     val arrowVersion = "0.11.0"
     implementation("org.jetbrains.kotlin:kotlin-reflect")

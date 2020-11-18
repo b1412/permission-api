@@ -1,9 +1,10 @@
 package com.github.b1412.permission.entity
 
+import com.github.b1412.api.entity.BaseEntity
 import org.hibernate.annotations.Type
 import java.io.Serializable
 import javax.persistence.*
-import com.github.b1412.api.entity.BaseEntity
+
 @Entity
 data class Branch(
         var name: String? = null,

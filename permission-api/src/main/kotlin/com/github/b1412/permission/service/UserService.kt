@@ -7,9 +7,7 @@ import com.github.b1412.permission.entity.Role
 import com.github.b1412.permission.entity.RolePermission
 import com.github.b1412.permission.entity.User
 import com.github.b1412.api.service.BaseService
-import com.github.b1412.extenstions.print
-import com.github.b1412.extenstions.println
-import com.github.b1412.security.ApplicationProperties
+import com.github.b1412.security.PermissionProperties
 import com.github.b1412.security.TokenBasedAuthentication
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -24,14 +22,14 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@EnableConfigurationProperties(value = [ApplicationProperties::class])
+@EnableConfigurationProperties(value = [PermissionProperties::class])
 class UserService(
         @Autowired
         val userDao: UserDao,
         @Value("\${spring.application.name}")
         val application: String,
         @Autowired
-        val applicationProperties: ApplicationProperties,
+        val permissionProperties: PermissionProperties,
         @Autowired
         val cacheClient: CacheClient,
         @Autowired
@@ -54,7 +52,7 @@ class UserService(
         val hints = HashMap<String, Any>()
         hints["javax.persistence.fetchgraph"] = graph
         val userOpt = this.entityManager.find(User::class.java, id, hints).toOption().filter {
-            when (applicationProperties.user.needVerify) {
+            when (permissionProperties.user.needVerify) {
                 true -> it.active!!
                 false -> true
             }

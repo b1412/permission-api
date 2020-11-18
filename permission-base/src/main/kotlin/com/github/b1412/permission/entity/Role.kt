@@ -6,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 data class Role(
-        var name: String? ,
+        var name: String?,
 
         @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
         var users: MutableList<User> = mutableListOf(),

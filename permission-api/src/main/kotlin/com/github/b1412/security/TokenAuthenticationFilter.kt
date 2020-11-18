@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
-@EnableConfigurationProperties(value = [ApplicationProperties::class])
+@EnableConfigurationProperties(value = [PermissionProperties::class])
 @Component
 class TokenAuthenticationFilter(
         @Autowired
@@ -27,7 +27,7 @@ class TokenAuthenticationFilter(
         @Autowired
         val objectMapper: ObjectMapper,
         @Autowired
-        val applicationProperties: ApplicationProperties,
+        val permissionProperties: PermissionProperties,
         @Autowired
         val userDetailsService: CustomUserDetailsService,
         @Autowired
@@ -36,7 +36,7 @@ class TokenAuthenticationFilter(
 ) : OncePerRequestFilter() {
 
     public override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        val pathsToSkip = applicationProperties.jwt.anonymousUrls.toOption()
+        val pathsToSkip = permissionProperties.jwt.anonymousUrls.toOption()
                 .map { it.split(",") }
                 .map { it.toList() }
                 .getOrElse { emptyList() }

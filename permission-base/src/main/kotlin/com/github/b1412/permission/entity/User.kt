@@ -5,17 +5,13 @@ import org.hibernate.annotations.Type
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.io.Serializable
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.Transient
+import javax.persistence.*
 
 @Entity
 data class User(
         var login: String? = null,
-        val firstname:String? = null,
-        val lastname:String? = null,
+        val firstname: String? = null,
+        val lastname: String? = null,
         var address: String? = null,
         var email: String? = null,
         var notes: String? = null,
