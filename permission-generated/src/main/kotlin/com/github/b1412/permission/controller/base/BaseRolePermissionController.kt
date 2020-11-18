@@ -1,15 +1,20 @@
 package com.github.b1412.permission.controller.base
 
 import com.github.b1412.api.controller.BaseController
-import com.github.b1412.json.GraphRender
+import org.springframework.web.bind.annotation.RestController
 import com.github.b1412.permission.entity.RolePermission
+import com.github.b1412.json.GraphRender
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.util.UriComponentsBuilder
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.util.UriComponentsBuilder
 
 @Transactional
 abstract class BaseRolePermissionController : BaseController<RolePermission, Long>() {
@@ -17,7 +22,7 @@ abstract class BaseRolePermissionController : BaseController<RolePermission, Lon
     @GraphRender("rolePermission")
     @GetMapping
     override fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
-        return super.page(request, filter, pageable)
+        return super.page(request, filter,pageable)
     }
 
     @GraphRender("rolePermission")
@@ -38,6 +43,6 @@ abstract class BaseRolePermissionController : BaseController<RolePermission, Lon
 
     @DeleteMapping("{id}")
     override fun deleteOne(@PathVariable id: Long, request: HttpServletRequest): ResponseEntity<*> {
-        return super.deleteOne(id, request)
+       return super.deleteOne(id,request)
     }
 }

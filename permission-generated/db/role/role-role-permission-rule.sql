@@ -13,6 +13,20 @@ VALUES (16, 0, 1, 1, 6, 1);
 INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
 VALUES (17, 0, 1, 1, 7, 1);
 INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
+VALUES (21, 0, 1, 1, 1, 2);
+INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
+VALUES (22, 0, 1, 1, 2, 2);
+INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
+VALUES (23, 0, 1, 1, 3, 2);
+INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
+VALUES (24, 0, 1, 1, 4, 2);
+INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
+VALUES (25, 0, 1, 1, 5, 2);
+INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
+VALUES (26, 0, 1, 1, 6, 2);
+INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
+VALUES (27, 0, 1, 1, 7, 2);
+INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
 VALUES (31, 0, 1, 1, 1, 3);
 INSERT INTO role_permission (id, version, creator_id, modifier_id, permission_id, role_id)
 VALUES (32, 0, 1, 1, 2, 3);
@@ -56,3 +70,17 @@ INSERT INTO role_permission_rule (role_permission_id, rule_id)
 VALUES (16, 1);
 INSERT INTO role_permission_rule (role_permission_id, rule_id)
 VALUES (17, 1);
+INSERT INTO role_permission_rule (role_permission_id, rule_id)
+VALUES (21, 5);
+INSERT INTO role_permission_rule (role_permission_id, rule_id)
+VALUES (22, 5);
+INSERT INTO role_permission_rule (role_permission_id, rule_id)
+VALUES (23, 5);
+INSERT INTO role_permission_rule (role_permission_id, rule_id)
+VALUES (24, 5);
+INSERT INTO role_permission_rule (role_permission_id, rule_id)
+VALUES (25, 5);
+INSERT INTO role_permission_rule (role_permission_id, rule_id)
+VALUES (26, 5);
+INSERT INTO role_permission_rule (role_permission_id, rule_id)
+VALUES (27, 5);

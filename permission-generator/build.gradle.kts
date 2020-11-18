@@ -26,9 +26,8 @@ repositories {
 
 dependencies {
     implementation(project(":permission-base"))
-    implementation("com.github.b1412:api-common:5ba35feadd")
-    implementation("com.github.b1412:kotlin-code-generator:f606c3539e")
-    implementation("com.github.b1412:generator-tasks:b82a0a2be1")
+    implementation("com.github.b1412:kotlin-code-generator:790498a17d")
+    implementation("com.github.b1412:generator-tasks:43b2e409ac")
 
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
