@@ -69,8 +69,6 @@ class MyInvocationSecurityMetadataSourceService(
             }
             None -> null
         }
-
-
     }
 
     override fun getAllConfigAttributes(): Collection<ConfigAttribute>? {

@@ -85,4 +85,23 @@ data class User(
         private const val serialVersionUID = 1L
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+
+        if (login != other.login) return false
+        if (firstname != other.firstname) return false
+        if (lastname != other.lastname) return false
+        if (address != other.address) return false
+        if (email != other.email) return false
+        if (notes != other.notes) return false
+        if (clientId != other.clientId) return false
+        if (expiresIn != other.expiresIn) return false
+        if (active != other.active) return false
+        if (username != other.username) return false
+        if (password != other.password) return false
+
+        return true
+    }
+
 }
