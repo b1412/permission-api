@@ -27,15 +27,15 @@ abstract class BaseEntity(
         @LastModifiedDate
         var updatedAt: ZonedDateTime? = null,
 
-        var deletedAt: ZonedDateTime? = null
-//
-//        @CreatedBy
-//        @ManyToOne
-//        @JoinColumn(name = "creator_id")
-//        var creator: User? = null,
-//
-//        @LastModifiedBy
-//        @ManyToOne
-//        @JoinColumn(name = "modifier_id")
-//        var modifier: User? = null,
+        var deletedAt: ZonedDateTime? = null,
+
+        @CreatedBy
+        @ManyToOne
+        @JoinColumn(name = "creator_id")
+        var creator: User? = null,
+
+        @LastModifiedBy
+        @ManyToOne
+        @JoinColumn(name = "modifier_id")
+        var modifier: User? = null,
 )

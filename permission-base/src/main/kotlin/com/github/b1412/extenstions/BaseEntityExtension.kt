@@ -15,9 +15,6 @@ fun <T> Any.copyFrom(newObj: T): T {
     }
     val method = this::class.memberFunctions.first { it.name == "copy" }
 
-//    if (methodTry.isFailure()) {
-//        throw  IllegalArgumentException("from Class ${this::class.java.name} is not a data class")
-//    }
     val parameterNames = method
             .parameters
             .tail()
