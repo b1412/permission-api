@@ -46,14 +46,14 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     springboot()
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("mysql:mysql-connector-java:6.0.5")
+    implementation("mysql:mysql-connector-java:8.0.22")
     arrow(arrowVersion)
     graphql()
     implementation("org.jooq:joor-java-8:0.9.12")
     implementation("io.github.microutils:kotlin-logging:1.7.6")
     implementation("io.jsonwebtoken:jjwt:0.7.0")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
-    implementation("org.codehaus.groovy:groovy-jsr223:2.4.3")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")

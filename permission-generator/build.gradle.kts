@@ -36,7 +36,7 @@ dependencies {
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
     implementation("com.google.guava:guava:30.0-jre")
-    implementation("mysql:mysql-connector-java:6.0.5")
+    implementation("mysql:mysql-connector-java:8.0.22")
 }
 
 tasks.withType<KotlinCompile> {

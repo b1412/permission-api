@@ -38,14 +38,14 @@ dependencies {
     springboot()
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5")
-    implementation("mysql:mysql-connector-java:6.0.5")
+    implementation("mysql:mysql-connector-java:8.0.22")
     arrow(arrowVersion)
     graphql()
     implementation("org.jooq:joor-java-8:0.9.12")
     implementation("io.github.microutils:kotlin-logging:1.7.6")
     implementation("io.jsonwebtoken:jjwt:0.7.0")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
-    implementation("org.codehaus.groovy:groovy-jsr223:2.4.3")
+
     implementation("com.amazonaws:aws-java-sdk-s3:1.11.210")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
@@ -55,7 +55,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:1.1.2")
     runtimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    implementation("org.codehaus.groovy:groovy-jsr223:2.4.3")
+
 }
 
 

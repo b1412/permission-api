@@ -53,7 +53,9 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:1.7.6")
     implementation("io.jsonwebtoken:jjwt:0.7.0")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
-    implementation("org.codehaus.groovy:groovy-jsr223:2.4.3")
+
+    implementation("com.vladmihalcea:hibernate-types-52:2.10.0")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
