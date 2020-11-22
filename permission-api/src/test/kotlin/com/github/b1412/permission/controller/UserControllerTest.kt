@@ -240,6 +240,4 @@ class UserControllerTest {
         //then
         resultActions.andExpect(status().isNotFound)
     }
-
-
 }
