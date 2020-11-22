@@ -169,7 +169,6 @@ class GraphQLSchemaBuilder(
         } else if (BigDecimal::class.java.isAssignableFrom(javaType)) {
             return Scalars.GraphQLBigDecimal
         }
-
         throw UnsupportedOperationException(
                 "Class could not be mapped to GraphQL: '" + javaType.typeName + "'")
     }
@@ -183,8 +182,6 @@ class GraphQLSchemaBuilder(
                 return listOf(getBasicAttributeType(attribute.javaType))
             } catch (e: UnsupportedOperationException) {
                 throw e
-                //fall through to the exception below
-                //which is more useful because it also contains the declaring member
             }
 
         } else if (attribute.persistentAttributeType == Attribute.PersistentAttributeType.ONE_TO_MANY || attribute.persistentAttributeType == Attribute.PersistentAttributeType.MANY_TO_MANY) {
