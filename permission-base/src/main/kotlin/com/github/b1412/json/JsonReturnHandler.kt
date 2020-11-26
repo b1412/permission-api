@@ -3,6 +3,7 @@ package com.github.b1412.json
 import arrow.core.getOrElse
 import arrow.core.toOption
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -65,11 +66,11 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
                 .map { it.split(",").toList() }
                 .getOrElse { emptyList() }
                 .filter { it.isNotBlank() }
-                .map { e -> e.split(".").toList() }
+                .map { it.split(".").toList() }
                 .filter { it.isNotEmpty() }
                 .sortedBy { it.size }
                 .forEach {
-                    if (it.size == 1) { //root node
+                    if (it.size == 1) { // root node
                         val embeddedNode = it.first()
                         addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
                     } else {
@@ -114,6 +115,21 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         jsonFilter.fields[entityClass]!!.add(embeddedFields.name)
         jsonFilter.fields[embeddedClazz] = embeddedFirstLevelFields
         objectMapper.addMixIn(embeddedClazz, jsonFilter.javaClass)
+
+        // add subclass
+        val subTypes = embeddedClazz.getDeclaredAnnotationsByType(JsonSubTypes::class.java)
+        if (subTypes.isNotEmpty()){
+            val embeddedSubClasses = subTypes.first().value
+            embeddedSubClasses.forEach {
+                entityClassMap.putIfAbsent("$embeddedNode<${it.value.simpleName}>", it.value.java)
+                val subEmbeddedFirstLevelFields = fieldsOfClass(it.value.java)
+               // jsonFilter.fields[entityClass]!!.add(embeddedFields.name)
+                jsonFilter.fields[it.value.java] = subEmbeddedFirstLevelFields
+                objectMapper.addMixIn(it.value.java, jsonFilter.javaClass)
+
+            }
+        }
+        //
     }
 
 

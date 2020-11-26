@@ -70,6 +70,7 @@ abstract class BaseService<T, ID : Serializable>(
                                     }
                                     else -> {
                                         val oldNestedObj = entityManager.find(obj::class.java, id)
+                                        syncFromDb(obj)
                                         val mergedObj = oldNestedObj.copyFrom(obj)
                                         if (one2one.mappedBy.isNotBlank()) {
                                             Reflect.on(mergedObj).set(one2one.mappedBy, baseEntity)

@@ -37,15 +37,16 @@ class CommonController(
     }
 
     @GetMapping(value = ["enum/{enum}"])
-    fun enumOptions(@PathVariable enum: String): ResponseEntity<*> {
+    fun enumOptions(@PathVariable enum: String): ResponseEntity<List<Map<String, String>>> {
         return findClasses(Enum::class.java, "classpath:nz/co/zran/cannon/enums/*.class")
                 .firstOrNone { it.simpleName == enum }
                 .toEither { }
-                .map {
-                    (it.getDeclaredMethod("values").invoke(it) as Array<*>)
-                            .map { value -> mapOf("key" to value, "value" to value) }
+                .map { enumClass ->
+                    (enumClass.getDeclaredMethod("values")
+                            .invoke(enumClass) as Array<*>)
+                            .map { mapOf("key" to it.toString(), "value" to it.toString()) }
                 }.fold(
-                        { ResponseEntity.notFound().build<Void>() },
+                        { ResponseEntity.notFound().build() },
                         { ResponseEntity.ok(it) }
                 )
     }

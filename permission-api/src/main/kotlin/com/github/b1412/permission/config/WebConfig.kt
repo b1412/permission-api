@@ -33,8 +33,6 @@ class WebConfig(
     fun mappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter {
         val jsonConverter = MappingJackson2HttpMessageConverter()
         val objectMapper = ObjectMapper()
-        objectMapper.enableDefaultTyping()
-
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
         objectMapper.registerModule(Jdk8Module())
         objectMapper.registerModule(JavaTimeModule())

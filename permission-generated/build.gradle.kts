@@ -27,7 +27,7 @@ allOpen {
 }
 
 group = "com.github.b1412"
-version = "0.1.18"
+version = "0.1.19"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
