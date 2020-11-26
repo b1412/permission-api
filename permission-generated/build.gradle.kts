@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    val kotlinVersion = "1.4.10"
+    val kotlinVersion = "1.4.20"
     jacoco
-    id("org.springframework.boot") version "2.3.0.RELEASE"
+    id("org.springframework.boot") version "2.4.0"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -40,7 +40,7 @@ repositories {
 
 dependencies {
     api(project(":permission-base"))
-    implementation("com.github.b1412:api-common:5ba35feadd")
+    implementation("com.github.b1412:api-common:ea80e986d2")
     val arrowVersion = "0.10.3"
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
