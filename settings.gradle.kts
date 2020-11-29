@@ -18,3 +18,4 @@ include(
         "permission-generated",
         "permission-generator"
 )
+

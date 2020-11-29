@@ -38,8 +38,8 @@ public final class GraphParser {
      * @param graphText     The textual representation of the graph
      * @param entityManager The EntityManager
      * @throws InvalidGraphException if the textual representation is invalid.
-     * @apiNote The passed EntityManager is expected to be a Hibernate implementation.
-     * Attempting to pass another provider's EntityManager implementation will fail
+     * @apiNote The passed EntityManager is expected to be a Hibernate api.
+     * Attempting to pass another provider's EntityManager api will fail
      */
     public static <T> RootGraph<T> parse(
             final Class<T> rootType,

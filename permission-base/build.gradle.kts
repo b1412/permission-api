@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.github.b1412"
-version = "0.1.20"
+version = "0.1.21"
 
 val jar: Jar by tasks
 val bootJar: BootJar by tasks
@@ -26,7 +26,7 @@ allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.MappedSuperclass")
 }
-noArg{
+noArg {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.MappedSuperclass")
 }
@@ -40,58 +40,59 @@ repositories {
 }
 dependencies {
     val arrowVersion = "0.11.0"
-    implementation("com.github.b1412:api-common:ea80e986d2")
-    implementation("com.github.b1412:kotlin-code-generator-meta:8c10be3699")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    api("com.github.b1412:api-common:06fd37d214")
+    api("com.github.b1412:kotlin-code-generator-meta:8c10be3699")
+
+    api("org.jetbrains.kotlin:kotlin-reflect")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     springboot()
     graphql()
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.h2database:h2")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin")
+    api("com.h2database:h2")
     arrow(arrowVersion)
-    implementation("org.jooq:joor-java-8:0.9.12")
-    implementation("io.github.microutils:kotlin-logging:1.7.6")
-    implementation("io.jsonwebtoken:jjwt:0.7.0")
-    implementation("commons-beanutils:commons-beanutils:1.9.4")
+    api("org.jooq:joor-java-8:0.9.12")
+    api("io.github.microutils:kotlin-logging:1.7.6")
+    api("io.jsonwebtoken:jjwt:0.7.0")
+    api("commons-beanutils:commons-beanutils:1.9.4")
 
-    implementation("com.vladmihalcea:hibernate-types-52:2.10.0")
+    api("com.vladmihalcea:hibernate-types-52:2.10.0")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    testApi("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testApi("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
         exclude(module = "mockito-core")
     }
-    testImplementation("com.ninja-squad:springmockk:1.1.2")
+    testApi("com.ninja-squad:springmockk:1.1.2")
     runtimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
 
 fun DependencyHandlerScope.springboot() {
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-freemarker")
-    implementation("org.springframework.boot:spring-boot-starter-web") {
+    api("org.springframework.boot:spring-boot-starter-validation")
+    api("org.springframework.boot:spring-boot-starter-data-jpa")
+    api("org.springframework.boot:spring-boot-starter-freemarker")
+    api("org.springframework.boot:spring-boot-starter-web") {
         exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
     }
-    implementation("org.springframework.boot:spring-boot-starter-undertow")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.springframework.boot:spring-boot-autoconfigure-processor")
-    implementation("org.testcontainers:junit-jupiter:1.14.3")
+    api("org.springframework.boot:spring-boot-starter-undertow")
+    api("org.springframework.boot:spring-boot-starter-security")
+    api("org.springframework.boot:spring-boot-starter-data-redis")
+    api("org.springframework.boot:spring-boot-autoconfigure-processor")
+    api("org.testcontainers:junit-jupiter:1.14.3")
 }
 
 fun DependencyHandlerScope.arrow(arrowVersion: String) {
-    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
-    implementation("io.arrow-kt:arrow-optics:$arrowVersion")
-    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
+    api("io.arrow-kt:arrow-fx:$arrowVersion")
+    api("io.arrow-kt:arrow-optics:$arrowVersion")
+    api("io.arrow-kt:arrow-syntax:$arrowVersion")
 }
 
 fun DependencyHandlerScope.graphql() {
-    implementation("com.graphql-java-kickstart:playground-spring-boot-starter:5.10.0")
-    implementation("com.graphql-java:graphql-spring-boot-starter:5.0.2")
-    implementation("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
-    implementation("com.graphql-java:graphql-java-tools:5.2.4")
+    api("com.graphql-java-kickstart:playground-spring-boot-starter:5.10.0")
+    api("com.graphql-java:graphql-spring-boot-starter:5.0.2")
+    api("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
+    api("com.graphql-java:graphql-java-tools:5.2.4")
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions {

@@ -52,8 +52,8 @@ class MyInvocationSecurityMetadataSourceService(
             hints["javax.persistence.fetchgraph"] = graph
             val all = permissionDao.findAll()
             all
-        }!!.filter{(_, _, _, authUris) ->
-            authUris!=null
+        }!!.filter { (_, _, _, authUris) ->
+            authUris != null
         }.firstOption { (_, _, _, authUris) ->
             authUris!!.split(";").any { uriPatten -> Pattern.matches(uriPatten, request.requestURI) }
         }

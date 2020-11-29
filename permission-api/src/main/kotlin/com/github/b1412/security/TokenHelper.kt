@@ -21,9 +21,9 @@ class TokenHelper(
 
     fun getUsernameFromToken(token: String): String {
         return Jwts.parser()
-                    .setSigningKey(permissionProperties.jwt.secret)
-                    .parseClaimsJws(token)
-                    .body.subject!!
+                .setSigningKey(permissionProperties.jwt.secret)
+                .parseClaimsJws(token)
+                .body.subject!!
 
     }
 

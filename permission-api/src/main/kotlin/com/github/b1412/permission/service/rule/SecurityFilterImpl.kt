@@ -1,7 +1,8 @@
 package com.github.b1412.permission.service.rule
 
-import arrow.core.Option
+import arrow.core.Either
 import arrow.core.extensions.list.foldable.find
+import arrow.core.extensions.list.foldable.firstOrNone
 import arrow.core.getOrElse
 import arrow.core.mapOf
 import com.github.b1412.api.service.SecurityFilter
@@ -23,9 +24,8 @@ class SecurityFilterImpl : SecurityFilter {
     @Autowired
     lateinit var accessRules: List<AccessRule>
 
-    fun findAccessRules(ruleName: String): Option<AccessRule> {
-
-        return accessRules.find { it.ruleName == ruleName }
+    fun findAccessRules(ruleName: String): Either<Unit, AccessRule> {
+        return accessRules.firstOrNone { it.ruleName == ruleName }.toEither { }
     }
 
     override fun query(method: String, requestURI: String): Map<String, String> {

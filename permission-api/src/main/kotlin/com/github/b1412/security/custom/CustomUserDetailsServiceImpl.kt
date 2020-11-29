@@ -29,7 +29,7 @@ class CustomUserDetailsServiceImpl(
             throw UsernameNotFoundException("Username and clientId must be provided")
         }
         log.info("clientId {},username {}", clientId, username)
-      //  return cacheClient.get("$application-$username-$clientId".toLowerCase()) { userService.getUserWithPermissions(username, clientId) }!!
+        //  return cacheClient.get("$application-$username-$clientId".toLowerCase()) { userService.getUserWithPermissions(username, clientId) }!!
         return userService.getUserWithPermissions(username, clientId)
     }
 }

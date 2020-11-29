@@ -25,18 +25,18 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":permission-base"))
-    implementation("com.github.b1412:kotlin-code-generator:790498a17d")
-    implementation("com.github.b1412:generator-tasks:43b2e409ac")
+    api(project(":permission-base"))
+    api("com.github.b1412:kotlin-code-generator:790498a17d")
+    api("com.github.b1412:generator-tasks:8acf3cd13a")
 
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    api("org.springframework.boot:spring-boot-starter-validation")
+    api("org.jetbrains.kotlin:kotlin-reflect")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     val arrowVersion = "0.11.0"
-    implementation("io.arrow-kt:arrow-core:$arrowVersion")
-    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
-    implementation("com.google.guava:guava:30.0-jre")
-    implementation("mysql:mysql-connector-java:8.0.22")
+    api("io.arrow-kt:arrow-core:$arrowVersion")
+    api("io.arrow-kt:arrow-syntax:$arrowVersion")
+    api("com.google.guava:guava:30.0-jre")
+    api("mysql:mysql-connector-java:8.0.22")
 }
 
 tasks.withType<KotlinCompile> {

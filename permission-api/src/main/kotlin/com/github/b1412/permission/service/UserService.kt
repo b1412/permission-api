@@ -1,12 +1,12 @@
 package com.github.b1412.permission.service
 
 import arrow.core.*
+import com.github.b1412.api.service.BaseService
 import com.github.b1412.cache.CacheClient
 import com.github.b1412.permission.dao.UserDao
 import com.github.b1412.permission.entity.Role
 import com.github.b1412.permission.entity.RolePermission
 import com.github.b1412.permission.entity.User
-import com.github.b1412.api.service.BaseService
 import com.github.b1412.security.PermissionProperties
 import com.github.b1412.security.TokenBasedAuthentication
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,7 +62,7 @@ class UserService(
             None -> throw AccessDeniedException("invalid user information or user is not verified: $username")
         }
         val permissions = user.role!!.rolePermissions.map { it.permission }
-        val grantedAuthorities = permissions.map { SimpleGrantedAuthority(it?.authKey) as GrantedAuthority }.toMutableList()
+        val grantedAuthorities = permissions.map { SimpleGrantedAuthority(it?.authKey) as GrantedAuthority}.toMutableList()
         user.grantedAuthorities = grantedAuthorities
         return user
     }

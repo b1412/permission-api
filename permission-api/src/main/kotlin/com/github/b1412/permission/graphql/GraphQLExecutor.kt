@@ -15,6 +15,7 @@ class GraphQLExecutor(
         var builder: GraphQLSchema.Builder
 ) {
     var graphQL: GraphQL? = null
+
     @PostConstruct
     @Synchronized
     protected fun createGraphQL() {
