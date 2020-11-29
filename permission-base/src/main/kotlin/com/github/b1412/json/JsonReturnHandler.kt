@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.github.b1412.api.entity.BaseEntity
+import com.github.b1412.permission.util.ClassUtil
 import com.github.b1412.util.findClasses
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.core.MethodParameter
@@ -21,6 +22,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
+import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
 import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
@@ -47,7 +49,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         val result = findClasses(BaseEntity::class.java, "classpath*:com/github/b1412/**/*.class") +
                 findClasses(BaseEntity::class.java, "classpath*:nz/co/**/*.class")
         val rootEntityClass = result.first { it.simpleName == endpoint.entity.capitalize() }
-        val firstLevelFields = fieldsOfClass(rootEntityClass)
+        val firstLevelFields = firstLevelFields(rootEntityClass)
         val objectMapper = ObjectMapper()
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
         objectMapper.registerModule(Jdk8Module())
@@ -111,19 +113,19 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         }
 
         entityClassMap.putIfAbsent(embeddedNode, embeddedClazz)
-        val embeddedFirstLevelFields = fieldsOfClass(embeddedClazz)
+        val embeddedFirstLevelFields = firstLevelFields(embeddedClazz)
         jsonFilter.fields[entityClass]!!.add(embeddedFields.name)
         jsonFilter.fields[embeddedClazz] = embeddedFirstLevelFields
         objectMapper.addMixIn(embeddedClazz, jsonFilter.javaClass)
 
         // add subclass
         val subTypes = embeddedClazz.getDeclaredAnnotationsByType(JsonSubTypes::class.java)
-        if (subTypes.isNotEmpty()){
+        if (subTypes.isNotEmpty()) {
             val embeddedSubClasses = subTypes.first().value
             embeddedSubClasses.forEach {
                 entityClassMap.putIfAbsent("$embeddedNode<${it.value.simpleName}>", it.value.java)
-                val subEmbeddedFirstLevelFields = fieldsOfClass(it.value.java)
-               // jsonFilter.fields[entityClass]!!.add(embeddedFields.name)
+                val subEmbeddedFirstLevelFields = firstLevelFields(it.value.java)
+                // jsonFilter.fields[entityClass]!!.add(embeddedFields.name)
                 jsonFilter.fields[it.value.java] = subEmbeddedFirstLevelFields
                 objectMapper.addMixIn(it.value.java, jsonFilter.javaClass)
 
@@ -133,13 +135,10 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
     }
 
 
-    private fun fieldsOfClass(entityClass: Class<*>): MutableList<String> {
-        return (entityClass.declaredFields + entityClass.superclass.declaredFields).filter { field ->
-            field.annotations.isEmpty() || field.annotations.all { annotation ->
-                (annotation is OneToMany || annotation is OneToOne || annotation is ManyToOne || annotation is ManyToMany).not()
-            }
-        }.map { it.name }.toMutableList()
+    private fun firstLevelFields(entityClass: Class<*>): MutableList<String> {
+        return ClassUtil.firstLevelFields(entityClass).map { it.name }.toMutableList()
     }
+
 
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
         if (bean is ResponseBodyAdvice<*>) {
