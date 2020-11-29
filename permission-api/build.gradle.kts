@@ -22,8 +22,8 @@ noArg {
     annotation("javax.persistence.MappedSuperclass")
 }
 
-group = "com.github.b1412"
-version = "0.1.22"
+val group: String by project
+val version: String by project
 
 val jar: Jar by tasks
 val bootJar: org.springframework.boot.gradle.tasks.bundling.BootJar by tasks

@@ -14,6 +14,8 @@ plugins {
     `maven-publish`
 }
 
+val group: String by project
+val version: String by project
 val jar: Jar by tasks
 val bootJar: BootJar by tasks
 
@@ -26,8 +28,6 @@ allOpen {
     annotation("javax.persistence.MappedSuperclass")
 }
 
-group = "com.github.b1412"
-version = "0.1.22"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 

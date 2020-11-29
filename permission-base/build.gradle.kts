@@ -13,8 +13,8 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.b1412"
-version = "0.1.22"
+val group: String by project
+val version: String by project
 
 val jar: Jar by tasks
 val bootJar: BootJar by tasks
@@ -48,7 +48,8 @@ dependencies {
     springboot()
     graphql()
     api("com.fasterxml.jackson.module:jackson-module-kotlin")
-    api("com.h2database:h2")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5")
+
     arrow(arrowVersion)
     api("org.jooq:joor-java-8:0.9.12")
     api("io.github.microutils:kotlin-logging:1.7.6")
