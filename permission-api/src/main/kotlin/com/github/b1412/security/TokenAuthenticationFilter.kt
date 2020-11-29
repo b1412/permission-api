@@ -1,10 +1,13 @@
 package com.github.b1412.security
 
 
-import arrow.core.*
+import arrow.core.None
+import arrow.core.Some
+import arrow.core.getOrElse
+import arrow.core.toOption
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.b1412.permission.service.UserService
 import com.github.b1412.error.ErrorDTO
+import com.github.b1412.permission.service.UserService
 import com.github.b1412.security.custom.CustomUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -47,10 +50,11 @@ class TokenAuthenticationFilter(
                 chain.doFilter(request, response)
             }
             else -> {
-                val authToken = tokenHelper.getToken(request)
-                val usernameTry = tokenHelper.getUsernameFromToken(authToken)
-                if (usernameTry.isSuccess) {
-                    val (username, clientId) = usernameTry.getOrNull()!!.split("@@")
+                val authToken = tokenHelper.getToken(request)!!
+                val usernameResult = kotlin.runCatching { tokenHelper.getUsernameFromToken(authToken) }
+                if (usernameResult.isSuccess) {
+                    val orNull = usernameResult.getOrNull()!!
+                    val (username, clientId) = orNull.split("@@")
                     val userDetails = userDetailsService.loadUserByUsernameAndClientId(username, clientId)
                     val authentication = TokenBasedAuthentication(userDetails)
                     authentication.token = authToken
@@ -58,19 +62,16 @@ class TokenAuthenticationFilter(
                     chain.doFilter(request, response)
                 } else {
                     val clientId = request.getParameter("clientId")
-                    // val header = request.getHeader("X-Forwarded-Host")
                     if (clientId == null) {
-                        loginExpired(request, response, usernameTry.exceptionOrNull()!!.message!!)
+                        loginExpired(request, response, usernameResult.exceptionOrNull()!!.message!!)
                     } else {
-
-                        //val option = userService.loadAuthentication(clientId)
                         when (val option = userService.loadAuthenticationByClientId(clientId)) {
                             is Some -> {
                                 SecurityContextHolder.getContext().authentication = option.t
                                 chain.doFilter(request, response)
                             }
                             None -> {
-                                loginExpired(request, response, usernameTry.exceptionOrNull()!!.message!!)
+                                loginExpired(request, response, usernameResult.exceptionOrNull()!!.message!!)
                             }
                         }
                     }
@@ -81,7 +82,7 @@ class TokenAuthenticationFilter(
 
     private fun loginExpired(request: HttpServletRequest, response: HttpServletResponse, message: String) {
         logger.warn(request.method + request.requestURI)
-        val msg = objectMapper.writeValueAsString(ErrorDTO(message="login expired"))
+        val msg = objectMapper.writeValueAsString(ErrorDTO(message = "login expired"))
         response.status = HttpStatus.FORBIDDEN.value()
         response.writer.write(msg)
     }
@@ -89,13 +90,5 @@ class TokenAuthenticationFilter(
     private fun skipPathRequest(request: HttpServletRequest, pathsToSkip: List<String>): Boolean {
         val m = pathsToSkip.map { AntPathRequestMatcher(it) }
         return OrRequestMatcher(m).matches(request)
-    }
-
-    companion object {
-
-
-        private fun getClientIp(request: HttpServletRequest): String {
-            return request.getHeader("X-Forwarded-For").toOption().getOrElse { request.remoteAddr }
-        }
     }
 }

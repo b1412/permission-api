@@ -1,8 +1,5 @@
 package com.github.b1412.security
 
-import com.github.b1412.permission.entity.User
-import com.github.b1412.security.custom.CustomUserDetailsService
-
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm.HS512
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,26 +15,21 @@ import javax.servlet.http.HttpServletRequest
 class TokenHelper(
         @Autowired
         val permissionProperties: PermissionProperties,
-        @Autowired
-        var userDetailsService: CustomUserDetailsService,
         @Value("\${spring.application.name}")
         val application: String
 ) {
 
-    fun getUsernameFromToken(token: String?): Result<String> {
-        return runCatching {
-            Jwts.parser()
+    fun getUsernameFromToken(token: String): String {
+        return Jwts.parser()
                     .setSigningKey(permissionProperties.jwt.secret)
                     .parseClaimsJws(token)
-                    .body
-        }.map { it.subject }
+                    .body.subject!!
+
     }
 
     fun generateToken(username: String, clientId: String): String {
-        val user = userDetailsService.loadUserByUsernameAndClientId(username, clientId) as User
         val currentTimeMillis = System.currentTimeMillis()
         val currentDate = Date(currentTimeMillis)
-        //val expirationDate = Date(currentTimeMillis + user.expiresIn.orElse(applicationProperties.jwt.expiresIn!!) * 1000)
         val expirationDate = Date(currentTimeMillis + permissionProperties.jwt.expiresIn!! * 1000)
         return Jwts.builder()
                 .setIssuer(application)

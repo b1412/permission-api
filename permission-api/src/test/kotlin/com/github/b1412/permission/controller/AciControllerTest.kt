@@ -2,14 +2,15 @@ package com.github.b1412.permission.controller
 
 import com.github.b1412.api.service.SecurityFilter
 import com.github.b1412.cache.CacheClient
+import com.github.b1412.error.GlobalExceptionHandler
+import com.github.b1412.json.JsonReturnHandler
 import com.github.b1412.permission.config.WebConfig
 import com.github.b1412.permission.dao.PermissionDao
 import com.github.b1412.permission.entity.Branch
 import com.github.b1412.permission.entity.Permission
 import com.github.b1412.permission.entity.Role
 import com.github.b1412.permission.entity.User
-import com.github.b1412.error.GlobalExceptionHandler
-import com.github.b1412.json.JsonReturnHandler
+import com.github.b1412.permission.service.PermissionService
 import com.github.b1412.permission.service.UserService
 import com.github.b1412.security.*
 import com.github.b1412.security.config.SecurityConfig
@@ -34,6 +35,7 @@ import javax.persistence.EntityManager
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = [
     PermissionController::class,
+    PermissionService::class,
     SecurityConfig::class,
     TokenAuthenticationFilter::class,
     CustomUserDetailsServiceImpl::class,
@@ -43,11 +45,10 @@ import javax.persistence.EntityManager
     MyInvocationSecurityMetadataSourceService::class,
     MyAccessDecisionManager::class,
     WebConfig::class,
-    SecurityFilter::class,
     JsonReturnHandler::class,
     GlobalExceptionHandler::class,
-    BCryptPasswordEncoder::class,
-    TokenHelper::class]
+    TokenHelper::class
+]
 )
 class AciControllerTest {
 
@@ -69,8 +70,11 @@ class AciControllerTest {
     @MockkBean
     lateinit var entityManager: EntityManager
 
-    @Autowired
+    @MockkBean
     lateinit var passwordEncoder: BCryptPasswordEncoder
+
+    @MockkBean
+    lateinit var securityFilter: SecurityFilter
 
     @BeforeEach
     fun setup() {
@@ -91,7 +95,7 @@ class AciControllerTest {
     fun `will not return embedded fields by default`() {
         // given
         every { tokenHelper.getToken(any()) } returns "token"
-        every { tokenHelper.getUsernameFromToken("token") } returns Result.success("leon@@4")
+        every { tokenHelper.getUsernameFromToken("token") } returns "leon@@4"
         every { userService.getUserWithPermissions("leon", "4") } returns User(username = "leon", clientId = "4")
         every { cacheClient.get<List<Permission>>("permissions", any()) } returns listOf(Permission())
 

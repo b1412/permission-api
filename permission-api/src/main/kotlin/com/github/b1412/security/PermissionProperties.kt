@@ -1,7 +1,9 @@
 package com.github.b1412.security
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.stereotype.Component
 
+@Component
 @ConfigurationProperties("permission")
 class PermissionProperties {
 

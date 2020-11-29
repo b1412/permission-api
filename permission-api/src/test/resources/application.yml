@@ -1,0 +1,3 @@
+permission:
+  jwt:
+    anonymousUrls: /v1/email-server/*,/v1/email-template/send/*/**,/v1/enum/*,/v1/login,/graphiql,/graphql,/vendor/**,/v1/menu/**,/actuator/**,/v1/user/register,/v1/user/active/*,/v1/attachment/download,/v1/attachment/upload,/files/*,/images/*,/v1/find-pwd-send-log/**/*
