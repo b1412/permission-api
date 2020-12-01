@@ -42,6 +42,17 @@ repositories {
 dependencies {
     api(project(":permission-generated"))
     api("com.github.b1412:api-common:ea80e986d2")
+
+    testApi("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testApi("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "junit")
+        exclude(module = "mockito-core")
+    }
+    testApi("com.ninja-squad:springmockk:1.1.2")
+    testApi("org.assertj:assertj-core:3.18.1")
+
+    testRuntimeOnly("com.h2database:h2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
 
