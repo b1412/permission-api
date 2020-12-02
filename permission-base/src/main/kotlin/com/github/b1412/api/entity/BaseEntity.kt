@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.io.Serializable
 import java.time.ZonedDateTime
 import javax.persistence.*
 
@@ -41,4 +42,6 @@ abstract class BaseEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "modifier_id")
     var modifier: User? = null,
-)
+) : Serializable{
+    constructor()
+}

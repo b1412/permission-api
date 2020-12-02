@@ -43,6 +43,7 @@ class UserService(
         val rolePermissionSubGraph = roleSubGraph.addSubgraph<List<RolePermission>>("rolePermissions")
         rolePermissionSubGraph.addAttributeNodes("permission")
         rolePermissionSubGraph.addAttributeNodes("rules")
+        graph.addSubgraph<User>("branch")
 
         val hints = HashMap<String, Any>()
         hints["javax.persistence.fetchgraph"] = graph

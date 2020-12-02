@@ -81,7 +81,6 @@ fun DependencyHandlerScope.springboot() {
     api("org.springframework.boot:spring-boot-starter-security")
     api("org.springframework.boot:spring-boot-starter-data-redis")
     api("org.springframework.boot:spring-boot-autoconfigure-processor")
-    api("org.testcontainers:junit-jupiter:1.14.3")
 }
 
 fun DependencyHandlerScope.arrow(arrowVersion: String) {

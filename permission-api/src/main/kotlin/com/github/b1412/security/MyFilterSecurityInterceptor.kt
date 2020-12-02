@@ -11,7 +11,6 @@ import javax.servlet.*
 @Service
 class MyFilterSecurityInterceptor : AbstractSecurityInterceptor(), Filter {
 
-
     @Autowired
     private val securityMetadataSource: FilterInvocationSecurityMetadataSource? = null
 
@@ -20,13 +19,11 @@ class MyFilterSecurityInterceptor : AbstractSecurityInterceptor(), Filter {
         super.setAccessDecisionManager(myAccessDecisionManager)
     }
 
-
     override fun init(filterConfig: FilterConfig) {
 
     }
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-
         val fi = FilterInvocation(request, response, chain)
         invoke(fi)
     }
