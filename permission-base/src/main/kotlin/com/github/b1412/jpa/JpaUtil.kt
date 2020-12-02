@@ -157,6 +157,8 @@ object JpaUtil {
             .map { it.split(",") }
             .getOrElse {
                 listOf()
+            }.filter {
+                it.contains("<").not()
             }
         logger.debug("embedded $embedded")
         val graphs = embedded.map {
