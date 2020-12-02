@@ -35,12 +35,10 @@ class BaseDaoImpl<T, ID : Serializable>(
             query.where(*predicates.toTypedArray())
             query.restriction
         }
-        val graph = JpaUtil.createEntityGraphFromURL(entityManager, domainClass, filter)
-
         val graphResult = runCatching { JpaUtil.createEntityGraphFromURL(entityManager, domainClass, filter) }
         return when {
             graphResult.isSuccess -> {
-                findAll(spec, pageable, graph)
+                findAll(spec, pageable, graphResult.getOrNull()!!)
             }
             else -> {
                 findAll(spec, pageable)
