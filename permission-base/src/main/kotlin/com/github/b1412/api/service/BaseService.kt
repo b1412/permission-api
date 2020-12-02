@@ -1,6 +1,6 @@
 package com.github.b1412.api.service
 
-import arrow.core.Option
+import arrow.core.Either
 import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.toOption
@@ -21,7 +21,7 @@ import javax.persistence.OneToOne
 
 @Component
 abstract class BaseService<T, ID : Serializable>(
-        private val dao: BaseDao<T, ID>
+    private val dao: BaseDao<T, ID>
 ) : BaseDao<T, ID> by dao {
 
     @Autowired
@@ -46,8 +46,8 @@ abstract class BaseService<T, ID : Serializable>(
                 if (one2one != null) {
                     Reflect.on(any).set(baseEntity::class.java.simpleName.toLowerCase(), baseEntity)
                 } else {
-                    when (val option = getObject(baseEntity, field, type)) {
-                        is Some<*> -> Reflect.on(baseEntity).set(field.name, option.t)
+                    when (val either = getObject(baseEntity, field, type)) {
+                        is Either.Left<*> -> Reflect.on(baseEntity).set(field.name, either.a)
                     }
                 }
             } else if (field.type.isAssignableFrom(MutableList::class.java)) {
@@ -55,43 +55,43 @@ abstract class BaseService<T, ID : Serializable>(
                 val many2Many = field.getAnnotation(ManyToMany::class.java)
                 if (one2one != null) {
                     val list = baseEntity.toOption()
-                            .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
-                            .map { it as MutableList<out BaseEntity> }
-                            .getOrElse { listOf() }
-                            .map { obj ->
-                                val id = Reflect.on(obj).get<Any>("id")
-                                when (id) {
-                                    null -> {
-                                        if (one2one.mappedBy.isNotBlank()) {
-                                            Reflect.on(obj).set(one2one.mappedBy, baseEntity)
-                                        }
-                                        syncFromDb(obj)
-                                        obj
+                        .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
+                        .map { it as MutableList<out BaseEntity> }
+                        .getOrElse { listOf() }
+                        .map { obj ->
+                            val id = Reflect.on(obj).get<Any>("id")
+                            when (id) {
+                                null -> {
+                                    if (one2one.mappedBy.isNotBlank()) {
+                                        Reflect.on(obj).set(one2one.mappedBy, baseEntity)
                                     }
-                                    else -> {
-                                        val oldNestedObj = entityManager.find(obj::class.java, id)
-                                        syncFromDb(obj)
-                                        val mergedObj = oldNestedObj.copyFrom(obj)
-                                        if (one2one.mappedBy.isNotBlank()) {
-                                            Reflect.on(mergedObj).set(one2one.mappedBy, baseEntity)
-                                        }
-                                        mergedObj
+                                    syncFromDb(obj)
+                                    obj
+                                }
+                                else -> {
+                                    val oldNestedObj = entityManager.find(obj::class.java, id)
+                                    syncFromDb(obj)
+                                    val mergedObj = oldNestedObj.copyFrom(obj)
+                                    if (one2one.mappedBy.isNotBlank()) {
+                                        Reflect.on(mergedObj).set(one2one.mappedBy, baseEntity)
                                     }
+                                    mergedObj
                                 }
                             }
+                        }
                     Reflect.on(any).call("clear")
                     Reflect.on(any).call("addAll", list)
                 } else if (many2Many != null) {
                     val list = baseEntity.toOption()
-                            .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
-                            .map { it as MutableList<out BaseEntity> }
-                            .getOrElse { listOf() }
-                            .map { obj ->
-                                when (val id = Reflect.on(obj).get<Any>("id")) {
-                                    null -> obj
-                                    else -> entityManager.find(obj::class.java, id)
-                                }
+                        .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
+                        .map { it as MutableList<out BaseEntity> }
+                        .getOrElse { listOf() }
+                        .map { obj ->
+                            when (val id = Reflect.on(obj).get<Any>("id")) {
+                                null -> obj
+                                else -> entityManager.find(obj::class.java, id)
                             }
+                        }
                     if (list.isNotEmpty()) {
                         Reflect.on(baseEntity).set(field.name, list)
                     }
@@ -100,10 +100,10 @@ abstract class BaseService<T, ID : Serializable>(
         }
     }
 
-    private fun getObject(baseEntity: BaseEntity, field: Field, type: Class<*>): Option<*> {
+    private fun getObject(baseEntity: BaseEntity, field: Field, type: Class<*>): Either<Unit, *> {
         return baseEntity.toOption()
-                .flatMap { Reflect.on(baseEntity).get<Any>(field.name).toOption() }
-                .flatMap { Reflect.on(it).get<Any>("id").toOption() }
-                .map { entityManager.find(type, it) }
+            .flatMap { Reflect.on(baseEntity).get<Any>(field.name).toOption() }
+            .flatMap { Reflect.on(it).get<Any>("id").toOption() }
+            .map { entityManager.find(type, it) }.toEither {  }
     }
 }

@@ -7,20 +7,20 @@ import graphql.parser.Parser
 object QueryBuilder {
     fun queryList(queryUrl: String): Map<String, String> {
         return queryUrl
-                .split("&")
-                .map { Pair(it.substringBefore("="), it.substringAfter("=")) }
-                .groupBy { it.first }
-                .map {
-                    when (it.value.size) {
-                        1 -> {
-                            val f = it.value.first()
-                            f.first to f.second
-                        }
-                        else -> {
-                            it.key to it.value.joinToString(",")
-                        }
+            .split("&")
+            .map { Pair(it.substringBefore("="), it.substringAfter("=")) }
+            .groupBy { it.first }
+            .map {
+                when (it.value.size) {
+                    1 -> {
+                        val f = it.value.first()
+                        f.first to f.second
                     }
-                }.toMap()
+                    else -> {
+                        it.key to it.value.joinToString(",")
+                    }
+                }
+            }.toMap()
     }
 
     fun graphqlPayload(input: String): String {
@@ -34,27 +34,27 @@ object QueryBuilder {
         val field = mutableListOf<String>()
         val arguments = rootField.arguments
         val queryString = arguments.firstOption { it.name == "where" }.fold(
-                { "" },
-                { argument ->
-                    val filterFields = (argument.value as ObjectValue).objectFields
-                    filterFields.joinToString("&") { f ->
-                        val (name, op) = f.name.split("_")
-                        val value = f.value
-                        val oldQuery = when (value) {
-                            is StringValue -> {
-                                "f_$name=${value.value}"
-                            }
-                            is IntValue -> {
-                                "f_$name=${value.value}"
-                            }
-                            is ArrayValue -> {
-                                "f_$name=${value.values.joinToString(",") { (it as StringValue).value }}"
-                            }
-                            else -> throw  IllegalArgumentException("unknown value type")
+            { "" },
+            { argument ->
+                val filterFields = (argument.value as ObjectValue).objectFields
+                filterFields.joinToString("&") { f ->
+                    val (name, op) = f.name.split("_")
+                    val value = f.value
+                    val oldQuery = when (value) {
+                        is StringValue -> {
+                            "f_$name=${value.value}"
                         }
-                        "$oldQuery&f_${name}_op=$op"
+                        is IntValue -> {
+                            "f_$name=${value.value}"
+                        }
+                        is ArrayValue -> {
+                            "f_$name=${value.values.joinToString(",") { (it as StringValue).value }}"
+                        }
+                        else -> throw  IllegalArgumentException("unknown value type")
                     }
-                })
+                    "$oldQuery&f_${name}_op=$op"
+                }
+            })
         val nodes = rootField.selectionSet.selections
         nodes.forEach {
             val name = (it as Field).name
@@ -75,12 +75,18 @@ object QueryBuilder {
         return "$queryString&$url"
     }
 
-    private fun fieldAndEmbedded(aliasOrKey: String, children: List<Selection<Selection<*>>>): Pair<List<String>, List<String>> {
+    private fun fieldAndEmbedded(
+        aliasOrKey: String,
+        children: List<Selection<Selection<*>>>
+    ): Pair<List<String>, List<String>> {
         val (fields, embedded) = children.partition { (it as Field).selectionSet == null }
         var first = mutableListOf(aliasOrKey)
         val secord = fields.map { aliasOrKey + "." + (it as Field).name }.toMutableList()
         if (embedded.isNotEmpty() && embedded[0].children != null) {
-            val (embedded2, fields2) = fieldAndEmbedded(aliasOrKey + "." + (embedded[0] as Field).name, (embedded[0].children[0] as SelectionSet).selections)
+            val (embedded2, fields2) = fieldAndEmbedded(
+                aliasOrKey + "." + (embedded[0] as Field).name,
+                (embedded[0].children[0] as SelectionSet).selections
+            )
             first.addAll(embedded2)
             secord += fields2
         }

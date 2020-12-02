@@ -2,7 +2,6 @@ package com.github.b1412.permission.entity
 
 import com.github.b1412.api.entity.BaseEntity
 import org.hibernate.annotations.Type
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.io.Serializable
@@ -10,36 +9,36 @@ import javax.persistence.*
 
 @Entity
 data class User(
-        var login: String? = null,
-        val firstname: String? = null,
-        val lastname: String? = null,
-        var address: String? = null,
-        var email: String? = null,
-        var notes: String? = null,
+    var login: String? = null,
+    val firstname: String? = null,
+    val lastname: String? = null,
+    var address: String? = null,
+    var email: String? = null,
+    var notes: String? = null,
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "branch_id")
-        var branch: Branch? = null,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "branch_id")
+    var branch: Branch? = null,
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "role_id")
-        var role: Role? = null,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    var role: Role? = null,
 
-        var clientId: String? = null,
-        var expiresIn: Long? = null,
+    var clientId: String? = null,
+    var expiresIn: Long? = null,
 
-        @Type(type = "yes_no")
-        var active: Boolean? = null,
+    @Type(type = "yes_no")
+    var active: Boolean? = null,
 
-        private var username: String? = null,
+    private var username: String? = null,
 
-        private var password: String? = null,
+    private var password: String? = null,
 
-        @Transient
-        var confirmPassword: String? = null,
+    @Transient
+    var confirmPassword: String? = null,
 
-        @Transient
-        var grantedAuthorities: MutableList<SimpleGrantedAuthority> = mutableListOf()
+    @Transient
+    var grantedAuthorities: MutableList<SimpleGrantedAuthority> = mutableListOf()
 
 ) : BaseEntity(), UserDetails, Serializable {
     override fun getUsername(): String? {

@@ -23,12 +23,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
-import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
-import javax.persistence.ManyToMany
-import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
-import javax.persistence.OneToOne
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -41,7 +36,12 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         return returnType.annotatedElement.declaredAnnotations.any { it is GraphRender }
     }
 
-    override fun handleReturnValue(returnValue: Any?, returnType: MethodParameter, mavContainer: ModelAndViewContainer, webRequest: NativeWebRequest) {
+    override fun handleReturnValue(
+        returnValue: Any?,
+        returnType: MethodParameter,
+        mavContainer: ModelAndViewContainer,
+        webRequest: NativeWebRequest
+    ) {
         mavContainer.isRequestHandled = true
         val response = webRequest.getNativeResponse(HttpServletResponse::class.java)!!
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
@@ -59,7 +59,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonFilter = JacksonJsonFilter(
-                fields = mutableMapOf(rootEntityClass to firstLevelFields)
+            fields = mutableMapOf(rootEntityClass to firstLevelFields)
         )
         val entityClassMap = mutableMapOf<String, Class<*>>()
 
@@ -67,23 +67,23 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
 
         embedded.toOption()
-                .map { it.split(",").toList() }
-                .getOrElse { emptyList() }
-                .filter { it.isNotBlank() }
-                .map { it.split(".").toList() }
-                .filter { it.isNotEmpty() }
-                .sortedBy { it.size }
-                .forEach {
-                    if (it.size == 1) { // root node
-                        val embeddedNode = it.first()
-                        addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
-                    } else {
-                        val embeddedNode = it.last()
-                        val lastParentNode = it.dropLast(1).last()
-                        val parentEntityClass = entityClassMap[lastParentNode]!!
-                        addEmbedded(objectMapper, entityClassMap, jsonFilter, parentEntityClass, embeddedNode)
-                    }
+            .map { it.split(",").toList() }
+            .getOrElse { emptyList() }
+            .filter { it.isNotBlank() }
+            .map { it.split(".").toList() }
+            .filter { it.isNotEmpty() }
+            .sortedBy { it.size }
+            .forEach {
+                if (it.size == 1) { // root node
+                    val embeddedNode = it.first()
+                    addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
+                } else {
+                    val embeddedNode = it.last()
+                    val lastParentNode = it.dropLast(1).last()
+                    val parentEntityClass = entityClassMap[lastParentNode]!!
+                    addEmbedded(objectMapper, entityClassMap, jsonFilter, parentEntityClass, embeddedNode)
                 }
+            }
 
         response.contentType = MediaType.APPLICATION_JSON_VALUE
 
@@ -105,7 +105,13 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         }
     }
 
-    private fun addEmbedded(objectMapper: ObjectMapper, entityClassMap: MutableMap<String, Class<*>>, jsonFilter: JacksonJsonFilter, entityClass: Class<*>, embeddedNode: String) {
+    private fun addEmbedded(
+        objectMapper: ObjectMapper,
+        entityClassMap: MutableMap<String, Class<*>>,
+        jsonFilter: JacksonJsonFilter,
+        entityClass: Class<*>,
+        embeddedNode: String
+    ) {
         val embeddedFields = entityClass.declaredFields.first { it.name == embeddedNode }
         val genericType = embeddedFields.genericType
         val embeddedClazz: Class<*>

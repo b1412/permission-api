@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter
 
 @JsonFilter("JacksonFilter")
 class JacksonJsonFilter(
-        val fields: MutableMap<Class<*>, MutableList<String>> = mutableMapOf()
+    val fields: MutableMap<Class<*>, MutableList<String>> = mutableMapOf()
 ) : FilterProvider() {
 
     override fun findFilter(filterId: Any): BeanPropertyFilter {
@@ -20,7 +20,12 @@ class JacksonJsonFilter(
 
     override fun findPropertyFilter(filterId: Any, valueToFilter: Any?): PropertyFilter {
         return object : SimpleBeanPropertyFilter() {
-            override fun serializeAsField(pojo: Any, jgen: JsonGenerator, prov: SerializerProvider, writer: PropertyWriter) {
+            override fun serializeAsField(
+                pojo: Any,
+                jgen: JsonGenerator,
+                prov: SerializerProvider,
+                writer: PropertyWriter
+            ) {
                 val name = writer.name
                 if (apply(pojo, name)) {
                     writer.serializeAsField(pojo, jgen, prov)

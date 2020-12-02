@@ -16,9 +16,9 @@ fun <T> Any.copyFrom(newObj: T): T {
     val method = this::class.memberFunctions.first { it.name == "copy" }
 
     val parameterNames = method
-            .parameters
-            .tail()
-            .mapIndexed { index, kParameter -> Pair(index, kParameter.name) }
+        .parameters
+        .tail()
+        .mapIndexed { index, kParameter -> Pair(index, kParameter.name) }
     val oldValues = parameterNames.map {
         val v = Reflect.on(this).get<Any?>(it.second)
         v
@@ -31,10 +31,10 @@ fun <T> Any.copyFrom(newObj: T): T {
     val entityNew = method.call(this, *mergedValues.toTypedArray())
     val fields = BaseEntity::class.java.declaredFields
     fields.filter { it.name != "serialVersionUID" && it.name != "Companion" }
-            .forEach {
-                val oldV = Reflect.on(this).get<Any>(it.name)
-                Reflect.on(entityNew).set(it.name, oldV)
-            }
+        .forEach {
+            val oldV = Reflect.on(this).get<Any>(it.name)
+            Reflect.on(entityNew).set(it.name, oldV)
+        }
     return entityNew as T
 }
 
