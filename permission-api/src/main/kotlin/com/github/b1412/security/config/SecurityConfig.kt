@@ -91,16 +91,16 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http.headers().cacheControl().disable()
         http.headers().frameOptions().sameOrigin()
         http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-                .addFilterBefore(tokenAuthenticationFilter, BasicAuthenticationFilter::class.java)
-                .addFilterBefore(myFilterSecurityInterceptor!!, FilterSecurityInterceptor::class.java)
-                .authorizeRequests()
-                .anyRequest().authenticated()
+            .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(tokenAuthenticationFilter, BasicAuthenticationFilter::class.java)
+            .addFilterBefore(myFilterSecurityInterceptor!!, FilterSecurityInterceptor::class.java)
+            .authorizeRequests()
+            .anyRequest().authenticated()
 
         http.formLogin().loginPage("/v1/login")
-                .and()
-                .logout()
-                .logoutUrl("/v1/logout")
+            .and()
+            .logout()
+            .logoutUrl("/v1/logout")
 
     }
 

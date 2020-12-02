@@ -13,9 +13,6 @@ plugins {
     `maven-publish`
 }
 
-val group: String by project
-val version: String by project
-
 val jar: Jar by tasks
 val bootJar: BootJar by tasks
 
@@ -58,6 +55,18 @@ dependencies {
 
     api("mysql:mysql-connector-java:8.0.22")
     api("com.vladmihalcea:hibernate-types-52:2.10.0")
+
+
+    testApi("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testApi("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "junit")
+        exclude(module = "mockito-core")
+    }
+    testApi("com.ninja-squad:springmockk:1.1.2")
+    testApi("org.assertj:assertj-core:3.18.1")
+
+    testRuntimeOnly("com.h2database:h2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
 

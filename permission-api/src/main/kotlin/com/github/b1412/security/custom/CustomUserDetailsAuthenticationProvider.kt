@@ -10,26 +10,34 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.util.Assert
 
-class CustomUserDetailsAuthenticationProvider(private val passwordEncoder: PasswordEncoder, private val userDetailsService: CustomUserDetailsService) : AbstractUserDetailsAuthenticationProvider() {
+class CustomUserDetailsAuthenticationProvider(
+    private val passwordEncoder: PasswordEncoder,
+    private val userDetailsService: CustomUserDetailsService
+) : AbstractUserDetailsAuthenticationProvider() {
 
     private var userNotFoundEncodedPassword: String? = null
 
     @Throws(AuthenticationException::class)
-    override fun additionalAuthenticationChecks(userDetails: UserDetails, authentication: UsernamePasswordAuthenticationToken) {
+    override fun additionalAuthenticationChecks(
+        userDetails: UserDetails,
+        authentication: UsernamePasswordAuthenticationToken
+    ) {
 
         if (authentication.credentials == null) {
             logger.debug("Authentication failed: no credentials provided")
             throw BadCredentialsException(
-                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
+                messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials")
+            )
         }
 
         val presentedPassword = authentication.credentials
-                .toString()
+            .toString()
 
         if (!passwordEncoder.matches(presentedPassword, userDetails.password)) {
             logger.debug("Authentication failed: password does not match stored value")
             throw BadCredentialsException(
-                    messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
+                messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials")
+            )
         }
     }
 

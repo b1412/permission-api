@@ -11,8 +11,8 @@ class SecurityAuditor : AuditorAware<User> {
 
     override fun getCurrentAuditor(): Optional<User> {
         return Optional.of(SecurityContextHolder.getContext().authentication)
-                .map { it.principal }
-                .map { it as User }
+            .map { it.principal }
+            .map { it as User }
 
     }
 }

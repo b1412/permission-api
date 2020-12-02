@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class RuleService(
-        @Autowired
-        val dao: RuleDao
+    @Autowired
+    val dao: RuleDao
 ) : BaseService<Rule, Long>(dao = dao)
 
 

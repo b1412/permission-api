@@ -14,8 +14,6 @@ plugins {
     `maven-publish`
 }
 
-val group: String by project
-val version: String by project
 val jar: Jar by tasks
 val bootJar: BootJar by tasks
 

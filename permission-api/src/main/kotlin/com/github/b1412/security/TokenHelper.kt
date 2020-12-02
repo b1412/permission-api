@@ -13,17 +13,17 @@ import javax.servlet.http.HttpServletRequest
 @EnableConfigurationProperties(value = [PermissionProperties::class])
 @Component
 class TokenHelper(
-        @Autowired
-        val permissionProperties: PermissionProperties,
-        @Value("\${spring.application.name}")
-        val application: String
+    @Autowired
+    val permissionProperties: PermissionProperties,
+    @Value("\${spring.application.name}")
+    val application: String
 ) {
 
     fun getUsernameFromToken(token: String): String {
         return Jwts.parser()
-                .setSigningKey(permissionProperties.jwt.secret)
-                .parseClaimsJws(token)
-                .body.subject!!
+            .setSigningKey(permissionProperties.jwt.secret)
+            .parseClaimsJws(token)
+            .body.subject!!
 
     }
 
@@ -32,13 +32,13 @@ class TokenHelper(
         val currentDate = Date(currentTimeMillis)
         val expirationDate = Date(currentTimeMillis + permissionProperties.jwt.expiresIn!! * 1000)
         return Jwts.builder()
-                .setIssuer(application)
-                .setSubject("$username@@$clientId")
-                .setIssuedAt(currentDate)
-                .setExpiration(expirationDate)
-                .signWith(HS512, permissionProperties.jwt.secret)
-                //  .claim("user", userDetails)
-                .compact()
+            .setIssuer(application)
+            .setSubject("$username@@$clientId")
+            .setIssuedAt(currentDate)
+            .setExpiration(expirationDate)
+            .signWith(HS512, permissionProperties.jwt.secret)
+            //  .claim("user", userDetails)
+            .compact()
     }
 
 

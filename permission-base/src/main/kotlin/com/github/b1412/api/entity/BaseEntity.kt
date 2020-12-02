@@ -17,28 +17,28 @@ import javax.persistence.*
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 abstract class BaseEntity(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Long? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
 
-        @Version
-        var version: Long? = null,
+    @Version
+    var version: Long? = null,
 
-        @CreatedDate
-        var createdAt: ZonedDateTime? = null,
+    @CreatedDate
+    var createdAt: ZonedDateTime? = null,
 
-        @LastModifiedDate
-        var updatedAt: ZonedDateTime? = null,
+    @LastModifiedDate
+    var updatedAt: ZonedDateTime? = null,
 
-        var deletedAt: ZonedDateTime? = null,
+    var deletedAt: ZonedDateTime? = null,
 
-        @CreatedBy
-        @ManyToOne
-        @JoinColumn(name = "creator_id")
-        var creator: User? = null,
+    @CreatedBy
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    var creator: User? = null,
 
-        @LastModifiedBy
-        @ManyToOne
-        @JoinColumn(name = "modifier_id")
-        var modifier: User? = null,
+    @LastModifiedBy
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modifier_id")
+    var modifier: User? = null,
 )

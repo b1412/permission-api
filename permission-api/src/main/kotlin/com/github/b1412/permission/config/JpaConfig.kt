@@ -8,11 +8,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @Configuration
 @EnableJpaAuditing(
-        dateTimeProviderRef = "customDateTimeProvider",
-        auditorAwareRef = "securityAuditor"
+    dateTimeProviderRef = "customDateTimeProvider",
+    auditorAwareRef = "securityAuditor"
 )
-@EnableJpaRepositories(basePackages = [
-    "com.github.b1412.*.dao"
-], repositoryBaseClass = BaseDaoImpl::class)
+@EnableJpaRepositories(
+    basePackages = [
+        "com.github.b1412.*.dao"
+    ], repositoryBaseClass = BaseDaoImpl::class
+)
 @EnableTransactionManagement
 class JpaConfig

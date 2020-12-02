@@ -12,13 +12,15 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class AuthenticationFailureHandler(
-        @Autowired
-        val objectMapper: ObjectMapper
+    @Autowired
+    val objectMapper: ObjectMapper
 ) : SimpleUrlAuthenticationFailureHandler() {
 
-    override fun onAuthenticationFailure(request: HttpServletRequest,
-                                         response: HttpServletResponse,
-                                         exception: AuthenticationException) {
+    override fun onAuthenticationFailure(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        exception: AuthenticationException
+    ) {
         val msg = objectMapper.writeValueAsString(ErrorDTO(message = exception.message!!))
         response.status = HttpStatus.UNAUTHORIZED.value()
         response.writer.write(msg)

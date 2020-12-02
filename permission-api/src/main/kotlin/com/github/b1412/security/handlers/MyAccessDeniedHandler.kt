@@ -12,13 +12,15 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class MyAccessDeniedHandler(
-        @Autowired
-        val objectMapper: ObjectMapper
+    @Autowired
+    val objectMapper: ObjectMapper
 ) : AccessDeniedHandler {
 
-    override fun handle(request: HttpServletRequest,
-                        response: HttpServletResponse,
-                        accessDeniedException: AccessDeniedException) {
+    override fun handle(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        accessDeniedException: AccessDeniedException
+    ) {
         val msg = objectMapper.writeValueAsString(ErrorDTO(message = "AccessDenied: " + request.requestURI))
         response.status = HttpStatus.FORBIDDEN.value()
         response.writer.write(msg)

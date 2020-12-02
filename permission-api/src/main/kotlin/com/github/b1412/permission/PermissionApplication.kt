@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.availability.ApplicationAvailabili
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 
 @SpringBootApplication(
-        scanBasePackages = [
-            "com.github.b1412.*"
-        ],
-        exclude = [
-            SecurityAutoConfiguration::class,
-            ApplicationAvailabilityAutoConfiguration::class]
+    scanBasePackages = [
+        "com.github.b1412.*"
+    ],
+    exclude = [
+        SecurityAutoConfiguration::class,
+        ApplicationAvailabilityAutoConfiguration::class]
 )
 class PermissionApplication

@@ -13,8 +13,10 @@ class CustomAuthenticationToken : UsernamePasswordAuthenticationToken {
         super.setAuthenticated(false)
     }
 
-    constructor(principal: Any, credentials: Any, domain: String,
-                authorities: Collection<GrantedAuthority>) : super(principal, credentials, authorities) {
+    constructor(
+        principal: Any, credentials: Any, domain: String,
+        authorities: Collection<GrantedAuthority>
+    ) : super(principal, credentials, authorities) {
         this.domain = domain
         super.setAuthenticated(true) // must use super, as we override
     }

@@ -3,6 +3,7 @@ package com.github.b1412.permission.entity
 import com.github.b1412.api.entity.BaseEntity
 import org.hibernate.annotations.Type
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.io.Serializable
 import javax.persistence.*
@@ -16,7 +17,7 @@ data class User(
         var email: String? = null,
         var notes: String? = null,
 
-        @ManyToOne(fetch = FetchType.EAGER)
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "branch_id")
         var branch: Branch? = null,
 
@@ -38,7 +39,7 @@ data class User(
         var confirmPassword: String? = null,
 
         @Transient
-        var grantedAuthorities: MutableList<GrantedAuthority> = mutableListOf()
+        var grantedAuthorities: MutableList<SimpleGrantedAuthority> = mutableListOf()
 
 ) : BaseEntity(), UserDetails, Serializable {
     override fun getUsername(): String? {
@@ -58,7 +59,7 @@ data class User(
         this.password = password
     }
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+    override fun getAuthorities(): MutableCollection<SimpleGrantedAuthority> {
         return grantedAuthorities
     }
 

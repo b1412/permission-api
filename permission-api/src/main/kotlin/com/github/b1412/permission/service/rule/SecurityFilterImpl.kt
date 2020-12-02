@@ -33,22 +33,22 @@ class SecurityFilterImpl : SecurityFilter {
         logger.debug(requestURI)
         val role = (SecurityContextHolder.getContext().authentication.principal as User).role!!
         val permissions = role
-                .rolePermissions
-                .map { it.permission }
-                .filter {
-                    it!!.authUris!!.split(";").any { uriPatten ->
-                        Pattern.matches(uriPatten, requestURI)
-                    }
-                }.filter { it!!.httpMethod == method }
+            .rolePermissions
+            .map { it.permission }
+            .filter {
+                it!!.authUris!!.split(";").any { uriPatten ->
+                    Pattern.matches(uriPatten, requestURI)
+                }
+            }.filter { it!!.httpMethod == method }
 
         return when (permissions.size) {
             0 -> throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
             1 -> {
                 val permission = permissions.first()!!
                 val rules = role.rolePermissions
-                        .find { it.permission!!.id == permission.id }
-                        .map { it.rules }
-                        .getOrElse { listOf<Rule>() }
+                    .find { it.permission!!.id == permission.id }
+                    .map { it.rules }
+                    .getOrElse { listOf<Rule>() }
                 if (rules.isEmpty()) {
                     logger.warn("no rule found")
                     throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))

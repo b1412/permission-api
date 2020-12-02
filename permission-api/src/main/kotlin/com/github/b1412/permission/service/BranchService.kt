@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class BranchService(
-        @Autowired
-        val branchDao: BranchDao
+    @Autowired
+    val branchDao: BranchDao
 ) : BaseService<Branch, Long>(dao = branchDao)

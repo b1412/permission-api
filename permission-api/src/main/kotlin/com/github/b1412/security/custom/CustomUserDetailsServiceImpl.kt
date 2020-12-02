@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service
 
 @Service("userDetailsService")
 class CustomUserDetailsServiceImpl(
-        @Value("\${spring.application.name}")
-        val application: String,
-        @Autowired
-        val userService: UserService,
-        @Autowired
-        val cacheClient: CacheClient
+    @Value("\${spring.application.name}")
+    val application: String,
+    @Autowired
+    val userService: UserService,
+    @Autowired
+    val cacheClient: CacheClient
 ) : CustomUserDetailsService {
 
     val log = LoggerFactory.getLogger(CustomUserDetailsServiceImpl::class.java)!!
@@ -29,7 +29,7 @@ class CustomUserDetailsServiceImpl(
             throw UsernameNotFoundException("Username and clientId must be provided")
         }
         log.info("clientId {},username {}", clientId, username)
-        //  return cacheClient.get("$application-$username-$clientId".toLowerCase()) { userService.getUserWithPermissions(username, clientId) }!!
-        return userService.getUserWithPermissions(username, clientId)
+        return cacheClient.get("$application-$username-$clientId".toLowerCase()) { userService.getUserWithPermissions(username, clientId) }!!
+       // return userService.getUserWithPermissions(username, clientId)
     }
 }

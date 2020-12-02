@@ -15,7 +15,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
@@ -24,18 +23,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @EnableConfigurationProperties(value = [PermissionProperties::class])
 class UserService(
-        @Autowired
-        val userDao: UserDao,
-        @Value("\${spring.application.name}")
-        val application: String,
-        @Autowired
-        val permissionProperties: PermissionProperties,
-        @Autowired
-        val cacheClient: CacheClient,
-        @Autowired
-        val roleDao: RoleService,
-        @Autowired
-        val branchDao: BranchService,
+    @Autowired
+    val userDao: UserDao,
+    @Value("\${spring.application.name}")
+    val application: String,
+    @Autowired
+    val permissionProperties: PermissionProperties,
+    @Autowired
+    val cacheClient: CacheClient
 ) : BaseService<User, Long>(dao = userDao) {
 
     @Transactional
@@ -62,7 +57,8 @@ class UserService(
             None -> throw AccessDeniedException("invalid user information or user is not verified: $username")
         }
         val permissions = user.role!!.rolePermissions.map { it.permission }
-        val grantedAuthorities = permissions.map { SimpleGrantedAuthority(it?.authKey) as GrantedAuthority}.toMutableList()
+        val grantedAuthorities =
+            permissions.map { SimpleGrantedAuthority(it?.authKey) }.toMutableList()
         user.grantedAuthorities = grantedAuthorities
         return user
     }
@@ -70,9 +66,14 @@ class UserService(
     @Transactional
     fun loadAuthenticationByClientId(clientId: String): Option<Authentication> {
         return userDao.findByIdOrNull(clientId.toLong()).toOption()
-                .map {
-                    val user = cacheClient.get("$application-${it.username}-$clientId".toLowerCase()) { getUserWithPermissions(it.username!!, clientId) }!!
-                    TokenBasedAuthentication(user as UserDetails)
-                }
+            .map {
+                val user = cacheClient.get("$application-${it.username}-$clientId".toLowerCase()) {
+                    getUserWithPermissions(
+                        it.username!!,
+                        clientId
+                    )
+                }!!
+                TokenBasedAuthentication(user as UserDetails)
+            }
     }
 }

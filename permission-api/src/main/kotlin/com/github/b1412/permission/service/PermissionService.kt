@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class PermissionService(
-        @Autowired
-        val dao: PermissionDao
+    @Autowired
+    val dao: PermissionDao
 ) : BaseService<Permission, Long>(dao = dao)
 
 

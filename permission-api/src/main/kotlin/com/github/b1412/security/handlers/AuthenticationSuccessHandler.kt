@@ -23,39 +23,44 @@ import javax.servlet.http.HttpServletResponse
 @EnableConfigurationProperties(value = [PermissionProperties::class])
 @Component
 class AuthenticationSuccessHandler(
-        @Value("\${spring.application.name}")
-        var application: String,
-        @Autowired
-        var tokenHelper: TokenHelper,
-        @Autowired
-        var objectMapper: ObjectMapper,
+    @Value("\${spring.application.name}")
+    var application: String,
+    @Autowired
+    var tokenHelper: TokenHelper,
+    @Autowired
+    var objectMapper: ObjectMapper,
 
-        @Autowired
-        var permissionProperties: PermissionProperties,
+    @Autowired
+    var permissionProperties: PermissionProperties,
 
-        @Autowired
-        var userService: UserService,
+    @Autowired
+    var userService: UserService,
 
-        @Autowired
-        var cacheClient: CacheClient
+    @Autowired
+    var cacheClient: CacheClient
 
 ) : SimpleUrlAuthenticationSuccessHandler() {
 
 
     @Transactional
-    override fun onAuthenticationSuccess(request: HttpServletRequest,
-                                         response: HttpServletResponse,
-                                         authentication: Authentication) {
+    override fun onAuthenticationSuccess(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        authentication: Authentication
+    ) {
         clearAuthenticationAttributes(request)
         val user = authentication.principal as User
 
-        cacheClient.set("$application-${user.username}-${user.clientId}".toLowerCase(), userService.getUserWithPermissions(user.username!!, user.clientId!!))
+        cacheClient.set(
+            "$application-${user.username}-${user.clientId}".toLowerCase(),
+            userService.getUserWithPermissions(user.username!!, user.clientId!!)
+        )
         val jws = tokenHelper.generateToken(user.username!!, user.clientId!!)
         val jwt = permissionProperties.jwt
         val userTokenState = UserTokenState(
-                access_token = jws,
-                //expires_in = user.expiresIn.orElse(jwt.expiresIn),
-                expires_in = jwt.expiresIn
+            access_token = jws,
+            //expires_in = user.expiresIn.orElse(jwt.expiresIn),
+            expires_in = jwt.expiresIn
         )
 
 

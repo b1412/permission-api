@@ -5,7 +5,6 @@
 
     <root level="INFO"/>
     <springProfile name="local">
-        <logger name="com.github.b1412" level="INFO"/>
         <logger name="org.springframework" level="WARN"/>
         <logger name="org.hibernate.SQL" level="DEBUG"/>
         <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>

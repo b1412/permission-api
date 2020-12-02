@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class GraphQlController(
-        val graphQLExecutor: GraphQLExecutor
+    val graphQLExecutor: GraphQLExecutor
 ) {
     class GraphQLInputQuery {
         var query: String? = null

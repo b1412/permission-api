@@ -25,24 +25,28 @@ import javax.servlet.http.HttpServletResponse
 @EnableConfigurationProperties(value = [PermissionProperties::class])
 @Component
 class TokenAuthenticationFilter(
-        @Autowired
-        val tokenHelper: TokenHelper,
-        @Autowired
-        val objectMapper: ObjectMapper,
-        @Autowired
-        val permissionProperties: PermissionProperties,
-        @Autowired
-        val userDetailsService: CustomUserDetailsService,
-        @Autowired
-        val userService: UserService
+    @Autowired
+    val tokenHelper: TokenHelper,
+    @Autowired
+    val objectMapper: ObjectMapper,
+    @Autowired
+    val permissionProperties: PermissionProperties,
+    @Autowired
+    val userDetailsService: CustomUserDetailsService,
+    @Autowired
+    val userService: UserService
 
 ) : OncePerRequestFilter() {
 
-    public override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+    public override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        chain: FilterChain
+    ) {
         val pathsToSkip = permissionProperties.jwt.anonymousUrls.toOption()
-                .map { it.split(",") }
-                .map { it.toList() }
-                .getOrElse { emptyList() }
+            .map { it.split(",") }
+            .map { it.toList() }
+            .getOrElse { emptyList() }
 
         when {
             skipPathRequest(request, pathsToSkip) -> {

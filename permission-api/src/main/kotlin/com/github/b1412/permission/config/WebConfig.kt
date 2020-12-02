@@ -19,8 +19,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 class WebConfig(
-        @Autowired
-        val jsonReturnHandler: JsonReturnHandler
+    @Autowired
+    val jsonReturnHandler: JsonReturnHandler
 ) : WebMvcConfigurer {
     override fun addReturnValueHandlers(returnValueHandlers: MutableList<HandlerMethodReturnValueHandler>) {
         returnValueHandlers.add(jsonReturnHandler)

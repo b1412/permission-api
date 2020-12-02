@@ -1,17 +1,17 @@
 package com.github.b1412.jpa
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.toOption
 import mu.KotlinLogging
 import org.hibernate.graph.EntityGraphs
 import org.hibernate.graph.GraphParser
-import java.lang.Boolean
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.persistence.EntityGraph
 import javax.persistence.EntityManager
 import javax.persistence.criteria.*
-import javax.persistence.criteria.Predicate
 import javax.persistence.metamodel.Attribute
 import javax.persistence.metamodel.EntityType
 import javax.persistence.metamodel.PluralAttribute
@@ -20,12 +20,12 @@ import javax.persistence.metamodel.SingularAttribute
 private val logger = KotlinLogging.logger {}
 
 object JpaUtil {
-    fun <T> createPredicate(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder): Option<Predicate> {
+    fun <T> createPredicate(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder): Either<Unit, Predicate> {
         val filterFields = filter.filter {
             it.key.contains("f_") && !it.key.endsWith("_op")
         }
         if (filterFields.isEmpty()) {
-            return Option.empty()
+            return Either.left(Unit)
         } else {
             val entityType = root.model
             val predicates = filterFields.map {
@@ -36,16 +36,26 @@ object JpaUtil {
                 if (fieldList.size == 1) {
                     cb.and(getPredicate(fieldList[0], root, entityType, value, operator, cb))
                 } else { // multiple fields query use OR
-                    cb.or(getPredicate(fieldList[0], root, entityType, value, operator, cb), getPredicate(fieldList[1], root, entityType, value, operator, cb))
+                    cb.or(
+                        getPredicate(fieldList[0], root, entityType, value, operator, cb),
+                        getPredicate(fieldList[1], root, entityType, value, operator, cb)
+                    )
                 }
             }.reduce { l, r ->
                 cb.and(l, r)
             }
-            return predicates.toOption()
+            return Either.right(predicates)
         }
     }
 
-    private fun <T> getPredicate(field: String, root: Root<T>, entityType: EntityType<T>, value: String, operator: QueryOp, cb: CriteriaBuilder): Predicate? {
+    private fun <T> getPredicate(
+        field: String,
+        root: Root<T>,
+        entityType: EntityType<T>,
+        value: String,
+        operator: QueryOp,
+        cb: CriteriaBuilder
+    ): Predicate? {
         var entityType1 = entityType
         val searchPath: Path<Any>
         val fields = field.split(".")
@@ -70,7 +80,7 @@ object JpaUtil {
             javaType!!.isAssignableFrom(java.lang.Long::class.java) -> value.split(",").map { it.toLong() }
             javaType!!.isAssignableFrom(Boolean::class.java) -> value.split(",").map { it.toBoolean() }
             javaType!!.isAssignableFrom(ZonedDateTime::class.java) -> value.split(",")
-                    .map { ZonedDateTime.ofInstant(Instant.ofEpochMilli(it.toLong()), ZoneId.systemDefault()) }
+                .map { ZonedDateTime.ofInstant(Instant.ofEpochMilli(it.toLong()), ZoneId.systemDefault()) }
             javaType!!.isEnum -> {
                 value.split(",").map { v ->
                     javaType!!.getDeclaredMethod("valueOf", String::class.java).invoke(javaType, v)
@@ -121,7 +131,11 @@ object JpaUtil {
         }
     }
 
-    fun <T> createPredicateV2(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder): Option<Predicate> {
+    fun <T> createPredicateV2(
+        filter: Map<String, String>,
+        root: Root<T>,
+        cb: CriteriaBuilder
+    ): Either<Unit, Predicate> {
         val newFilter = mutableMapOf<String, String>()
         filter.filter { it.key.split("_").size == 2 }.forEach { (key, value) ->
             val (field, op) = key.split("_")
@@ -132,15 +146,19 @@ object JpaUtil {
         return createPredicate(newFilter, root, cb)
     }
 
-    fun <T> createEntityGraphFromURL(entityManager: EntityManager, domainClass: Class<T>, filter: Map<String, String>): EntityGraph<T> {
+    fun <T> createEntityGraphFromURL(
+        entityManager: EntityManager,
+        domainClass: Class<T>,
+        filter: Map<String, String>
+    ): EntityGraph<T> {
         val embedded = filter["embedded"]
-                .toOption()
-                .filter { it.isNotBlank() }
-                .map { it.split(",") }
-                .getOrElse {
-                    listOf()
-                }
-        logger.debug { "embedded $embedded" }
+            .toOption()
+            .filter { it.isNotBlank() }
+            .map { it.split(",") }
+            .getOrElse {
+                listOf()
+            }
+        logger.debug("embedded $embedded")
         val graphs = embedded.map {
             it.split(".").reversed().reduce { l, r ->
                 val s = "$r($l)"

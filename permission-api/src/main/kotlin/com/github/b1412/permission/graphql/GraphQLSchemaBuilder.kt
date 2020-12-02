@@ -16,7 +16,7 @@ import javax.persistence.metamodel.*
 
 @Component
 class GraphQLSchemaBuilder(
-        private val entityManager: EntityManager
+    private val entityManager: EntityManager
 ) : GraphQLSchema.Builder() {
 
     private val classCache = HashMap<Class<*>, GraphQLType>()
@@ -26,13 +26,13 @@ class GraphQLSchemaBuilder(
 
     fun getQueryType(): GraphQLObjectType {
         val queryType = GraphQLObjectType
-                .newObject()
-                .name("JPA_GraphQL")
-                .description("All encompassing schema for this JPA environment")
+            .newObject()
+            .name("JPA_GraphQL")
+            .description("All encompassing schema for this JPA environment")
         queryType.fields(
-                entityManager.metamodel.entities
-                        .filter { this.isNotIgnored(it) }
-                        .map { this.getQueryFieldDefinition(it) }
+            entityManager.metamodel.entities
+                .filter { this.isNotIgnored(it) }
+                .map { this.getQueryFieldDefinition(it) }
         )
 
         return queryType.build()
@@ -62,38 +62,50 @@ class GraphQLSchemaBuilder(
 
     fun getQueryFieldDefinition(entityType: EntityType<*>): GraphQLFieldDefinition {
         val (basicFields, entityFields) = entityType.attributes.filter { isNotIgnored(it) }
-                .partition { isValidInput(it) }
+            .partition { isValidInput(it) }
         val fields = basicFields.flatMap { createFilterFields(it) }
         entityFields.flatMap { createFilterFields(it) }
         val argument = GraphQLArgument.newArgument()
-                .name("where")
-                .type(GraphQLInputObjectType.newInputObject()
-                        .name(entityType.name.capitalize() + "Where")
-                        .fields(fields)
-                        .build()
-                ).build()
+            .name("where")
+            .type(
+                GraphQLInputObjectType.newInputObject()
+                    .name(entityType.name.capitalize() + "Where")
+                    .fields(fields)
+                    .build()
+            ).build()
         GraphQLEnumType.newEnum()
-                .name("Direction")
-                .description("Describes the direction (Ascending / Descending) to sort a field.")
-                .value("ASC", 0, "Ascending")
-                .value("DESC", 1, "Descending")
-                .build()
+            .name("Direction")
+            .description("Describes the direction (Ascending / Descending) to sort a field.")
+            .value("ASC", 0, "Ascending")
+            .value("DESC", 1, "Descending")
+            .build()
 
         val pageType = GraphQLObjectType.newObject()
-                .name(entityType.name + "Connection")
-                .description("'Connection' response wrapper object for " + entityType.name + ".  When pagination or aggregation is requested, this object will be returned with metadata about the query.")
-                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalPages").description("Total number of pages calculated on the database for this pageSize.").type(Scalars.GraphQLLong).build())
-                .field(GraphQLFieldDefinition.newFieldDefinition().name("totalElements").description("Total number of results on the database for this query.").type(Scalars.GraphQLLong).build())
-                .field(GraphQLFieldDefinition.newFieldDefinition().name("content").description("The actual object results").type(GraphQLList(getObjectType(entityType))).build())
-                .build()
+            .name(entityType.name + "Connection")
+            .description("'Connection' response wrapper object for " + entityType.name + ".  When pagination or aggregation is requested, this object will be returned with metadata about the query.")
+            .field(
+                GraphQLFieldDefinition.newFieldDefinition().name("totalPages")
+                    .description("Total number of pages calculated on the database for this pageSize.")
+                    .type(Scalars.GraphQLLong).build()
+            )
+            .field(
+                GraphQLFieldDefinition.newFieldDefinition().name("totalElements")
+                    .description("Total number of results on the database for this query.").type(Scalars.GraphQLLong)
+                    .build()
+            )
+            .field(
+                GraphQLFieldDefinition.newFieldDefinition().name("content").description("The actual object results")
+                    .type(GraphQLList(getObjectType(entityType))).build()
+            )
+            .build()
 
         return GraphQLFieldDefinition.newFieldDefinition()
-                .name(entityType.name)
-                .description(getSchemaDocumentation(entityType.javaType))
-                .type(pageType)
-                .dataFetcher(JpaDataFetcher(entityManager, entityType))
-                .argument(listOf(argument, paginationArgument))
-                .build()
+            .name(entityType.name)
+            .description(getSchemaDocumentation(entityType.javaType))
+            .type(pageType)
+            .dataFetcher(JpaDataFetcher(entityManager, entityType))
+            .argument(listOf(argument, paginationArgument))
+            .build()
     }
 
     private fun getObjectType(entityType: EntityType<*>): GraphQLObjectType {
@@ -101,10 +113,10 @@ class GraphQLSchemaBuilder(
             return entityCache[entityType]!!
 
         val answer = GraphQLObjectType.newObject()
-                .name(entityType.name)
-                .description(getSchemaDocumentation(entityType.javaType))
-                .fields(entityType.attributes.filter { this.isNotIgnored(it) }.flatMap { this.getObjectField(it) })
-                .build()
+            .name(entityType.name)
+            .description(getSchemaDocumentation(entityType.javaType))
+            .fields(entityType.attributes.filter { this.isNotIgnored(it) }.flatMap { this.getObjectField(it) })
+            .build()
 
         entityCache[entityType] = answer
 
@@ -113,56 +125,76 @@ class GraphQLSchemaBuilder(
 
     private fun getObjectField(attribute: Attribute<*, *>): List<GraphQLFieldDefinition> {
         return getAttributeType(attribute)
-                .filterIsInstance<GraphQLOutputType>()
-                .map { type ->
-                    val arguments = ArrayList<GraphQLArgument>()
-                    arguments.add(GraphQLArgument.newArgument().name("orderBy").type(orderByDirectionEnum).build())
-                    // Get the fields that can be queried on (i.e. Simple Types, no Sub-Objects)
-                    if (attribute is SingularAttribute<*, *> && attribute.getPersistentAttributeType() != Attribute.PersistentAttributeType.BASIC) {
-                        val foreignType = attribute.type as ManagedType<*>
+            .filterIsInstance<GraphQLOutputType>()
+            .map { type ->
+                val arguments = ArrayList<GraphQLArgument>()
+                arguments.add(GraphQLArgument.newArgument().name("orderBy").type(orderByDirectionEnum).build())
+                // Get the fields that can be queried on (i.e. Simple Types, no Sub-Objects)
+                if (attribute is SingularAttribute<*, *> && attribute.getPersistentAttributeType() != Attribute.PersistentAttributeType.BASIC) {
+                    val foreignType = attribute.type as ManagedType<*>
 
-                        findBasicAttributes(foreignType.attributes).forEach {
-                            arguments.add(GraphQLArgument.newArgument()
-                                    .name(it.name)
-                                    .type(getAttributeType(it).first() as GraphQLInputType)
-                                    .build())
-                        }
+                    findBasicAttributes(foreignType.attributes).forEach {
+                        arguments.add(
+                            GraphQLArgument.newArgument()
+                                .name(it.name)
+                                .type(getAttributeType(it).first() as GraphQLInputType)
+                                .build()
+                        )
                     }
-
-                    GraphQLFieldDefinition.newFieldDefinition()
-                            .name(attribute.name)
-                            .description(getSchemaDocumentation(attribute.javaMember))
-                            .type(type)
-                            //  .argument(arguments)
-                            .build()
                 }
+
+                GraphQLFieldDefinition.newFieldDefinition()
+                    .name(attribute.name)
+                    .description(getSchemaDocumentation(attribute.javaMember))
+                    .type(type)
+                    //  .argument(arguments)
+                    .build()
+            }
 
     }
 
     private fun findBasicAttributes(attributes: Collection<Attribute<*, *>>): List<Attribute<*, *>> {
-        return attributes.filter { this.isNotIgnored(it) }.filter { it.persistentAttributeType == Attribute.PersistentAttributeType.BASIC }
+        return attributes.filter { this.isNotIgnored(it) }
+            .filter { it.persistentAttributeType == Attribute.PersistentAttributeType.BASIC }
     }
 
     private fun getBasicAttributeType(javaType: Class<*>): GraphQLType {
         // First check our 'standard' and 'customized' Attribute Mappers.  Use them if possible
         val customMapper = attributeMappers.stream()
-                .filter { it.getBasicAttributeType(javaType).isPresent }
-                .findFirst()
+            .filter { it.getBasicAttributeType(javaType).isPresent }
+            .findFirst()
 
         if (customMapper.isPresent)
             return customMapper.get().getBasicAttributeType(javaType).get()
         else if (String::class.java.isAssignableFrom(javaType) || ByteArray::class.java.isAssignableFrom(javaType))
             return Scalars.GraphQLString
-        else if (Int::class.javaObjectType.isAssignableFrom(javaType) || Int::class.java.isAssignableFrom(javaType) || Int::class.javaPrimitiveType!!.isAssignableFrom(javaType))
+        else if (Int::class.javaObjectType.isAssignableFrom(javaType) || Int::class.java.isAssignableFrom(javaType) || Int::class.javaPrimitiveType!!.isAssignableFrom(
+                javaType
+            )
+        )
             return Scalars.GraphQLInt
-        else if (Short::class.java.isAssignableFrom(javaType) || Short::class.javaPrimitiveType!!.isAssignableFrom(javaType))
+        else if (Short::class.java.isAssignableFrom(javaType) || Short::class.javaPrimitiveType!!.isAssignableFrom(
+                javaType
+            )
+        )
             return Scalars.GraphQLShort
-        else if (Float::class.javaObjectType.isAssignableFrom(javaType) || Float::class.java.isAssignableFrom(javaType) || Float::class.javaPrimitiveType!!.isAssignableFrom(javaType)
-                || Double::class.java.isAssignableFrom(javaType) || Double::class.javaPrimitiveType!!.isAssignableFrom(javaType))
+        else if (Float::class.javaObjectType.isAssignableFrom(javaType) || Float::class.java.isAssignableFrom(javaType) || Float::class.javaPrimitiveType!!.isAssignableFrom(
+                javaType
+            )
+            || Double::class.java.isAssignableFrom(javaType) || Double::class.javaPrimitiveType!!.isAssignableFrom(
+                javaType
+            )
+        )
             return Scalars.GraphQLFloat
-        else if (Long::class.javaObjectType.isAssignableFrom(javaType) || Long::class.java.isAssignableFrom(javaType) || Long::class.javaPrimitiveType!!.isAssignableFrom(javaType))
+        else if (Long::class.javaObjectType.isAssignableFrom(javaType) || Long::class.java.isAssignableFrom(javaType) || Long::class.javaPrimitiveType!!.isAssignableFrom(
+                javaType
+            )
+        )
             return Scalars.GraphQLLong
-        else if (Boolean::class.javaObjectType.isAssignableFrom(javaType) || Boolean::class.java.isAssignableFrom(javaType) || Boolean::class.javaPrimitiveType!!.isAssignableFrom(javaType))
+        else if (Boolean::class.javaObjectType.isAssignableFrom(javaType) || Boolean::class.java.isAssignableFrom(
+                javaType
+            ) || Boolean::class.javaPrimitiveType!!.isAssignableFrom(javaType)
+        )
             return Scalars.GraphQLBoolean
         else if (javaType.isEnum) {
             return getTypeFromJavaType(javaType)
@@ -170,7 +202,8 @@ class GraphQLSchemaBuilder(
             return Scalars.GraphQLBigDecimal
         }
         throw UnsupportedOperationException(
-                "Class could not be mapped to GraphQL: '" + javaType.typeName + "'")
+            "Class could not be mapped to GraphQL: '" + javaType.typeName + "'"
+        )
     }
 
     fun getAttributeType(attribute: Attribute<*, *>): List<GraphQLType> {
@@ -199,7 +232,8 @@ class GraphQLSchemaBuilder(
         }
 
         throw UnsupportedOperationException(
-                "Attribute could not be mapped to GraphQL: field '$declaringMember' of entity class '$declaringType' ${attribute.persistentAttributeType}")
+            "Attribute could not be mapped to GraphQL: field '$declaringMember' of entity class '$declaringType' ${attribute.persistentAttributeType}"
+        )
     }
 
     private fun isValidInput(attribute: Attribute<*, *>): Boolean {
@@ -282,46 +316,51 @@ class GraphQLSchemaBuilder(
 
     fun createFilterFields(attribute: Attribute<*, *>): List<GraphQLInputObjectField> {
         return getAttributeType(attribute)
-                .filterIsInstance<GraphQLInputType>()
-                .filter { type ->
-                    attribute.persistentAttributeType != Attribute.PersistentAttributeType.EMBEDDED ||
-                            attribute.persistentAttributeType == Attribute.PersistentAttributeType.EMBEDDED
-                            && type is GraphQLScalarType
-                }.flatMap {
-                    OPERATORS.map { operator ->
-                        var type = it
-                        if (operator == "in" || operator == "bt") {
-                            type = GraphQLList.list(type)
-                        }
-                        GraphQLInputObjectField.newInputObjectField()
-                                .name("${attribute.name}_$operator")
-                                .type(type).build()
+            .filterIsInstance<GraphQLInputType>()
+            .filter { type ->
+                attribute.persistentAttributeType != Attribute.PersistentAttributeType.EMBEDDED ||
+                        attribute.persistentAttributeType == Attribute.PersistentAttributeType.EMBEDDED
+                        && type is GraphQLScalarType
+            }.flatMap {
+                OPERATORS.map { operator ->
+                    var type = it
+                    if (operator == "in" || operator == "bt") {
+                        type = GraphQLList.list(type)
                     }
+                    GraphQLInputObjectField.newInputObjectField()
+                        .name("${attribute.name}_$operator")
+                        .type(type).build()
                 }
+            }
     }
 
     companion object {
         private val OPERATORS = listOf("eq", "in", "like", "gte", "gt", "lt", "lte", "bt")
 
         private val paginationArgument = GraphQLArgument.newArgument()
-                .name("pageRequest")
-                .type(GraphQLInputObjectType.newInputObject()
-                        .name("Pageable")
-                        .description("Query object for Pagination Requests, specifying the requested page, and that page's size.\n\nNOTE: 'page' parameter is 1-indexed, NOT 0-indexed.\n\nExample: paginationRequest { page: 1, size: 20 }")
-                        .field(GraphQLInputObjectField.newInputObjectField().name("page")
-                                .description("Which page should be returned, starting with 1 (1-indexed)")
-                                .type(Scalars.GraphQLInt).build())
-                        .field(GraphQLInputObjectField.newInputObjectField().name("size")
-                                .description("How many results should this page contain")
-                                .type(Scalars.GraphQLInt).build())
-                        .build()
-                ).build()
+            .name("pageRequest")
+            .type(
+                GraphQLInputObjectType.newInputObject()
+                    .name("Pageable")
+                    .description("Query object for Pagination Requests, specifying the requested page, and that page's size.\n\nNOTE: 'page' parameter is 1-indexed, NOT 0-indexed.\n\nExample: paginationRequest { page: 1, size: 20 }")
+                    .field(
+                        GraphQLInputObjectField.newInputObjectField().name("page")
+                            .description("Which page should be returned, starting with 1 (1-indexed)")
+                            .type(Scalars.GraphQLInt).build()
+                    )
+                    .field(
+                        GraphQLInputObjectField.newInputObjectField().name("size")
+                            .description("How many results should this page contain")
+                            .type(Scalars.GraphQLInt).build()
+                    )
+                    .build()
+            ).build()
 
         private val orderByDirectionEnum = GraphQLEnumType.newEnum()
-                .name("Direction")
-                .description("Describes the direction (Ascending / Descending) to sort a field.")
-                .value("ASC", 0, "Ascending")
-                .value("DESC", 1, "Descending")
-                .build()
+            .name("Direction")
+            .description("Describes the direction (Ascending / Descending) to sort a field.")
+            .value("ASC", 0, "Ascending")
+            .value("DESC", 1, "Descending")
+            .build()
     }
 }

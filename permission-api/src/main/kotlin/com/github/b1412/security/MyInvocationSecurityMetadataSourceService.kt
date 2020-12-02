@@ -21,12 +21,12 @@ import kotlin.collections.set
 
 @Service
 class MyInvocationSecurityMetadataSourceService(
-        @Autowired
-        val permissionDao: PermissionDao,
-        @Autowired
-        val cacheClient: CacheClient,
-        @Autowired
-        val entityManager: EntityManager
+    @Autowired
+    val permissionDao: PermissionDao,
+    @Autowired
+    val cacheClient: CacheClient,
+    @Autowired
+    val entityManager: EntityManager
 ) : FilterInvocationSecurityMetadataSource {
 
     // private static ThreadLocal<ConfigAttribute> authorityHolder = new ThreadLocal<ConfigAttribute>();

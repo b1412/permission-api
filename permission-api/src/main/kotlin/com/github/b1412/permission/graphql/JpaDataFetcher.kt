@@ -16,8 +16,9 @@ import javax.persistence.metamodel.PluralAttribute
 import kotlin.math.ceil
 
 open class JpaDataFetcher(
-        private var entityManager: EntityManager,
-        private var entityType: EntityType<*>) : DataFetcher<Any> {
+    private var entityManager: EntityManager,
+    private var entityType: EntityType<*>
+) : DataFetcher<Any> {
 
     override fun get(environment: DataFetchingEnvironment): Any {
         val field = environment.fields.iterator().next()
@@ -29,14 +30,14 @@ open class JpaDataFetcher(
         if (contentSelection.isPresent) {
             val typedQuery = getQuery(environment, field, contentSelection.get())
             result["content"] = typedQuery
-                    .setFirstResult((pageInformation.page!! - 1) * pageInformation.size!!)
-                    .setMaxResults(pageInformation.size!!).resultList
+                .setFirstResult((pageInformation.page!! - 1) * pageInformation.size!!)
+                .setMaxResults(pageInformation.size!!).resultList
         }
 
         if (totalElementsSelection.isPresent || totalPagesSelection.isPresent) {
             val totalElements = contentSelection
-                    .map { contentField -> getCountQuery(environment, contentField).singleResult }
-                    .orElseGet { getCountQuery(environment, Field()).singleResult }
+                .map { contentField -> getCountQuery(environment, contentField).singleResult }
+                .orElseGet { getCountQuery(environment, Field()).singleResult }
 
             result["totalElements"] = totalElements
             result["totalPages"] = ceil(totalElements!! / pageInformation.size!!.toDouble()).toLong()
@@ -48,7 +49,10 @@ open class JpaDataFetcher(
         val cb = entityManager.criteriaBuilder
         val query = cb.createQuery<Any>(entityType.javaType as Class<Any>)
         val root = query.from(entityType)
-        val url = QueryBuilder.queryURLFromField(rootField).substringBefore("&embedded") + QueryBuilder.queryURLFromField(contentField)
+        val url =
+            QueryBuilder.queryURLFromField(rootField).substringBefore("&embedded") + QueryBuilder.queryURLFromField(
+                contentField
+            )
         val filter = QueryBuilder.queryList(url)
         JpaUtil.createPredicate(filter, root, cb).fold({}, { query.where(it) })
         val graph = JpaUtil.createEntityGraphFromURL(entityManager, entityType.javaType, filter)
@@ -90,13 +94,15 @@ open class JpaDataFetcher(
         val root = query.from(entityType)
         val idAttribute = entityType.getId(Any::class.java)
         query.select(cb.count(root.get<Any>(idAttribute.name)))
-        val predicates = field.arguments.map { cb.equal(root.get<Any>(it.name), convertValue(environment, it, it.value)) }
+        val predicates =
+            field.arguments.map { cb.equal(root.get<Any>(it.name), convertValue(environment, it, it.value)) }
         query.where(*predicates.toTypedArray())
         return entityManager.createQuery(query)
     }
 
     private fun getSelectionField(field: Field, fieldName: String): Optional<Field> {
-        return field.selectionSet.selections.stream().filter { it is Field }.map { it as Field }.filter { it -> fieldName == it.name }.findFirst()
+        return field.selectionSet.selections.stream().filter { it is Field }.map { it as Field }
+            .filter { it -> fieldName == it.name }.findFirst()
     }
 
     private fun extractPageInformation(environment: DataFetchingEnvironment, field: Field): PageInformation {
@@ -104,8 +110,10 @@ open class JpaDataFetcher(
         if (paginationRequest.isPresent) {
             field.arguments.remove(paginationRequest.get())
             val paginationValues = paginationRequest.get().value as ObjectValue
-            val page = paginationValues.objectFields.firstOption { "page" == it.name }.map { (it.value as IntValue).value.toInt() }.getOrElse { 1 }
-            val size = paginationValues.objectFields.firstOption { "size" == it.name }.map { (it.value as IntValue).value.toInt() }.getOrElse { 20 }
+            val page = paginationValues.objectFields.firstOption { "page" == it.name }
+                .map { (it.value as IntValue).value.toInt() }.getOrElse { 1 }
+            val size = paginationValues.objectFields.firstOption { "size" == it.name }
+                .map { (it.value as IntValue).value.toInt() }.getOrElse { 20 }
             return PageInformation(page, size)
         }
         return PageInformation(1, Integer.MAX_VALUE)

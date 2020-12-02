@@ -11,8 +11,8 @@ import javax.transaction.Transactional
 
 @Component
 class GraphQLExecutor(
-        val entityManager: EntityManager,
-        var builder: GraphQLSchema.Builder
+    val entityManager: EntityManager,
+    var builder: GraphQLSchema.Builder
 ) {
     var graphQL: GraphQL? = null
 
@@ -24,7 +24,9 @@ class GraphQLExecutor(
 
     @Transactional
     fun execute(query: String, arguments: Map<String, Any>?): ExecutionResult {
-        return if (arguments == null) graphQL!!.execute(query) else graphQL!!.execute(ExecutionInput.newExecutionInput().query(query).variables(arguments).build())
+        return if (arguments == null) graphQL!!.execute(query) else graphQL!!.execute(
+            ExecutionInput.newExecutionInput().query(query).variables(arguments).build()
+        )
     }
 
 }

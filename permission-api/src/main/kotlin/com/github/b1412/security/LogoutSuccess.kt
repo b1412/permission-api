@@ -16,16 +16,20 @@ import javax.servlet.http.HttpServletResponse
 
 class LogoutSuccess(
 
-        @Value("\${spring.application.name}")
-        val application: String,
-        @Autowired
-        val objectMapper: ObjectMapper,
+    @Value("\${spring.application.name}")
+    val application: String,
+    @Autowired
+    val objectMapper: ObjectMapper,
 
-        val cacheClient: CacheClient
+    val cacheClient: CacheClient
 ) : LogoutSuccessHandler {
 
 
-    override fun onLogoutSuccess(httpServletRequest: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
+    override fun onLogoutSuccess(
+        httpServletRequest: HttpServletRequest,
+        response: HttpServletResponse,
+        authentication: Authentication?
+    ) {
         if (authentication != null) {
             cacheClient.deleteByKey("$application-${authentication.name}")
         }
