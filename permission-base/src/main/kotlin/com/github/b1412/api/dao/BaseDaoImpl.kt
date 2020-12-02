@@ -30,13 +30,22 @@ class BaseDaoImpl<T, ID : Serializable>(
         val root = query.from(domainClass)
         query.select(root)
         JpaUtil.createPredicate(filter, root, cb).fold({}, { query.where(it) })
-        val graph = JpaUtil.createEntityGraphFromURL(entityManager, domainClass, filter)
         val spec = Specification { root: Root<T>, query: CriteriaQuery<*>, cb: CriteriaBuilder ->
             val predicates = JpaUtil.createPredicateV2(filter, root, cb).map { listOf(it) }.getOrElse { listOf() }
             query.where(*predicates.toTypedArray())
             query.restriction
         }
-        return findAll(spec, pageable, graph)
+        val graph = JpaUtil.createEntityGraphFromURL(entityManager, domainClass, filter)
+
+        val graphResult = runCatching { JpaUtil.createEntityGraphFromURL(entityManager, domainClass, filter) }
+        return when {
+            graphResult.isSuccess -> {
+                findAll(spec, pageable, graph)
+            }
+            else -> {
+                findAll(spec, pageable)
+            }
+        }
     }
 
     override fun searchOneBy(filter: Map<String, String>): Either<Unit, T> {
