@@ -42,6 +42,4 @@ abstract class BaseEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "modifier_id")
     var modifier: User? = null,
-) : Serializable{
-    constructor()
-}
+) : Serializable
