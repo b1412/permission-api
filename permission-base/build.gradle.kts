@@ -53,7 +53,8 @@ dependencies {
     api("io.jsonwebtoken:jjwt:0.7.0")
     api("commons-beanutils:commons-beanutils:1.9.4")
 
-    api("mysql:mysql-connector-java:8.0.22")
+    api("org.postgresql:postgresql")
+    //api("mysql:mysql-connector-java:8.0.22")
     api("com.vladmihalcea:hibernate-types-52:2.10.0")
 
 

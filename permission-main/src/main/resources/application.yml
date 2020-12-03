@@ -4,16 +4,18 @@ spring:
   application:
     name: cannon
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: cannon
-    url: jdbc:mysql://mysql:3306/cannon?characterEncoding=utf8&allowPublicKeyRetrieval=true&useSSL=false
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://postgres:5432/postgres
+    #url: jdbc:mysql://mysql:3306/cannon?characterEncoding=utf8&allowPublicKeyRetrieval=true&useSSL=false
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+        globally_quoted_identifiers: true
     open-in-view: true
   profiles:
     active: local
