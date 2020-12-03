@@ -64,7 +64,7 @@ abstract class BaseService<T, ID : Serializable>(
                     Reflect.on(any).set(baseEntity::class.java.simpleName.toLowerCase(), baseEntity)
                 } else {
                     when (val either = getObject(baseEntity, field, type)) {
-                        is Either.Left<*> -> Reflect.on(baseEntity).set(field.name, either.a)
+                        is Either.Right<*> -> Reflect.on(baseEntity).set(field.name, either.b)
                     }
                 }
             } else if (field.type.isAssignableFrom(MutableList::class.java)) {
