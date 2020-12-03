@@ -2,7 +2,6 @@ package com.github.b1412.permission.service
 
 import arrow.core.*
 import com.github.b1412.api.service.BaseService
-import com.github.b1412.cache.CacheClient
 import com.github.b1412.permission.dao.UserDao
 import com.github.b1412.permission.entity.Role
 import com.github.b1412.permission.entity.RolePermission
@@ -28,9 +27,7 @@ class UserService(
     @Value("\${spring.application.name}")
     val application: String,
     @Autowired
-    val permissionProperties: PermissionProperties,
-    @Autowired
-    val cacheClient: CacheClient
+    val permissionProperties: PermissionProperties
 ) : BaseService<User, Long>(dao = userDao) {
 
     @Transactional

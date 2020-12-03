@@ -1,11 +1,11 @@
 package com.github.b1412.api.service
 
 import arrow.core.Either
-import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.toOption
 import com.github.b1412.api.dao.BaseDao
 import com.github.b1412.api.entity.BaseEntity
+import com.github.b1412.cache.CacheClient
 import com.github.b1412.extenstions.copyFrom
 import org.joor.Reflect
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,19 +21,36 @@ import javax.persistence.OneToOne
 
 @Component
 abstract class BaseService<T, ID : Serializable>(
-    private val dao: BaseDao<T, ID>
+    private val dao: BaseDao<T, ID>,
 ) : BaseDao<T, ID> by dao {
 
     @Autowired
     lateinit var securityFilter: SecurityFilter
 
     @Autowired
+    lateinit var cacheClient: CacheClient
+
+    @Autowired
     lateinit var entityManager: EntityManager
 
-
-    fun searchBySecurity(method: String, requestURI: String, params: Map<String, String>, pageable: Pageable): Page<T> {
+    fun searchBySecurity(
+        method: String,
+        requestURI: String,
+        params: Map<String, String>,
+        pageable: Pageable,
+        cacheable: Boolean = false
+    ): Page<T> {
         val securityFilters = securityFilter.query(method, requestURI)
-        return dao.searchByFilter(params + securityFilters, pageable)
+        return if (cacheable) {
+            val clazz = dao::class.java.simpleName
+            val key = "$clazz-page-${pageable.pageNumber}-${pageable.pageSize}"
+            println(key)
+            cacheClient.get(key) {
+                dao.searchByFilter(params + securityFilters, pageable)
+            }!!
+        } else {
+            dao.searchByFilter(params + securityFilters, pageable)
+        }
     }
 
     fun syncFromDb(baseEntity: BaseEntity) {
@@ -104,6 +121,6 @@ abstract class BaseService<T, ID : Serializable>(
         return baseEntity.toOption()
             .flatMap { Reflect.on(baseEntity).get<Any>(field.name).toOption() }
             .flatMap { Reflect.on(it).get<Any>("id").toOption() }
-            .map { entityManager.find(type, it) }.toEither {  }
+            .map { entityManager.find(type, it) }.toEither { }
     }
 }

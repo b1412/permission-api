@@ -39,19 +39,8 @@ class MyInvocationSecurityMetadataSourceService(
 
     override fun getAttributes(`object`: Any): List<ConfigAttribute>? {
         val request = (`object` as FilterInvocation).httpRequest
-        val permissionOpt = cacheClient.get("permissions") {
-
-            val graph = this.entityManager.createEntityGraph(User::class.java)
-
-            val roleSubGraph = graph.addSubgraph<Role>("role")
-            val rolePermissionSubGraph = roleSubGraph.addSubgraph<List<RolePermission>>("rolePermissions")
-            rolePermissionSubGraph.addAttributeNodes("permission")
-            rolePermissionSubGraph.addAttributeNodes("rules")
-
-            val hints = HashMap<String, Any>()
-            hints["javax.persistence.fetchgraph"] = graph
-            val all = permissionDao.findAll()
-            all
+        val permissionOpt = cacheClient.get("permission-all-list") {
+            permissionDao.findAll()
         }!!.filter { (_, _, _, authUris) ->
             authUris != null
         }.firstOption { (_, _, _, authUris) ->
