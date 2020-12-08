@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     api(project(":permission-base"))
-    api("com.github.b1412:kotlin-code-generator:790498a17d")
+    api("com.github.b1412:kotlin-code-generator:77e431bb75")
     api("com.github.b1412:generator-tasks:8acf3cd13a")
 
     api("org.springframework.boot:spring-boot-starter-validation")
