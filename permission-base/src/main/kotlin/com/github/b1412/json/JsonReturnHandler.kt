@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.github.b1412.api.entity.BaseEntity
 import com.github.b1412.permission.util.ClassUtil
+import com.github.b1412.permission.util.ClassUtil.allDeclaredFields
 import com.github.b1412.util.findClasses
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.core.MethodParameter
@@ -112,7 +113,7 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         entityClass: Class<*>,
         embeddedNode: String
     ) {
-        val embeddedFields = entityClass.declaredFields.first { it.name == embeddedNode }
+        val embeddedFields = entityClass.allDeclaredFields().first { it.name == embeddedNode }
         val genericType = embeddedFields.genericType
         val embeddedClazz: Class<*>
         embeddedClazz = when (genericType) {
@@ -169,5 +170,4 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         }
         return bean
     }
-
 }

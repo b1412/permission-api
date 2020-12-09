@@ -23,30 +23,43 @@ abstract class BaseController<T, ID : Serializable> {
     @Autowired
     lateinit var baseService: BaseService<T, ID>
 
-    open fun page(request: HttpServletRequest, @RequestParam filter: Map<String, String>, pageable: Pageable): ResponseEntity<*> {
+    open fun page(
+        request: HttpServletRequest,
+        @RequestParam filter: Map<String, String>,
+        pageable: Pageable
+    ): ResponseEntity<*> {
         val page = baseService.searchBySecurity(request.method, request.requestURI, filter, pageable)
         return page.responseEntityOk()
     }
 
     open fun findOne(@PathVariable id: ID, request: HttpServletRequest): ResponseEntity<*> {
         return baseService.findByIdOrNull(id).toOption()
-                .fold(
-                        { ResponseEntity.notFound().build() },
-                        { it.responseEntityOk() }
-                )
+            .fold(
+                { ResponseEntity.notFound().build() },
+                { it.responseEntityOk() }
+            )
     }
 
-    open fun saveOne(@Validated @RequestBody input: T, request: HttpServletRequest, uriComponent: UriComponentsBuilder): ResponseEntity<*> {
+    open fun saveOne(
+        @Validated @RequestBody input: T,
+        request: HttpServletRequest,
+        uriComponent: UriComponentsBuilder
+    ): ResponseEntity<*> {
         baseService.syncFromDb(input as BaseEntity)
         baseService.save(input)
-        val endpoint = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_HYPHEN).convert(input!!::class.java.simpleName)
+        val endpoint =
+            CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_HYPHEN).convert(input!!::class.java.simpleName)
         val uriComponents = uriComponent.path("/v1/${endpoint}/{id}").buildAndExpand(input.id)
         val headers = HttpHeaders()
         headers.location = uriComponents.toUri()
         return ResponseEntity.created(uriComponents.toUri()).build<Void>()
     }
 
-    open fun updateOne(@PathVariable id: ID, @Validated @RequestBody input: T, request: HttpServletRequest): ResponseEntity<*> {
+    open fun updateOne(
+        @PathVariable id: ID,
+        @Validated @RequestBody input: T,
+        request: HttpServletRequest
+    ): ResponseEntity<*> {
         baseService.syncFromDb(input as BaseEntity)
         val persisted = baseService.findByIdOrNull(id)
         val merged = (persisted as Any).copyFrom(input) as T
@@ -55,10 +68,7 @@ abstract class BaseController<T, ID : Serializable> {
     }
 
     open fun deleteOne(@PathVariable id: ID, request: HttpServletRequest): ResponseEntity<*> {
-        return runCatching { baseService.deleteById(id) }
-                .fold(
-                        { ResponseEntity.noContent().build<T>() },
-                        { ResponseEntity.notFound().build() }
-                )
+        baseService.deleteById(id)
+        return ResponseEntity.noContent().build<T>()
     }
 }

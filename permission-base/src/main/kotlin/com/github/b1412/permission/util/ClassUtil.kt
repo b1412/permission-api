@@ -20,4 +20,13 @@ object ClassUtil {
         }
         return fields
     }
+
+    fun Class<*>.allDeclaredFields(): List<Field> {
+        val fields: MutableList<Field> = mutableListOf()
+        fields.addAll(this.declaredFields)
+        if (this.superclass != null) {
+            fields.addAll(this.superclass.allDeclaredFields())
+        }
+        return fields
+    }
 }

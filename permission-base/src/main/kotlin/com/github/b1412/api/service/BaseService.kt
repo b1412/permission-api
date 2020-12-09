@@ -44,7 +44,6 @@ abstract class BaseService<T, ID : Serializable>(
         return if (cacheable) {
             val clazz = dao::class.java.simpleName
             val key = "$clazz-page-${pageable.pageNumber}-${pageable.pageSize}"
-            println(key)
             cacheClient.get(key) {
                 dao.searchByFilter(params + securityFilters, pageable)
             }!!
