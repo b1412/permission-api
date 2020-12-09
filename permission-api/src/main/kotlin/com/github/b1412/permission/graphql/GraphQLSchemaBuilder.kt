@@ -178,12 +178,12 @@ class GraphQLSchemaBuilder(
             )
         )
             return Scalars.GraphQLShort
-        else if (Float::class.javaObjectType.isAssignableFrom(javaType) || Float::class.java.isAssignableFrom(javaType) || Float::class.javaPrimitiveType!!.isAssignableFrom(
-                javaType
-            )
-            || Double::class.java.isAssignableFrom(javaType) || Double::class.javaPrimitiveType!!.isAssignableFrom(
-                javaType
-            )
+        else if (Float::class.javaObjectType.isAssignableFrom(javaType)
+            || Float::class.javaPrimitiveType!!.isAssignableFrom(javaType)
+            || Float::class.java.isAssignableFrom(javaType)
+            || Double::class.javaObjectType.isAssignableFrom(javaType)
+            || Double::class.javaPrimitiveType!!.isAssignableFrom(javaType)
+            || Double::class.java.isAssignableFrom(javaType)
         )
             return Scalars.GraphQLFloat
         else if (Long::class.javaObjectType.isAssignableFrom(javaType) || Long::class.java.isAssignableFrom(javaType) || Long::class.javaPrimitiveType!!.isAssignableFrom(
