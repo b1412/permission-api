@@ -57,62 +57,65 @@ abstract class BaseService<T, ID : Serializable>(
         fields.forEach { field ->
             val type = field.type
             val any = Reflect.on(baseEntity).get<Any>(field.name)
-            if (BaseEntity::class.java.isAssignableFrom(field.type)) {
-                val one2one = field.getAnnotation(OneToOne::class.java)
-                if (one2one != null) {
-                    Reflect.on(any).set(baseEntity::class.java.simpleName.toLowerCase(), baseEntity)
-                } else {
-                    when (val either = getObject(baseEntity, field, type)) {
-                        is Either.Right<*> -> Reflect.on(baseEntity).set(field.name, either.b)
+            if (any != null) {
+                if (BaseEntity::class.java.isAssignableFrom(field.type)) {
+                    val one2one = field.getAnnotation(OneToOne::class.java)
+                    if (one2one != null) {
+                        Reflect.on(any).set(baseEntity::class.java.simpleName.toLowerCase(), baseEntity)
+                    } else {
+                        when (val either = getObject(baseEntity, field, type)) {
+                            is Either.Right<*> -> Reflect.on(baseEntity).set(field.name, either.b)
+                        }
                     }
-                }
-            } else if (field.type.isAssignableFrom(MutableList::class.java)) {
-                val one2one = field.getAnnotation(OneToMany::class.java)
-                val many2Many = field.getAnnotation(ManyToMany::class.java)
-                if (one2one != null) {
-                    val list = baseEntity.toOption()
-                        .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
-                        .map { it as MutableList<out BaseEntity> }
-                        .getOrElse { listOf() }
-                        .map { obj ->
-                            val id = Reflect.on(obj).get<Any>("id")
-                            when (id) {
-                                null -> {
-                                    if (one2one.mappedBy.isNotBlank()) {
-                                        Reflect.on(obj).set(one2one.mappedBy, baseEntity)
+                } else if (field.type.isAssignableFrom(MutableList::class.java)) {
+                    val oneToMany = field.getAnnotation(OneToMany::class.java)
+                    val many2Many = field.getAnnotation(ManyToMany::class.java)
+                    if (oneToMany != null) {
+                        val list = baseEntity.toOption()
+                            .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
+                            .map { it as MutableList<out BaseEntity> }
+                            .getOrElse { listOf() }
+                            .map { obj ->
+                                val id = Reflect.on(obj).get<Any>("id")
+                                when (id) {
+                                    null -> {
+                                        if (oneToMany.mappedBy.isNotBlank()) {
+                                            Reflect.on(obj).set(oneToMany.mappedBy, baseEntity)
+                                        }
+                                        syncFromDb(obj)
+                                        obj
                                     }
-                                    syncFromDb(obj)
-                                    obj
-                                }
-                                else -> {
-                                    val oldNestedObj = entityManager.find(obj::class.java, id)
-                                    syncFromDb(obj)
-                                    val mergedObj = oldNestedObj.copyFrom(obj)
-                                    if (one2one.mappedBy.isNotBlank()) {
-                                        Reflect.on(mergedObj).set(one2one.mappedBy, baseEntity)
+                                    else -> {
+                                        val oldNestedObj = entityManager.find(obj::class.java, id)
+                                        syncFromDb(obj)
+                                        val mergedObj = oldNestedObj.copyFrom(obj)
+                                        if (oneToMany.mappedBy.isNotBlank()) {
+                                            Reflect.on(mergedObj).set(oneToMany.mappedBy, baseEntity)
+                                        }
+                                        mergedObj
                                     }
-                                    mergedObj
                                 }
                             }
-                        }
-                    Reflect.on(any).call("clear")
-                    Reflect.on(any).call("addAll", list)
-                } else if (many2Many != null) {
-                    val list = baseEntity.toOption()
-                        .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
-                        .map { it as MutableList<out BaseEntity> }
-                        .getOrElse { listOf() }
-                        .map { obj ->
-                            when (val id = Reflect.on(obj).get<Any>("id")) {
-                                null -> obj
-                                else -> entityManager.find(obj::class.java, id)
+                        Reflect.on(any).call("clear")
+                        Reflect.on(any).call("addAll", list)
+                    } else if (many2Many != null) {
+                        val list = baseEntity.toOption()
+                            .flatMap { Reflect.on(it).get<Any>(field.name).toOption() }
+                            .map { it as MutableList<out BaseEntity> }
+                            .getOrElse { listOf() }
+                            .map { obj ->
+                                when (val id = Reflect.on(obj).get<Any>("id")) {
+                                    null -> obj
+                                    else -> entityManager.find(obj::class.java, id)
+                                }
                             }
+                        if (list.isNotEmpty()) {
+                            Reflect.on(baseEntity).set(field.name, list)
                         }
-                    if (list.isNotEmpty()) {
-                        Reflect.on(baseEntity).set(field.name, list)
                     }
                 }
             }
+
         }
     }
 
