@@ -1,8 +1,10 @@
 package com.github.b1412.api.entity
 
 import com.github.b1412.permission.entity.User
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import com.vladmihalcea.hibernate.type.json.JsonStringType
 import org.hibernate.annotations.TypeDef
+import org.hibernate.annotations.TypeDefs
 import org.hibernate.annotations.Where
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
@@ -14,7 +16,10 @@ import java.time.ZonedDateTime
 import javax.persistence.*
 
 @Where(clause = "deletedAt is not null")
-@TypeDef(name = "json", typeClass = JsonStringType::class)
+@TypeDefs(
+    TypeDef(name = "json", typeClass = JsonStringType::class),
+    TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
+)
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 abstract class BaseEntity(
