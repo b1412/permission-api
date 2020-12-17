@@ -7,6 +7,12 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.io.Serializable
 import javax.persistence.*
 
+@Table(
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["client_id", "username"]),
+        UniqueConstraint(columnNames = ["client_id", "email"])
+    ]
+)
 @Entity
 data class User(
     var login: String? = null,
