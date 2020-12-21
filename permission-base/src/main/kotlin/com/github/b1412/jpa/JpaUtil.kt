@@ -60,11 +60,10 @@ object JpaUtil {
         val searchPath: Path<Any>
         val fields = field.split(".")
         var javaType: Class<*>? = null
-        val convertedValues: List<Any>
         if (fields.size > 1) {
-            var join: Join<Any, Any> = root.join(fields[0])
+            var join: Join<Any, Any> = root.join(fields[0], JoinType.LEFT)
             for (i in 1 until fields.size - 1) {
-                join = join.join(fields[i])
+                join = join.join(fields[i], JoinType.LEFT)
             }
             searchPath = join.get(fields[fields.size - 1])
             fields.windowed(2, 1).forEach { (e, f) ->
@@ -73,9 +72,9 @@ object JpaUtil {
             }
         } else {
             javaType = getJavaType(entityType1, field)
-            searchPath = root.get<Any>(field)
+            searchPath = root.get(field)
         }
-        convertedValues = when {
+        val convertedValues: List<Any> = when {
             javaType!!.isAssignableFrom(java.lang.String::class.java) -> value.split(",")
             javaType!!.isAssignableFrom(java.lang.Long::class.java) -> value.split(",").map { it.toLong() }
             javaType!!.isAssignableFrom(Boolean::class.java) -> value.split(",").map { it.toBoolean() }
@@ -191,5 +190,4 @@ object JpaUtil {
             else -> throw  IllegalArgumentException()
         }
     }
-
 }

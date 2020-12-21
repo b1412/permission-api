@@ -1,6 +1,5 @@
 package com.github.b1412.security
 
-
 import arrow.core.None
 import arrow.core.Some
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -18,7 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
 
 @EnableConfigurationProperties(value = [PermissionProperties::class])
 @Component
@@ -47,8 +45,11 @@ class TokenAuthenticationFilter(
                 chain.doFilter(request, response)
             }
             else -> {
-                val authToken = tokenHelper.getToken(request)!!
-                val usernameResult = kotlin.runCatching { tokenHelper.getUsernameFromToken(authToken) }
+                val authToken = tokenHelper.getToken(request)
+                if (authToken.isNullOrBlank()) {
+                    badToken(request, response, "token is empty")
+                }
+                val usernameResult = kotlin.runCatching { tokenHelper.getUsernameFromToken(authToken!!) }
                 if (usernameResult.isSuccess) {
                     val orNull = usernameResult.getOrNull()!!
                     val (username, clientId) = orNull.split("@@")
@@ -79,8 +80,15 @@ class TokenAuthenticationFilter(
 
     private fun loginExpired(request: HttpServletRequest, response: HttpServletResponse, message: String) {
         logger.warn(request.method + request.requestURI)
-        val msg = objectMapper.writeValueAsString(ErrorDTO(message = "login expired"))
+        val msg = objectMapper.writeValueAsString(ErrorDTO(message = message))
         response.status = HttpStatus.FORBIDDEN.value()
+        response.writer.write(msg)
+    }
+
+    private fun badToken(request: HttpServletRequest, response: HttpServletResponse, message: String) {
+        logger.warn(request.method + request.requestURI)
+        val msg = objectMapper.writeValueAsString(ErrorDTO(message = message))
+        response.status = HttpStatus.UNAUTHORIZED.value()
         response.writer.write(msg)
     }
 

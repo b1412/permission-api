@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component
 @Component
 class UserAccessRule : AccessRule {
     override val ruleName: String
-        get() = "user"
+        get() = "belongTo"
 
     override fun exec(permission: Permission): Map<String, String> {
         val user = SecurityContextHolder.getContext().authentication.principal as User
-        return mapOf("f_user.id" to user.id.toString(), "f_user.id_op" to "=")
+        return mapOf("belongTo.id_eq" to user.id.toString())
     }
 }

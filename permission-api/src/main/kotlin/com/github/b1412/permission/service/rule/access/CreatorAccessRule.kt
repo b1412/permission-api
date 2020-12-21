@@ -12,6 +12,6 @@ class CreatorAccessRule : AccessRule {
 
     override fun exec(permission: Permission): Map<String, String> {
         val user = SecurityContextHolder.getContext().authentication.principal as User
-        return mapOf("f_creator.id" to user.id.toString(), "f_creator.id_op" to "=")
+        return mapOf("creator.id_eq" to user.id.toString())
     }
 }
