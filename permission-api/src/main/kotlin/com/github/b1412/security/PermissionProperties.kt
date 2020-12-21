@@ -17,7 +17,7 @@ class PermissionProperties {
         var secret = "queenvictoria"
         var cookie = "AUTH-TOKEN"
         var param = "token"
-        var anonymousUrls: String? = null
+        var anonymousUrls: List<String> = mutableListOf()
     }
 
     class User {

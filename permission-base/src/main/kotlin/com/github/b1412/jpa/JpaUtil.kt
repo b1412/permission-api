@@ -62,7 +62,7 @@ object JpaUtil {
         var javaType: Class<*>? = null
         val convertedValues: List<Any>
         if (fields.size > 1) {
-            var join: Join<Any, Any> = root.join<Any, Any>(fields[0])
+            var join: Join<Any, Any> = root.join(fields[0])
             for (i in 1 until fields.size - 1) {
                 join = join.join(fields[i])
             }

@@ -3,8 +3,6 @@ package com.github.b1412.security
 
 import arrow.core.None
 import arrow.core.Some
-import arrow.core.getOrElse
-import arrow.core.toOption
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.b1412.error.ErrorDTO
 import com.github.b1412.permission.service.UserService
@@ -43,13 +41,8 @@ class TokenAuthenticationFilter(
         response: HttpServletResponse,
         chain: FilterChain
     ) {
-        val pathsToSkip = permissionProperties.jwt.anonymousUrls.toOption()
-            .map { it.split(",") }
-            .map { it.toList() }
-            .getOrElse { emptyList() }
-
         when {
-            skipPathRequest(request, pathsToSkip) -> {
+            skipPathRequest(request, permissionProperties.jwt.anonymousUrls) -> {
                 SecurityContextHolder.getContext().authentication = AnonAuthentication()
                 chain.doFilter(request, response)
             }
