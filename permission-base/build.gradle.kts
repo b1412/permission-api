@@ -38,7 +38,7 @@ repositories {
 dependencies {
     val arrowVersion = "0.11.0"
     api("com.github.b1412:api-common:e307fc7309")
-    api("com.github.b1412:kotlin-code-generator-meta:11abea967b")
+    api("com.github.b1412:kotlin-code-generator-meta:c0c2739aa6")
 
     api("org.jetbrains.kotlin:kotlin-reflect")
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
