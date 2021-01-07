@@ -58,6 +58,7 @@ class AuthenticationSuccessHandler(
         val jws = tokenHelper.generateToken(user.username!!, user.clientId!!)
         val jwt = permissionProperties.jwt
         val userTokenState = UserTokenState(
+            id = user.id!!.toString(),
             access_token = jws,
             //expires_in = user.expiresIn.orElse(jwt.expiresIn),
             expires_in = jwt.expiresIn

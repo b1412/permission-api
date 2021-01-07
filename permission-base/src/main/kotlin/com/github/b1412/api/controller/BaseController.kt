@@ -5,12 +5,14 @@ import com.github.b1412.api.entity.BaseEntity
 import com.github.b1412.api.service.BaseService
 import com.github.b1412.extenstions.copyFrom
 import com.github.b1412.extenstions.responseEntityOk
+import com.github.b1412.permission.entity.User
 import com.google.common.base.CaseFormat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,6 +31,18 @@ abstract class BaseController<T, ID : Serializable> {
         pageable: Pageable
     ): ResponseEntity<*> {
         val page = baseService.searchBySecurity(request.method, request.requestURI, filter, pageable)
+        return page.responseEntityOk()
+    }
+
+    open fun myPage(
+        request: HttpServletRequest,
+        @RequestParam filter: Map<String, String>,
+        pageable: Pageable
+    ): ResponseEntity<*> {
+        val user = (SecurityContextHolder.getContext().authentication.principal as User)
+        val page = baseService.searchBySecurity(
+            request.method, request.requestURI, filter + mapOf("creator.id" to user.id.toString()), pageable
+        )
         return page.responseEntityOk()
     }
 
