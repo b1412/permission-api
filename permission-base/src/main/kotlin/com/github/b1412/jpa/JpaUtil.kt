@@ -77,7 +77,7 @@ object JpaUtil {
         val convertedValues: List<Any> = when {
             javaType!!.isAssignableFrom(java.lang.String::class.java) -> value.split(",")
             javaType!!.isAssignableFrom(java.lang.Long::class.java) -> value.split(",").map { it.toLong() }
-            javaType!!.isAssignableFrom(Boolean::class.java) -> value.split(",").map { it.toBoolean() }
+            javaType!!.isAssignableFrom(java.lang.Boolean::class.java) -> value.split(",").map { it.toBoolean() }
             javaType!!.isAssignableFrom(ZonedDateTime::class.java) -> value.split(",")
                 .map { ZonedDateTime.ofInstant(Instant.ofEpochMilli(it.toLong()), ZoneId.systemDefault()) }
             javaType!!.isEnum -> {
