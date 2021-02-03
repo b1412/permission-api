@@ -20,6 +20,6 @@ interface BaseDao<T, ID : Serializable> : JpaRepository<T, ID>, JpaSpecification
 
     fun searchOneBy(filter: Map<String, String>): Either<Unit, T>
 
-    fun searchOneByOrNull(filter: Map<String, String>): Either<Unit, T>
+    fun searchOneByOrNull(filter: Map<String, String>): T?
 }
 
