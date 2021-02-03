@@ -68,4 +68,8 @@ class BaseDaoImpl<T, ID : Serializable>(
             result.getOrNull()!!
         }
     }
+
+    override fun searchOneByOrNull(filter: Map<String, String>): T? {
+        return searchByFilter(filter, Pageable.unpaged()).firstOrNull()
+    }
 }

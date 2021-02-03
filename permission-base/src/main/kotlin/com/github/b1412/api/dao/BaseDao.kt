@@ -19,5 +19,7 @@ interface BaseDao<T, ID : Serializable> : JpaRepository<T, ID>, JpaSpecification
     fun searchByFilter(filter: Map<String, String>, pageable: Pageable): Page<T>
 
     fun searchOneBy(filter: Map<String, String>): Either<Unit, T>
+
+    fun searchOneByOrNull(filter: Map<String, String>): Either<Unit, T>
 }
 
