@@ -85,4 +85,9 @@ abstract class BaseController<T, ID : Serializable> {
         baseService.deleteById(id)
         return ResponseEntity.noContent().build<T>()
     }
+
+    open fun deleteAll(request: HttpServletRequest): ResponseEntity<*> {
+        baseService.deleteAll()
+        return ResponseEntity.noContent().build<T>()
+    }
 }
