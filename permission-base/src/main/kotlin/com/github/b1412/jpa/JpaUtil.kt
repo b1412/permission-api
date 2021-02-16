@@ -171,12 +171,12 @@ object JpaUtil {
         return EntityGraphs.merge(entityManager, domainClass, *graphs.toTypedArray())
     }
 
-    private fun getJavaType(entityType: EntityType<*>, field: String): Class<*> {
+     fun getJavaType(entityType: EntityType<*>, field: String): Class<*> {
         val argumentEntityAttribute = entityType.getAttribute(field)
         return if (argumentEntityAttribute is PluralAttribute<*, *, *>) argumentEntityAttribute.elementType.javaType else argumentEntityAttribute.javaType
     }
 
-    private fun <T> getReferenceEntityType(entityType: EntityType<T>, field: String): EntityType<T> {
+     fun <T> getReferenceEntityType(entityType: EntityType<T>, field: String): EntityType<T> {
         val attribute = entityType.getAttribute(field)
         return when {
             attribute.persistentAttributeType == Attribute.PersistentAttributeType.ONE_TO_MANY || attribute.persistentAttributeType == Attribute.PersistentAttributeType.MANY_TO_MANY -> {
