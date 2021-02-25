@@ -1,12 +1,9 @@
 package com.github.b1412.permission.service.rule
 
 import arrow.core.Either
-import arrow.core.extensions.list.foldable.find
 import arrow.core.extensions.list.foldable.firstOrNone
 import arrow.core.getOrElse
-import arrow.core.mapOf
 import com.github.b1412.api.service.SecurityFilter
-import com.github.b1412.permission.entity.Rule
 import com.github.b1412.permission.entity.User
 import com.github.b1412.permission.service.rule.access.AccessRule
 import org.slf4j.LoggerFactory
@@ -20,7 +17,6 @@ import java.util.regex.Pattern
 @Component
 class SecurityFilterImpl : SecurityFilter {
 
-
     @Autowired
     lateinit var accessRules: List<AccessRule>
 
@@ -28,9 +24,10 @@ class SecurityFilterImpl : SecurityFilter {
         return accessRules.firstOrNone { it.ruleName == ruleName }.toEither { }
     }
 
+    /**
+     *  if no rule found, return all.
+     */
     override fun query(method: String, requestURI: String): Map<String, String> {
-        logger.debug(method)
-        logger.debug(requestURI)
         val role = (SecurityContextHolder.getContext().authentication.principal as User).role!!
         val permissions = role
             .rolePermissions
@@ -38,32 +35,30 @@ class SecurityFilterImpl : SecurityFilter {
             .filter {
                 it!!.authUris!!.split(";").any { uriPatten ->
                     Pattern.matches(uriPatten, requestURI)
-                }
-            }.filter { it!!.httpMethod == method }
+                } && it.httpMethod == method
+            }
+        logger.debug("method $method url $requestURI has ${permissions.size} permission(s)")
+        if (permissions.isEmpty()) {
+            throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
+        }
 
-        return when (permissions.size) {
-            0 -> throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
-            1 -> {
-                val permission = permissions.first()!!
-                val rules = role.rolePermissions
-                    .find { it.permission!!.id == permission.id }
-                    .map { it.rules }
-                    .getOrElse { listOf<Rule>() }
-                if (rules.isEmpty()) {
-                    logger.warn("no rule found")
-                    throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
-                }
+        val permission = permissions.first()!!
+        val rules = role.rolePermissions
+            .firstOrNone { it.permission!!.id == permission.id }
+            .map { it.rules }
+            .getOrElse { listOf() }
+        return when {
+            rules.isEmpty() -> {
+                arrow.core.mapOf()
+            }
+            else -> {
                 rules.map { rule ->
                     val accessRule = findAccessRules(rule.name!!)
                     logger.debug("access rule {0}", accessRule)
-                    accessRule.map { it.exec(permission) }.getOrElse { mapOf() }
+                    accessRule.map { it.exec(permission) }.getOrElse { arrow.core.mapOf() }
                 }.reduce { acc, map -> acc + map }
             }
-            else -> {
-                throw AccessDeniedException(MessageFormat.format("No permission {0} {1}", method, requestURI))
-            }
         }
-
     }
 
     companion object {

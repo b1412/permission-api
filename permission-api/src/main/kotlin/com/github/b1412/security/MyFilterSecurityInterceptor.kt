@@ -8,7 +8,7 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.stereotype.Service
 import javax.servlet.*
 
-@Service
+//@Service
 class MyFilterSecurityInterceptor : AbstractSecurityInterceptor(), Filter {
 
     @Autowired

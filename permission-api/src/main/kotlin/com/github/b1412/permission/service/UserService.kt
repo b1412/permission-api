@@ -54,7 +54,11 @@ class UserService(
             is Some -> userOpt.t
             None -> throw AccessDeniedException("invalid user information or user is not verified: $username")
         }
-        val permissions = user.role!!.rolePermissions.map { it.permission }
+
+        val permissions = user.role!!.rolePermissions
+            //TODO
+            //   .filter { it.rules.isEmpty().not() }
+            .map { it.permission }
         val grantedAuthorities =
             permissions.map { SimpleGrantedAuthority(it?.authKey) }.toMutableList()
         user.grantedAuthorities = grantedAuthorities

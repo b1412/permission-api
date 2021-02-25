@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
 
-    @Throws(IOException::class)
     override fun commence(
         request: HttpServletRequest,
         response: HttpServletResponse,

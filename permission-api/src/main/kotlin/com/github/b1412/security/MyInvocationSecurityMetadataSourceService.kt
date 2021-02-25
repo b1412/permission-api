@@ -1,49 +1,38 @@
 package com.github.b1412.security
 
-import arrow.core.None
-import arrow.core.Some
 import arrow.core.extensions.list.foldable.firstOption
+import arrow.core.getOrElse
 import com.github.b1412.cache.CacheClient
 import com.github.b1412.permission.dao.PermissionDao
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.ConfigAttribute
 import org.springframework.security.access.SecurityConfig
 import org.springframework.security.web.FilterInvocation
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource
 import org.springframework.stereotype.Service
 import java.util.regex.Pattern
-import javax.persistence.EntityManager
 
 @Service
 class MyInvocationSecurityMetadataSourceService(
-    @Autowired
     val permissionDao: PermissionDao,
-    @Autowired
-    val cacheClient: CacheClient,
-    @Autowired
-    val entityManager: EntityManager
+    val cacheClient: CacheClient
 ) : FilterInvocationSecurityMetadataSource {
-
-    override fun getAttributes(`object`: Any): List<ConfigAttribute>? {
+    /**
+     * decide the url current request in the permission list, if so return to decide
+     */
+    override fun getAttributes(`object`: Any): List<ConfigAttribute> {
         val request = (`object` as FilterInvocation).httpRequest
-        val permissionOpt = cacheClient.get("permission-all-list") {
-            permissionDao.findAll()
-        }!!.filter { (_, _, _, authUris) ->
-            authUris != null
-        }.firstOption { (_, _, _, authUris) ->
-            authUris!!.split(";").any { uriPatten -> Pattern.matches(uriPatten, request.requestURI) }
-        }
-
-        return when (permissionOpt) {
-            is Some -> {
-                listOf(SecurityConfig(permissionOpt.t.authKey))
+        val configAttributes = cacheClient.get("permission-all-list", supplier = { permissionDao.findAll() })!!
+            .firstOption { (_, _, authUris, httpMethod) ->
+                authUris!!.split(";").any { Pattern.matches(it, request.requestURI) }
+                        && request.method == httpMethod
             }
-            None -> null
-        }
+            .map { listOf(SecurityConfig(it.authKey)) }
+            .getOrElse { listOf() }
+        return configAttributes
     }
 
     override fun getAllConfigAttributes(): Collection<ConfigAttribute>? {
-        return null
+        return listOf()
     }
 
     override fun supports(clazz: Class<*>): Boolean {

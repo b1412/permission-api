@@ -74,10 +74,15 @@ object JpaUtil {
             javaType = getJavaType(entityType1, field)
             searchPath = root.get(field)
         }
+
         val convertedValues: List<Any> = when {
             javaType!!.isAssignableFrom(java.lang.String::class.java) -> value.split(",")
             javaType!!.isAssignableFrom(java.lang.Long::class.java) -> value.split(",").map { it.toLong() }
-            javaType!!.isAssignableFrom(java.lang.Boolean::class.java) -> value.split(",").map { it.toBoolean() }
+            (Boolean::class.javaObjectType.isAssignableFrom(javaType!!)
+                    || Boolean::class.java.isAssignableFrom(javaType!!)
+                    || Boolean::class.javaPrimitiveType!!.isAssignableFrom(
+                javaType!!
+            )) -> value.split(",").map { it.toBoolean() }
             javaType!!.isAssignableFrom(ZonedDateTime::class.java) -> value.split(",")
                 .map { ZonedDateTime.ofInstant(Instant.ofEpochMilli(it.toLong()), ZoneId.systemDefault()) }
             javaType!!.isEnum -> {
@@ -171,12 +176,12 @@ object JpaUtil {
         return EntityGraphs.merge(entityManager, domainClass, *graphs.toTypedArray())
     }
 
-     fun getJavaType(entityType: EntityType<*>, field: String): Class<*> {
+    fun getJavaType(entityType: EntityType<*>, field: String): Class<*> {
         val argumentEntityAttribute = entityType.getAttribute(field)
         return if (argumentEntityAttribute is PluralAttribute<*, *, *>) argumentEntityAttribute.elementType.javaType else argumentEntityAttribute.javaType
     }
 
-     fun <T> getReferenceEntityType(entityType: EntityType<T>, field: String): EntityType<T> {
+    fun <T> getReferenceEntityType(entityType: EntityType<T>, field: String): EntityType<T> {
         val attribute = entityType.getAttribute(field)
         return when {
             attribute.persistentAttributeType == Attribute.PersistentAttributeType.ONE_TO_MANY || attribute.persistentAttributeType == Attribute.PersistentAttributeType.MANY_TO_MANY -> {

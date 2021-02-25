@@ -61,7 +61,8 @@ class TokenAuthenticationFilter(
                 } else {
                     val clientId = request.getParameter("clientId")
                     if (clientId == null) {
-                        loginExpired(request, response, usernameResult.exceptionOrNull()!!.message!!)
+                        //loginExpired(request, response, usernameResult.exceptionOrNull()!!.message!!)
+                        loginExpired(request, response, "login error")
                     } else {
                         when (val option = userService.loadAuthenticationByClientId(clientId)) {
                             is Some -> {

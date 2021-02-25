@@ -21,7 +21,10 @@ class MyAccessDeniedHandler(
         response: HttpServletResponse,
         accessDeniedException: AccessDeniedException
     ) {
-        val msg = objectMapper.writeValueAsString(ErrorDTO(message = "AccessDenied: " + request.requestURI))
+        val msg = objectMapper.writeValueAsString(
+            ErrorDTO(message = "No Permission to access: ${request.method} ${request.requestURI}")
+        )
+
         response.status = HttpStatus.FORBIDDEN.value()
         response.writer.write(msg)
     }

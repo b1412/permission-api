@@ -15,7 +15,17 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.filter.CharacterEncodingFilter
+import javax.servlet.Filter
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+
 
 @Configuration
 class WebConfig(
@@ -24,6 +34,27 @@ class WebConfig(
 ) : WebMvcConfigurer {
     override fun addReturnValueHandlers(returnValueHandlers: MutableList<HandlerMethodReturnValueHandler>) {
         returnValueHandlers.add(jsonReturnHandler)
+    }
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("http://localhost:4200")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+        configuration.exposedHeaders = listOf("Authorization", "content-type")
+        configuration.allowedHeaders = listOf("Authorization", "content-type")
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
+    }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    fun characterEncodingFilter(): CharacterEncodingFilter? {
+        val filter = CharacterEncodingFilter()
+        filter.encoding = "UTF-8"
+        filter.setForceEncoding(true)
+        return filter
     }
 
     @Bean

@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse
 class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
     var advices: List<ResponseBodyAdvice<Any>> = emptyList()
 
-
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
         return returnType.annotatedElement.declaredAnnotations.any { it is GraphRender }
     }
@@ -47,11 +46,9 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         val response = webRequest.getNativeResponse(HttpServletResponse::class.java)!!
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
         val embedded = request.getParameter("embedded")
-        val endpoint = returnType.annotatedElement.declaredAnnotations.first { it is GraphRender }!! as GraphRender
-        val result = findClasses(BaseEntity::class.java, "classpath*:com/github/b1412/**/*.class") +
-                findClasses(BaseEntity::class.java, "classpath*:nz/co/**/*.class")
-        val rootEntityClass = result.first { it.simpleName == endpoint.entity.capitalize() }
-        val firstLevelFields = firstLevelFields(rootEntityClass)
+        val endpoint = (returnType.annotatedElement.declaredAnnotations.first { it is GraphRender }!! as GraphRender)
+            .entity
+
         val objectMapper = ObjectMapper()
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
         objectMapper.registerModule(Jdk8Module())
@@ -59,35 +56,53 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
         objectMapper.registerModule(Hibernate5Module().configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true))
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val jsonFilter = JacksonJsonFilter(
-            fields = mutableMapOf(rootEntityClass to firstLevelFields)
-        )
-        val entityClassMap = mutableMapOf<String, Class<*>>()
 
-        objectMapper.setFilterProvider(jsonFilter)
-        objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
+        val classes = findClasses(BaseEntity::class.java, "classpath*:com/github/b1412/**/*.class") +
+                findClasses(BaseEntity::class.java, "classpath*:nz/co/**/*.class")
 
-        embedded.toOption()
-            .map { it.split(",").toList() }
-            .getOrElse { emptyList() }
-            .filter { it.isNotBlank() }
-            .map { it.split(".").toList() }
-            .filter { it.isNotEmpty() }
-            .sortedBy { it.size }
-            .forEach {
-                if (it.size == 1) { // root node
-                    val embeddedNode = it.first()
-                    addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
-                } else {
-                    val embeddedNode = it.last()
-                    val lastParentNode = it.dropLast(1).last()
-                    val parentEntityClass = entityClassMap[lastParentNode]!!
-                    addEmbedded(objectMapper, entityClassMap, jsonFilter, parentEntityClass, embeddedNode)
+        if (endpoint == "tree") {
+            val entity = request.requestURI.substringAfterLast("/")
+            val rootEntityClass = classes.first { it.simpleName.equals(entity, ignoreCase = true) }
+            val firstLevelFields = firstLevelFields(rootEntityClass)
+            firstLevelFields.add("children")
+            val jsonFilter = JacksonJsonFilter(
+                fields = mutableMapOf(rootEntityClass to firstLevelFields)
+            )
+            objectMapper.setFilterProvider(jsonFilter)
+            objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
+        } else {
+            val rootEntityClass = classes.first { it.simpleName.equals(endpoint, ignoreCase = true) }
+            val firstLevelFields = firstLevelFields(rootEntityClass)
+
+            val jsonFilter = JacksonJsonFilter(
+                fields = mutableMapOf(rootEntityClass to firstLevelFields)
+            )
+            objectMapper.setFilterProvider(jsonFilter)
+            objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
+
+            val entityClassMap = mutableMapOf<String, Class<*>>()
+            embedded
+                .toOption()
+                .map { it.split(",").toList() }
+                .getOrElse { emptyList() }
+                .filter { it.isNotBlank() }
+                .map { it.split(".").toList() }
+                .filter { it.isNotEmpty() }
+                .sortedBy { it.size }
+                .forEach {
+                    if (it.size == 1) { // root node
+                        val embeddedNode = it.first()
+                        addEmbedded(objectMapper, entityClassMap, jsonFilter, rootEntityClass, embeddedNode)
+                    } else {
+                        val embeddedNode = it.last()
+                        val lastParentNode = it.dropLast(1).last()
+                        val parentEntityClass = entityClassMap[lastParentNode]!!
+                        addEmbedded(objectMapper, entityClassMap, jsonFilter, parentEntityClass, embeddedNode)
+                    }
                 }
-            }
+        }
 
         response.contentType = MediaType.APPLICATION_JSON_VALUE
-
 
         when {
             returnValue is ByteArray -> {

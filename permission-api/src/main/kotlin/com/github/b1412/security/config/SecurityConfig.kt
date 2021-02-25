@@ -1,6 +1,7 @@
 package com.github.b1412.security.config
 
 import com.github.b1412.security.LogoutSuccess
+import com.github.b1412.security.MyAccessDecisionManager
 import com.github.b1412.security.MyFilterSecurityInterceptor
 import com.github.b1412.security.TokenAuthenticationFilter
 import com.github.b1412.security.custom.CustomAuthenticationFilter
@@ -25,9 +26,13 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
+import java.util.*
 
 @Configuration
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
@@ -36,6 +41,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
     private val myAccessDeniedHandler: MyAccessDeniedHandler? = null
+
+    @Autowired
+    private val myAccessDecisionManager: MyAccessDecisionManager? = null
 
     @Autowired
     private val logoutSuccess: LogoutSuccess? = null
@@ -51,6 +59,19 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
     lateinit var userDetailsService: CustomUserDetailsService
+
+
+//    @Bean
+//    fun corsFilter(): CorsFilter {
+//        val source = UrlBasedCorsConfigurationSource()
+//        val config = CorsConfiguration()
+//        //config.allowCredentials = true
+//        config.addAllowedOrigin("*")
+//        config.addAllowedHeader("*")
+//        config.addAllowedMethod("*")
+//        source.registerCorsConfiguration("/**", config)
+//        return CorsFilter(source)
+//    }
 
 
     @Bean
@@ -78,30 +99,20 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         auth.authenticationProvider(authProvider())
     }
 
-    @Throws(Exception::class)
-    override fun configure(web: WebSecurity?) {
-        web!!.ignoring().antMatchers("/js/**", "/css/**", "/images/**", "/**/favicon.ico")
-    }
-
-
     override fun configure(http: HttpSecurity) {
-        http.exceptionHandling().accessDeniedHandler(myAccessDeniedHandler)
         http.cors()
+        http.exceptionHandling().accessDeniedHandler(myAccessDeniedHandler)
         http.csrf().disable()
         http.headers().cacheControl().disable()
         http.headers().frameOptions().sameOrigin()
-        http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterBefore(tokenAuthenticationFilter, BasicAuthenticationFilter::class.java)
-            .addFilterBefore(myFilterSecurityInterceptor!!, FilterSecurityInterceptor::class.java)
-            .authorizeRequests()
-            .anyRequest().authenticated()
+        http.authorizeRequests()
+            .anyRequest()
+            .authenticated()
+            .accessDecisionManager(myAccessDecisionManager)
 
-        http.formLogin().loginPage("/v1/login")
-            .and()
-            .logout()
-            .logoutUrl("/v1/logout")
+        http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(tokenAuthenticationFilter, BasicAuthenticationFilter::class.java)
+//            .addFilterBefore(myFilterSecurityInterceptor!!, FilterSecurityInterceptor::class.java)
 
     }
-
 }
