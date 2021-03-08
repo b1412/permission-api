@@ -181,9 +181,10 @@ object JpaUtil {
         return EntityGraphs.merge(entityManager, domainClass, *graphs.toTypedArray())
     }
 
-    fun getJavaType(entityType: EntityType<*>, field: String): Class<*> {
+    private fun getJavaType(entityType: EntityType<*>, field: String): Class<*> {
         val argumentEntityAttribute = entityType.getAttribute(field)
-        return if (argumentEntityAttribute is PluralAttribute<*, *, *>) argumentEntityAttribute.elementType.javaType else argumentEntityAttribute.javaType
+        return argumentEntityAttribute.javaType
+        //  return if (argumentEntityAttribute is PluralAttribute<*, *, *>) argumentEntityAttribute.elementType.javaType else argumentEntityAttribute.javaType
     }
 
     fun <T> getReferenceEntityType(entityType: EntityType<T>, field: String): EntityType<T> {
