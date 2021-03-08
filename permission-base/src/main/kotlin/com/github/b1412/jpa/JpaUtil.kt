@@ -90,6 +90,8 @@ object JpaUtil {
                     javaType!!.getDeclaredMethod("valueOf", String::class.java).invoke(javaType, v)
                 }
             }
+            javaType!!.isAssignableFrom(MutableList::class.java) -> value.split(",").map { it.toLong() }
+
             else -> throw UnsupportedOperationException(javaType.toString())
         }
         return when (operator) {
@@ -131,6 +133,9 @@ object JpaUtil {
             }
             QueryOp.NN -> {
                 cb.isNotNull(searchPath)
+            }
+            QueryOp.CONTAINS -> {
+                cb.isMember(convertedValues.first() as Number, searchPath as Expression<Collection<Long>>)
             }
         }
     }

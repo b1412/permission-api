@@ -9,5 +9,6 @@ enum class QueryOp {
     IN,
     BETWEEN,
     NULL,
-    NN
+    NN,
+    CONTAINS
 }
