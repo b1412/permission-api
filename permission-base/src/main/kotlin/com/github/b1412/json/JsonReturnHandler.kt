@@ -70,6 +70,16 @@ class JsonReturnHandler : HandlerMethodReturnValueHandler, BeanPostProcessor {
             )
             objectMapper.setFilterProvider(jsonFilter)
             objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
+        } else if (endpoint == "tree-parent") {
+            val entity = request.requestURI.substringAfter("tree/").substringBeforeLast("/")
+            val rootEntityClass = classes.first { it.simpleName.equals(entity, ignoreCase = true) }
+            val firstLevelFields = firstLevelFields(rootEntityClass)
+            firstLevelFields.add("parent")
+            val jsonFilter = JacksonJsonFilter(
+                fields = mutableMapOf(rootEntityClass to firstLevelFields)
+            )
+            objectMapper.setFilterProvider(jsonFilter)
+            objectMapper.addMixIn(rootEntityClass, jsonFilter.javaClass)
         } else {
             val rootEntityClass = classes.first { it.simpleName.equals(endpoint, ignoreCase = true) }
             val firstLevelFields = firstLevelFields(rootEntityClass)
