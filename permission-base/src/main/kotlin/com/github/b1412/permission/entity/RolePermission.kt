@@ -14,6 +14,10 @@ data class RolePermission(
     @NotNull
     val permission: Permission? = null,
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    val role: Role? = null,
+
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
