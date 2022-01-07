@@ -20,7 +20,11 @@ import javax.persistence.metamodel.SingularAttribute
 private val logger = KotlinLogging.logger {}
 
 object JpaUtil {
-    fun <T> createPredicate(filter: Map<String, String>, root: Root<T>, cb: CriteriaBuilder): Either<Unit, Predicate> {
+    private fun <T> createPredicate(
+        filter: Map<String, String>,
+        root: Root<T>,
+        cb: CriteriaBuilder
+    ): Either<Unit, Predicate> {
         val filterFields = filter.filter {
             it.key.contains("f_") && !it.key.endsWith("_op")
         }
@@ -28,15 +32,16 @@ object JpaUtil {
             return Either.left(Unit)
         } else {
             val entityType = root.model
+            val joinTables = mutableMapOf<String, Join<Any, Any>>()
             val predicates = filterFields.map {
                 val value = it.value
                 val operator = QueryOp.valueOf(filter[it.key + "_op"].toOption().getOrElse { "=" }.toUpperCase())
                 val field = it.key.replace("f_", "")
                 val fieldList = field.split("-")
                 if (fieldList.size == 1) {
-                    cb.and(getPredicate(fieldList[0], root, entityType, value, operator, cb))
+                    cb.and(getPredicate(fieldList[0], root, entityType, value, operator, cb, joinTables))
                 } else { // multiple fields query use OR
-                    val result = fieldList.map { getPredicate(it, root, entityType, value, operator, cb) }
+                    val result = fieldList.map { getPredicate(it, root, entityType, value, operator, cb, joinTables) }
                     cb.or(
                         *result.toTypedArray()
                     )
@@ -54,18 +59,25 @@ object JpaUtil {
         entityType: EntityType<T>,
         value: String,
         operator: QueryOp,
-        cb: CriteriaBuilder
+        cb: CriteriaBuilder,
+        joinTableMappings: MutableMap<String, Join<Any, Any>>
     ): Predicate? {
         var entityType1 = entityType
         val searchPath: Path<Any>
         val fields = field.split(".")
         var javaType: Class<*>? = null
         if (fields.size > 1) {
-            var join: Join<Any, Any> = root.join(fields[0], JoinType.LEFT)
-            for (i in 1 until fields.size - 1) {
-                join = join.join(fields[i], JoinType.LEFT)
+            var joinTable = fields[0]
+            var join: Join<Any, Any>? = joinTableMappings[joinTable]
+            if (join == null) {
+                join = root.join(joinTable, JoinType.LEFT)
+                joinTableMappings[joinTable] = join
             }
-            searchPath = join.get(fields[fields.size - 1])
+            for (i in 1 until fields.size - 1) {
+                joinTable = fields[i]
+                join = join!!.join(joinTable, JoinType.LEFT)
+            }
+            searchPath = join!!.get(fields[fields.size - 1])
             fields.windowed(2, 1).forEach { (e, f) ->
                 entityType1 = getReferenceEntityType(entityType1, e)
                 javaType = getJavaType(entityType1, f)
