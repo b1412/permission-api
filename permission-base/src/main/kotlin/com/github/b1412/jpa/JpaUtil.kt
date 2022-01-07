@@ -36,9 +36,9 @@ object JpaUtil {
                 if (fieldList.size == 1) {
                     cb.and(getPredicate(fieldList[0], root, entityType, value, operator, cb))
                 } else { // multiple fields query use OR
+                    val result = fieldList.map { getPredicate(it, root, entityType, value, operator, cb) }
                     cb.or(
-                        getPredicate(fieldList[0], root, entityType, value, operator, cb),
-                        getPredicate(fieldList[1], root, entityType, value, operator, cb)
+                        *result.toTypedArray()
                     )
                 }
             }.reduce { l, r ->
